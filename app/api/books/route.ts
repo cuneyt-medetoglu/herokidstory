@@ -2234,9 +2234,15 @@ export async function POST(request: NextRequest) {
           .filter((url): url is string => Boolean(url))
 
         const pageEntityIds: string[] = []
+        const characterNames = new Set(
+          characters.map((c: { name?: string }) => (c.name || '').trim().toLowerCase()).filter(Boolean)
+        )
         if (storyData?.supportingEntities) {
           for (const entity of storyData.supportingEntities) {
             if (entity.appearsOnPages && entity.appearsOnPages.includes(pageNumber)) {
+              // Do not add entity if it has the same name as a character (e.g. pet Luna) — avoids duplicate dog in images
+              const entityName = (entity.name || '').trim().toLowerCase()
+              if (entityName && characterNames.has(entityName)) continue
               pageEntityIds.push(entity.id)
             }
           }

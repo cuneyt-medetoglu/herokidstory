@@ -200,7 +200,7 @@ export function generateStoryPrompt(input: StoryGenerationInput): string {
     buildCharacterSection(characterDesc, characters),
     buildStoryRequirementsSection(themeConfig, characterAge, ageGroup, pageCount ?? 12, language, illustrationStyle),
     ...(customRequests?.trim() ? [buildStorySeedSection(customRequests.trim(), pageCount ?? 12, ageGroup)] : []),
-    buildSupportingEntitiesSection(theme), // NEW: Supporting entities for master generation
+    buildSupportingEntitiesSection(theme, characters), // Pets must NOT be duplicated in supportingEntities
     buildLanguageSection(language),
     buildAgeAppropriateSection(ageGroup),
     buildStoryStructureSection(characterName, ageGroup, pageCount ?? 12, characters),
@@ -662,12 +662,25 @@ The author gave this idea for the story. Use it as the starting point.
 "${customRequests}"`
 }
 
-function buildSupportingEntitiesSection(theme: string): string {
+function buildSupportingEntitiesSection(
+  theme: string,
+  characters?: Array<{ name?: string; type?: { displayName?: string; group?: string } }>
+): string {
+  const petNames =
+    characters
+      ?.filter(c => c.type?.group === 'Pets' || (c.type?.displayName && ['Dog', 'Cat', 'Rabbit', 'Bird'].includes(c.type.displayName)))
+      .map(c => c.name || c.type?.displayName)
+      .filter(Boolean) ?? []
+  const excludeRule =
+    petNames.length > 0
+      ? `\n- **CRITICAL:** Do NOT add to "supportingEntities" any animal that is already a CHARACTER (e.g. the family pet). The following are characters and must NOT appear in supportingEntities: ${petNames.join(', ')}. supportingEntities is ONLY for ADDITIONAL entities (e.g. a toy, a wild animal that is not the pet, or an important object like a photo or map). One pet = one character; do not duplicate it as an entity.`
+      : ''
+
   return `# SUPPORTING ENTITIES (Master-For-All-Entities)
-Identify ALL animals and important objects that appear in the story; each gets a master illustration.
-- Include: any animals and key objects that the story needs. Exclude: background-only elements (e.g. trees, rocks), character clothing.
+Identify ADDITIONAL animals and important objects that appear in the story (each gets a master illustration).${excludeRule}
+- Include: only animals/objects that are NOT already in the character list (e.g. a toy, a second animal that is not the family pet, or a key object like a camping photo). Exclude: the family pet (it is already a character); background-only elements (e.g. trees, rocks); character clothing.
 - Rules: unique name+id per entity; visual description for master; same name throughout; list appearsOnPages.
-- JSON: include "supportingEntities" array with id, type (animal|object), name, description, appearsOnPages. Verify all story entities are listed.
+- JSON: include "supportingEntities" array with id, type (animal|object), name, description, appearsOnPages. Leave the array empty [] if the only animals/objects in the story are the characters themselves.
 
 # SUGGESTED OUTFITS (for master illustrations)
 Output "suggestedOutfits": an object with one entry per character. Keys = character IDs from CHARACTER MAPPING (exact UUIDs). Value for each key = one line in English describing that character's outfit for this story (e.g. "comfortable outdoor clothing, sneakers"; "casual dress, sandals"). Used for master character illustrations so each character's clothing fits the story. Match story setting and theme. If only one character, the object has one key.`
