@@ -531,6 +531,8 @@ export async function POST(request: NextRequest) {
   let ttsMs = 0
   let ttsPrewarmPromise: Promise<void> | null = null
   let ttsPrewarmStartTime = 0
+  /** Gerçek TTS üretim süresi (prewarm tamamlanınca set edilir); TIMING SUMMARY'de bunu gösteriyoruz. */
+  let ttsActualMs = 0
 
   try {
     const user = await requireUser()
@@ -1056,33 +1058,23 @@ export async function POST(request: NextRequest) {
       const pagesForTts = storyData.pages.filter((p: any) => p?.text?.trim())
       if (pagesForTts.length) {
         const bookLanguageForTts = language || 'tr'
-        const TTS_BATCH_SIZE = 5
         ttsPrewarmPromise = (async () => {
-          const ttsBatchCount = Math.ceil(pagesForTts.length / TTS_BATCH_SIZE)
-          console.log(`[Create Book] 🔊 TTS prewarm (background): ${pagesForTts.length} pages, ${ttsBatchCount} batch(es) of ${TTS_BATCH_SIZE} (parallel)`)
+          console.log(`[Create Book] 🔊 TTS prewarm (background): ${pagesForTts.length} pages (all parallel)`)
           let ttsSuccess = 0
           let ttsFail = 0
           const startTts = Date.now()
-          for (let batchStart = 0; batchStart < pagesForTts.length; batchStart += TTS_BATCH_SIZE) {
-            const ttsBatch = pagesForTts.slice(batchStart, batchStart + TTS_BATCH_SIZE)
-            const batchNum = Math.floor(batchStart / TTS_BATCH_SIZE) + 1
-            const batchT = Date.now()
-            const batchResults = await Promise.allSettled(
-              ttsBatch.map((p: any) => generateTts(p.text.trim(), { language: bookLanguageForTts, userId: user.id }))
-            )
-            const batchMs = Date.now() - batchT
-            const ok = batchResults.filter((r: PromiseSettledResult<any>) => r.status === 'fulfilled').length
-            const fail = batchResults.filter((r: PromiseSettledResult<any>) => r.status === 'rejected').length
-            ttsSuccess += ok
-            ttsFail += fail
-            batchResults.forEach((result: PromiseSettledResult<any>, idx: number) => {
-              if (result.status === 'rejected') {
-                console.warn(`[Create Book] TTS prewarm: batch ${batchNum} page ${batchStart + idx + 1} failed:`, (result.reason as Error).message)
-              }
-            })
-            console.log(`[Create Book] 🔊 TTS batch ${batchNum}/${ttsBatchCount}: ${ok}/${ttsBatch.length} ok — ${batchMs}ms`)
-          }
+          const results = await Promise.allSettled(
+            pagesForTts.map((p: any) => generateTts(p.text.trim(), { language: bookLanguageForTts, userId: user.id }))
+          )
           const ttsTotalMs = Date.now() - startTts
+          results.forEach((result: PromiseSettledResult<any>, idx: number) => {
+            if (result.status === 'fulfilled') ttsSuccess++
+            else {
+              ttsFail++
+              console.warn(`[Create Book] TTS prewarm: page ${idx + 1} failed:`, (result.reason as Error).message)
+            }
+          })
+          ttsActualMs = ttsTotalMs
           console.log(`[Create Book] ✅ TTS prewarm done: ${ttsSuccess}/${pagesForTts.length} pages (${ttsFail} failed) — ${ttsTotalMs}ms (${(ttsTotalMs / 1000).toFixed(1)}s)`)
           console.log(`[Create Book] 📊 TTS avg per page: ${Math.round(ttsTotalMs / Math.max(pagesForTts.length, 1))}ms`)
         })()
@@ -2685,36 +2677,26 @@ export async function POST(request: NextRequest) {
       // TTS prewarm: story sonrası arka planda başlatıldı; burada bitene kadar bekle (CREATE_BOOK_TIMING_ANALYSIS.md)
       if (ttsPrewarmPromise) {
         await ttsPrewarmPromise
-        ttsMs = Date.now() - ttsPrewarmStartTime
+        // Özet için gerçek TTS süresini kullan (duvar saati değil); ttsActualMs prewarm içinde set edildi
+        ttsMs = ttsActualMs > 0 ? ttsActualMs : Date.now() - ttsPrewarmStartTime
       } else if (allImagesGenerated && pages?.length) {
         // From-example vb. path: TTS arka planda başlatılmadığı için burada çalıştır
         const bookLanguage = language || 'tr'
-        const TTS_BATCH_SIZE = 5
-        const ttsStartTime = Date.now()
         const ttsPages = pages.filter((p: any) => p?.text?.trim())
-        const ttsBatchCount = Math.ceil(ttsPages.length / TTS_BATCH_SIZE)
-        console.log(`[Create Book] 🔊 TTS prewarm: ${ttsPages.length} pages, ${ttsBatchCount} batch(es) of ${TTS_BATCH_SIZE} (parallel)`)
+        console.log(`[Create Book] 🔊 TTS prewarm: ${ttsPages.length} pages (all parallel)`)
+        const ttsStartTime = Date.now()
         let ttsSuccess = 0
         let ttsFail = 0
-        for (let batchStart = 0; batchStart < ttsPages.length; batchStart += TTS_BATCH_SIZE) {
-          const ttsBatch = ttsPages.slice(batchStart, batchStart + TTS_BATCH_SIZE)
-          const batchNum = Math.floor(batchStart / TTS_BATCH_SIZE) + 1
-          const batchT = Date.now()
-          const batchResults = await Promise.allSettled(
-            ttsBatch.map((p: any) => generateTts(p.text.trim(), { language: bookLanguage, userId: user.id, bookId: book.id }))
-          )
-          const batchMs = Date.now() - batchT
-          const ok = batchResults.filter((r: PromiseSettledResult<any>) => r.status === 'fulfilled').length
-          const fail = batchResults.filter((r: PromiseSettledResult<any>) => r.status === 'rejected').length
-          ttsSuccess += ok
-          ttsFail += fail
-          batchResults.forEach((result: PromiseSettledResult<any>, idx: number) => {
-            if (result.status === 'rejected') {
-              console.warn(`[Create Book] TTS prewarm: batch ${batchNum} page ${batchStart + idx + 1} failed:`, (result.reason as Error).message)
-            }
-          })
-          console.log(`[Create Book] 🔊 TTS batch ${batchNum}/${ttsBatchCount}: ${ok}/${ttsBatch.length} ok — ${batchMs}ms`)
-        }
+        const results = await Promise.allSettled(
+          ttsPages.map((p: any) => generateTts(p.text.trim(), { language: bookLanguage, userId: user.id, bookId: book.id }))
+        )
+        results.forEach((result: PromiseSettledResult<any>, idx: number) => {
+          if (result.status === 'fulfilled') ttsSuccess++
+          else {
+            ttsFail++
+            console.warn(`[Create Book] TTS prewarm: page ${idx + 1} failed:`, (result.reason as Error).message)
+          }
+        })
         const ttsTotalMs = Date.now() - ttsStartTime
         ttsMs = ttsTotalMs
         console.log(`[Create Book] ✅ TTS prewarm done: ${ttsSuccess}/${ttsPages.length} pages (${ttsFail} failed) — ${ttsTotalMs}ms (${(ttsTotalMs / 1000).toFixed(1)}s)`)

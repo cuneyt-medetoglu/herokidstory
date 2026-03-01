@@ -33,6 +33,7 @@ Sen KidStoryBook projesinin proje yöneticisisin. Görevin:
 
 ### Konu Bazlı Referanslar (detay ilgili dokümanlarda)
 - **Create Book / görsel–hikaye kalitesi:** `docs/prompts/STORY_PROMPT_TEMPLATE.md` (güncel: v2.6.0 — ONE STORY STEP BY STEP), `docs/prompts/IMAGE_PROMPT_TEMPLATE.md`
+- **Create Book akışı / süre / paralellik / TTS:** `docs/analysis/CREATE_BOOK_FLOW_SEQUENCE.md` (adım sırası, TTS prewarm, master→kapak→sayfa, Step 6 butonları, timing summary, Google TTS quota; optimizasyon önerileri OPT-1/2/3)
 - **Prompt optimizasyon / analiz:** `docs/analysis/PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md`, `docs/guides/PROMPT_OPTIMIZATION_GUIDE.md`
 - **PDF (limit, sıkıştırma, timeout):** `docs/guides/PDF_GENERATION_GUIDE.md`
 
@@ -295,7 +296,7 @@ Kullanıcı şunları diyebilir:
 
 **docs/ Ana Dizini:** Sadece 5 dosya (DOCUMENTATION.md, ROADMAP.md, PRD.md, FEATURES.md, ARCHITECTURE.md). Başka dosya EKLEME!
 
-**Alt Klasörler:** `implementation/`, `checklists/`, `guides/`, `reports/`, `strategies/`, `archive/`, `ai/`, `api/`, `database/`, `prompts/`, `technical/`
+**Alt Klasörler:** `implementation/`, `checklists/`, `guides/`, `reports/`, `strategies/`, `archive/`, `ai/`, `api/`, `database/`, `prompts/`, `technical/`, `analysis/`
 
 **Yeni Dosya:** Dosya tipini belirle → Uygun klasöre koy → `FAZ{X}_{Y}_{TYPE}.md` formatında isimlendir → docs/ root'una ASLA koyma!
 
