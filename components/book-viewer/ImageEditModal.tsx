@@ -142,9 +142,10 @@ export function ImageEditModal({
         throw new Error(result.message || result.error || 'Failed to edit image')
       }
 
+      const remaining = result.data.quotaRemaining
       toast({
         title: "Success!",
-        description: `Image edited successfully. ${result.data.quotaRemaining} edit(s) remaining.`,
+        description: `Image edited successfully. ${remaining == null ? 'Unlimited' : `${remaining} edit(s)`} remaining.`,
       })
 
       onSuccess(result.data.editedImageUrl)

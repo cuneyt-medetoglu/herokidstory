@@ -52,9 +52,10 @@ export function RegenerateImageModal({
         throw new Error(result.message || "Invalid response")
       }
 
+      const remaining = result.data.quotaRemaining
       toast({
         title: "Success!",
-        description: `Page image regenerated. ${result.data.quotaRemaining} change(s) remaining.`,
+        description: `Page image regenerated. ${remaining == null ? 'Unlimited' : `${remaining} change(s)`} remaining.`,
       })
 
       onSuccess(result.data.editedImageUrl)

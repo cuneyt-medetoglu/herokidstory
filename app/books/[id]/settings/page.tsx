@@ -31,6 +31,7 @@ interface Book {
   }
   edit_quota_used: number
   edit_quota_limit: number
+  imageEditQuotaBypass?: boolean
   created_at: string
 }
 
@@ -275,6 +276,7 @@ export default function BookSettingsPage({ params }: { params: { id: string } })
   }
 
   const quotaRemaining = book.edit_quota_limit - book.edit_quota_used
+  const isQuotaBypass = book.imageEditQuotaBypass === true
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-background dark:from-slate-900 dark:to-slate-950">
@@ -294,7 +296,7 @@ export default function BookSettingsPage({ params }: { params: { id: string } })
             <p className="text-muted-foreground">{book.title}</p>
           </div>
           <Badge variant="secondary" className="text-lg px-4 py-2">
-            {quotaRemaining}/{book.edit_quota_limit} Changes Left
+            {isQuotaBypass ? 'Unlimited (Admin)' : `${quotaRemaining}/${book.edit_quota_limit} Changes Left`}
           </Badge>
         </div>
 
@@ -393,7 +395,10 @@ export default function BookSettingsPage({ params }: { params: { id: string } })
           <CardHeader>
             <CardTitle>🎨 Edit Images</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Fix or regenerate page images. You have {quotaRemaining} change{quotaRemaining !== 1 ? 's' : ''} remaining (edit or regenerate).
+              Fix or regenerate page images.{' '}
+            {isQuotaBypass
+              ? 'Unlimited changes (admin).'
+              : `You have ${quotaRemaining} change${quotaRemaining !== 1 ? 's' : ''} remaining (edit or regenerate).`}
             </p>
           </CardHeader>
           <CardContent>
@@ -422,7 +427,7 @@ export default function BookSettingsPage({ params }: { params: { id: string } })
 
                   <Button
                     onClick={() => handleEditImage(page.pageNumber)}
-                    disabled={quotaRemaining === 0 || !page.imageUrl}
+                    disabled={(!isQuotaBypass && quotaRemaining === 0) || !page.imageUrl}
                     className="w-full"
                     size="sm"
                     variant="outline"
@@ -432,7 +437,7 @@ export default function BookSettingsPage({ params }: { params: { id: string } })
                   </Button>
                   <Button
                     onClick={() => handleRegenerateImage(page.pageNumber)}
-                    disabled={quotaRemaining === 0 || !page.imageUrl}
+                    disabled={(!isQuotaBypass && quotaRemaining === 0) || !page.imageUrl}
                     className="w-full"
                     size="sm"
                     variant="outline"

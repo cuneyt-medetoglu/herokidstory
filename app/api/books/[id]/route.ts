@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireUser } from '@/lib/auth/api-auth'
+import { getUserRole } from '@/lib/db/users'
 import {
   getBookById,
   updateBook,
@@ -73,7 +74,13 @@ export async function GET(
       console.error('Failed to increment view count:', error)
     })
 
-    return successResponse(book, 'Book fetched successfully')
+    const userRole = await getUserRole(user.id)
+    const imageEditQuotaBypass = userRole === 'admin'
+
+    return successResponse(
+      imageEditQuotaBypass ? { ...book, imageEditQuotaBypass: true } : book,
+      'Book fetched successfully'
+    )
   } catch (error) {
     console.error('Get book error:', error)
     return handleAPIError(error)

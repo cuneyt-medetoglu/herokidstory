@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireUser } from '@/lib/auth/api-auth'
+import { getUserRole } from '@/lib/db/users'
 import { uploadFile, getPublicUrl } from '@/lib/storage/s3'
 import { getBookById, updateBook } from '@/lib/db/books'
 import { insertEditHistory, getLatestPageVersion, getEditHistory } from '@/lib/db/edit-history'
@@ -24,7 +25,7 @@ export interface ImageEditRequest {
 export interface ImageEditResponse {
   editedImageUrl: string
   version: number
-  quotaRemaining: number
+  quotaRemaining: number | null
   history: Array<{
     version: number
     imageUrl: string
@@ -41,6 +42,8 @@ export async function POST(request: NextRequest) {
     // 1. AUTHENTICATION & AUTHORIZATION
     // ====================================================================
     const user = await requireUser()
+    const userRole = await getUserRole(user.id)
+    const isAdmin = userRole === 'admin'
 
     // ====================================================================
     // 2. PARSE & VALIDATE REQUEST
@@ -119,7 +122,7 @@ export async function POST(request: NextRequest) {
     const quotaUsed = book.edit_quota_used || 0
     const quotaLimit = book.edit_quota_limit || 3
 
-    if (quotaUsed >= quotaLimit) {
+    if (!isAdmin && quotaUsed >= quotaLimit) {
       return errorResponse(`Edit quota exceeded. You have used all ${quotaLimit} edits for this book.`, undefined, 429)
     }
 
@@ -298,13 +301,16 @@ export async function POST(request: NextRequest) {
       imageUrl: editedImageUrl,
     }
 
-    await updateBook(bookId, {
+    const bookUpdateData: Parameters<typeof updateBook>[1] = {
       story_data: {
         ...book.story_data,
         pages: updatedPages,
       },
-      edit_quota_used: quotaUsed + 1,
-    })
+    }
+    if (!isAdmin) {
+      bookUpdateData.edit_quota_used = quotaUsed + 1
+    }
+    await updateBook(bookId, bookUpdateData)
 
     console.log('[Image Edit] ✅ Book updated with new image and quota')
 
@@ -325,7 +331,7 @@ export async function POST(request: NextRequest) {
     // ====================================================================
     // 14. RETURN RESPONSE
     // ====================================================================
-    const quotaRemaining = quotaLimit - (quotaUsed + 1)
+    const quotaRemaining: number | null = isAdmin ? null : quotaLimit - (quotaUsed + 1)
 
     return successResponse<ImageEditResponse>(
       {

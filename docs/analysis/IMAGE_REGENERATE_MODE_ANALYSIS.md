@@ -46,7 +46,7 @@ Kaynak dokümanlar:
 Bugünkü yapı:
 - **Edit Images grid:** Her sayfa için bir kart, tek bir `Edit Image` butonu.
 - **Image Edit Modal:** Maske çizimi (ReactSketchCanvas), prompt, OpenAI Image Edit API çağrısı.
-- **Quota:** `books.edit_quota_used / edit_quota_limit` → UI'de `X/Y Edits Left`.
+- **Quota:** `books.edit_quota_used / edit_quota_limit` → UI'de `X/Y Edits Left`. **Admin kullanıcılar için quota uygulanmaz** (backend'de `getUserRole` ile kontrol edilir; UI'da "Unlimited (Admin)" gösterilir, `edit_quota_used` artırılmaz).
 - **History:** `image_edit_history` tablosu, `version` alanı, revert mantığı (`Version 0 = orijinal`).
 
 Sınırlar:

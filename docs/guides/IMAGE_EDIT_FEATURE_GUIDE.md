@@ -13,7 +13,7 @@ The Image Edit feature allows parents to fix errors in generated book images usi
 
 **Key Features:**
 - Canvas-based mask drawing (ChatGPT-style)
-- 3 edits per book quota
+- 3 edits per book quota (unlimited for admin users)
 - Full version history tracking
 - Ability to revert to previous versions
 - Parent-only access through Settings page

@@ -13,6 +13,7 @@
 
 import { NextRequest } from "next/server"
 import { requireUser } from "@/lib/auth/api-auth"
+import { getUserRole } from "@/lib/db/users"
 import { getBookById, updateBook } from "@/lib/db/books"
 import { getCharacterById } from "@/lib/db/characters"
 import { getLatestPageVersion, insertEditHistory, getEditHistory } from "@/lib/db/edit-history"
@@ -31,11 +32,20 @@ const IMAGE_MODEL = "gpt-image-1.5"
 const IMAGE_SIZE = "1024x1536"
 const IMAGE_QUALITY = "low"
 
+/** Geçici: REGENERATE_DEBUG=true veya DEBUG_LOGGING=true ile hikaye/prompt önizlemesi loglanır */
+const REGENERATE_DEBUG = process.env.REGENERATE_DEBUG === "true" || process.env.DEBUG_LOGGING === "true"
+
 export async function POST(request: NextRequest) {
   try {
     const user = await requireUser()
+    const userRole = await getUserRole(user.id)
+    const isAdmin = userRole === 'admin'
     const body = await request.json()
     const { bookId, pageNumber, userPrompt } = body || {}
+
+    if (REGENERATE_DEBUG) {
+      console.log("[Regenerate] ─── START", { bookId, pageNumber, userPrompt: userPrompt ? `${String(userPrompt).slice(0, 80)}...` : "(empty)" })
+    }
 
     // ── 1. Validasyon ──────────────────────────────────────────────────────
     if (!bookId || !pageNumber) {
@@ -57,7 +67,7 @@ export async function POST(request: NextRequest) {
     // ── 3. Quota ───────────────────────────────────────────────────────────
     const quotaUsed = book.edit_quota_used ?? 0
     const quotaLimit = book.edit_quota_limit ?? 3
-    if (quotaUsed >= quotaLimit) {
+    if (!isAdmin && quotaUsed >= quotaLimit) {
       return errorResponse(
         `Image change quota exceeded. You have used all ${quotaLimit} changes for this book.`,
         undefined,
@@ -90,18 +100,25 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 5. Karakterler ─────────────────────────────────────────────────────
-    const characterIds: string[] =
+    // Hem metadata hem page.characterIds'deki tüm ID'leri yükle.
+    // page.characterIds bazen Anne/Baba gibi ek karakterler içerir; bunlar metadata'da olmayabilir.
+    const metaCharacterIds: string[] =
       book.story_data?.metadata?.characterIds ||
       (book.character_id ? [book.character_id] : [])
-    if (characterIds.length === 0) {
+    // page henüz yüklendi (pageIndex kullanıldı); page.characterIds'i de ekle
+    const pageCharIds: string[] = (book.story_data.pages[pageIndex] as any)?.characterIds || []
+    const allCharacterIds = [...new Set([...metaCharacterIds, ...pageCharIds])]
+    if (allCharacterIds.length === 0) {
       return errorResponse("Book has no character data", undefined, 400)
     }
     const characters = (
-      await Promise.all(characterIds.map((id) => getCharacterById(id).then((r) => r.data)))
+      await Promise.all(allCharacterIds.map((id) => getCharacterById(id).then((r) => r.data)))
     ).filter(Boolean) as Awaited<ReturnType<typeof getCharacterById>>["data"][]
     if (characters.length === 0) {
       return errorResponse("Could not load characters for this book", undefined, 400)
     }
+    // characterIds = metadata listesi (kitap geneli); page'e özgü olanlar pageCharacters'ta belirlenir
+    const characterIds = metaCharacterIds
 
     // ── 6. Temel meta ──────────────────────────────────────────────────────
     const themeKey = (book.theme || "adventure").toLowerCase().replace(/\s+/g, "_")
@@ -124,6 +141,15 @@ export async function POST(request: NextRequest) {
           ? `${baseScene.trim()}. ${userPrompt.trim()}`
           : userPrompt.trim()
         : baseScene
+
+    if (REGENERATE_DEBUG) {
+      console.log("[Regenerate] HIKAYE (sayfa metni):", {
+        baseSceneLen: baseScene.length,
+        baseScenePreview: baseScene.slice(0, 200) + (baseScene.length > 200 ? "..." : ""),
+        sceneDescriptionLen: sceneDescription.length,
+        scenePreview: sceneDescription.slice(0, 250) + (sceneDescription.length > 250 ? "..." : ""),
+      })
+    }
 
     const characterActionRaw =
       page.sceneContext?.trim() ||
@@ -163,6 +189,22 @@ export async function POST(request: NextRequest) {
     const hasValidShotPlan =
       pageShotPlan && typeof pageShotPlan === "object" && !Array.isArray(pageShotPlan)
 
+    // Master varsa kıyafet referanstan (create-book ile aynı): elbise tutarlı kalsın
+    const pageMasterUrls = pageCharacters
+      .map((id) => masterIllustrations[id])
+      .filter((url): url is string => Boolean(url))
+    const useMasterForClothing = pageMasterUrls.length > 0
+
+    if (REGENERATE_DEBUG) {
+      const names = pageCharacters.map((id) => characters.find((c) => c.id === id)?.name || id)
+      console.log("[Regenerate] SAYFA KARAKTERLERİ:", {
+        pageCharacters: pageCharacters.length,
+        names,
+        useMasterForClothing,
+        clothingDirective: useMasterForClothing ? "match_reference" : "theme default",
+      })
+    }
+
     const sceneInput = {
       pageNumber,
       sceneDescription,
@@ -172,6 +214,7 @@ export async function POST(request: NextRequest) {
       focusPoint: "balanced" as const,
       ...(Object.keys(characterExpressions).length > 0 && { characterExpressions }),
       ...(hasValidShotPlan && { shotPlan: pageShotPlan }),
+      ...(useMasterForClothing && { clothing: "match_reference" as const }),
     }
 
     // ── 9. Karakter prompt (create-book ile aynı) ──────────────────────────
@@ -212,19 +255,72 @@ export async function POST(request: NextRequest) {
       }))
     )
 
-    // ── 11. Referans görseller (create-book sırasıyla) ────────────────────
-    // A10: Önce master'lar, yoksa reference_photo_url
-    const pageMasterUrls = pageCharacters
-      .map((id) => masterIllustrations[id])
+    if (REGENERATE_DEBUG) {
+      console.log("[Regenerate] PROMPT:", {
+        fullPromptLen: fullPrompt.length,
+        promptPreview: fullPrompt.slice(0, 350) + (fullPrompt.length > 350 ? "..." : ""),
+      })
+    }
+
+    // ── 11. Referans görseller (create-book ile aynı: karakter master + bu sayfada görünen entity master) ─
+    // Karakter başına mutlaka bir ref: master varsa onu, yoksa reference_photo_url (eksik master = yanlış karakter çıkar)
+    const entityMasterIllustrations = (book.generation_metadata?.entityMasterIllustrations || {}) as Record<string, string>
+    const supportingEntities = (book.story_data?.supportingEntities || []) as Array<{
+      id: string
+      name?: string
+      appearsOnPages?: number[]
+    }>
+    const characterNamesLower = new Set(
+      characters.map((c) => (c.name || "").trim().toLowerCase()).filter(Boolean)
+    )
+    const pageEntityIds: string[] = []
+    if (supportingEntities.length > 0) {
+      for (const entity of supportingEntities) {
+        if (!entity.appearsOnPages?.includes(pageNumber)) continue
+        const entityName = (entity.name || "").trim().toLowerCase()
+        if (entityName && characterNamesLower.has(entityName)) continue
+        pageEntityIds.push(entity.id)
+      }
+    }
+    const pageEntityMasterUrls = pageEntityIds
+      .map((id) => entityMasterIllustrations[id])
       .filter((url): url is string => Boolean(url))
 
-    const referenceImageUrls =
-      pageMasterUrls.length > 0
-        ? pageMasterUrls
-        : characters
-            .filter((c) => pageCharacters.includes(c.id))
-            .map((c) => c.reference_photo_url)
-            .filter((url): url is string => Boolean(url))
+    // Her karakter için: önce master, yoksa reference_photo_url (hiç ref kalmamasın)
+    const pageCharacterUrls: string[] = []
+    for (const charId of pageCharacters) {
+      const url = masterIllustrations[charId] || characters.find((c) => c.id === charId)?.reference_photo_url
+      if (url) pageCharacterUrls.push(url)
+    }
+    const referenceImageUrls = [
+      ...pageCharacterUrls,
+      ...pageEntityMasterUrls,
+    ]
+    const characterMasterUrls = pageCharacterUrls.filter((url) =>
+      pageCharacters.some((id) => masterIllustrations[id] === url)
+    )
+    const numCharRefs = pageCharacterUrls.length
+
+    if (referenceImageUrls.length === 0) {
+      return errorResponse(
+        "No reference images available for this page (no character/entity masters or photos). Cannot regenerate with character consistency.",
+        undefined,
+        400
+      )
+    }
+
+    console.log("[Regenerate] REFERANSLAR:", {
+      pageNumber,
+      characterRefs: numCharRefs,
+      entityRefs: pageEntityMasterUrls.length,
+      totalRefUrls: referenceImageUrls.length,
+      characterSources: pageCharacterUrls.map((url, i) => {
+        const charId = pageCharacters[i]
+        const isMaster = characterMasterUrls.includes(url)
+        const name = characters.find((c) => c.id === charId)?.name || charId
+        return `${name}:${isMaster ? "master" : "photo"}`
+      }),
+    })
 
     // ── 12. Referans blob'larını indir ─────────────────────────────────────
     // Önce kendi S3'ümüzden credential ile oku (403 önlenir); değilse fetch (data: veya harici URL)
@@ -232,10 +328,20 @@ export async function POST(request: NextRequest) {
 
     for (let i = 0; i < referenceImageUrls.length; i++) {
       const refUrl = referenceImageUrls[i]
-      const isMaster = pageMasterUrls.includes(refUrl)
-      const charId = pageCharacters[i] || `unknown_${i}`
-      const charName = characters.find((c) => c.id === charId)?.name || `char_${i + 1}`
-      const label = isMaster ? `master_${charName}` : `photo_${charName}`
+      const isCharRef = i < numCharRefs
+      const isMaster = characterMasterUrls.includes(refUrl) || pageEntityMasterUrls.includes(refUrl)
+      const label = isCharRef
+        ? (() => {
+            const charId = pageCharacters[i] || `unknown_${i}`
+            const charName = characters.find((c) => c.id === charId)?.name || `char_${i + 1}`
+            return isMaster ? `master_${charName}` : `photo_${charName}`
+          })()
+        : (() => {
+            const entityIndex = i - numCharRefs
+            const entityId = pageEntityIds[entityIndex]
+            const entity = supportingEntities.find((e) => e.id === entityId)
+            return entity?.name ? `entity_${entity.name}` : `entity_${entityIndex}`
+          })()
 
       try {
         const fromS3 = await getObjectBufferFromUrl(refUrl)
@@ -261,11 +367,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    console.log("[Regenerate] BLOB SONUÇ:", {
+      pageNumber,
+      wanted: referenceImageUrls.length,
+      loaded: imageBlobs.length,
+      charRefsWanted: numCharRefs,
+      ok: imageBlobs.length >= numCharRefs && imageBlobs.length > 0,
+    })
+
+    if (referenceImageUrls.length > 0 && imageBlobs.length === 0) {
+      return errorResponse(
+        "Referans görselleri yüklenemedi. Lütfen tekrar deneyin veya destek ile iletişime geçin.",
+        undefined,
+        500
+      )
+    }
+    if (referenceImageUrls.length > 0 && imageBlobs.length < numCharRefs) {
+      return errorResponse(
+        `Karakter referansları eksik (${imageBlobs.length}/${numCharRefs} yüklendi). Karakter tutarlılığı için tüm referanslar gerekli. Lütfen tekrar deneyin.`,
+        undefined,
+        500
+      )
+    }
+
     // ── 13. OpenAI API çağrısı ────────────────────────────────────────────
     let imageUrl: string | null = null
     let imageB64: string | null = null
 
     if (imageBlobs.length > 0) {
+      console.log("[Regenerate] API: /v1/images/edits (referanslarla)", { imageCount: imageBlobs.length })
       // Edits API — create-book ile aynı FormData yapısı
       const formData = new FormData()
       formData.append("model", IMAGE_MODEL)
@@ -291,6 +421,7 @@ export async function POST(request: NextRequest) {
       imageUrl = result.data?.[0]?.url || null
       imageB64 = result.data?.[0]?.b64_json || null
     } else {
+      console.warn("[Regenerate] API: /v1/images/generations (referans yok – karakter tutarlılığı olmaz)")
       // Fallback: referans görsel yok → generations API
       console.warn("[Regenerate Image] No reference images available, using /v1/images/generations")
       const result = await imageGenerateWithLog(
@@ -343,10 +474,13 @@ export async function POST(request: NextRequest) {
     const updatedPages = [...book.story_data.pages]
     updatedPages[pageIndex] = { ...updatedPages[pageIndex], imageUrl: newImageUrl }
 
-    await updateBook(bookId, {
+    const bookUpdateData: Parameters<typeof updateBook>[1] = {
       story_data: { ...book.story_data, pages: updatedPages },
-      edit_quota_used: quotaUsed + 1,
-    })
+    }
+    if (!isAdmin) {
+      bookUpdateData.edit_quota_used = quotaUsed + 1
+    }
+    await updateBook(bookId, bookUpdateData)
 
     // ── 17. Yanıt ──────────────────────────────────────────────────────────
     const historyData = await getEditHistory(bookId)
@@ -359,11 +493,13 @@ export async function POST(request: NextRequest) {
         createdAt: h.created_at,
       }))
 
+    const quotaRemaining: number | null = isAdmin ? null : quotaLimit - (quotaUsed + 1)
+
     return successResponse(
       {
         editedImageUrl: newImageUrl,
         version: nextVersion,
-        quotaRemaining: quotaLimit - (quotaUsed + 1),
+        quotaRemaining,
         history,
       },
       "Page image regenerated successfully"
