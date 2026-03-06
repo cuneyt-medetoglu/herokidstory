@@ -66,6 +66,7 @@ docs/
 │
 ├── guides/                     # Rehberler ve talimatlar
 │   ├── README.md               # Klasör açıklaması (FAZ 6)
+│   ├── EXAMPLES_PAGE_README.md # Examples sayfası (API, Used Photos, test)
 │   ├── ENVIRONMENT_SETUP.md    # Environment variables kurulum rehberi
 │   ├── V0_APP_WORKFLOW.md      # v0.app çalışma akışı rehberi
 │   ├── COLOR_PALETTE.md        # Renk paleti rehberi
@@ -97,9 +98,12 @@ docs/
 │   ├── SALES_AND_CART_STRATEGY_ANALYSIS.md
 │   └── (CURRENT_STATUS, MISSING_IMPLEMENTATIONS, GPT_IMAGE_COVER → archive/2026-q1/reports/)
 │
+├── features/                   # Özellik bazlı analiz ve plan (konu odaklı)
+│   └── EXAMPLES_USED_PHOTOS_FEATURE.md # Examples Used Photos: API presigned URL, UI (modal, thumbnails)
+│
 ├── strategies/                 # Strateji dokümanları
 │   ├── README.md               # Klasör açıklaması (FAZ 6)
-│   ├── GIT_STRATEGY.md         # Git branching stratejisi
+│   ├── EXAMPLES_REAL_BOOKS_AND_CREATE_YOUR_OWN.md # Examples: gerçek kitaplar + Create your own
 │   ├── EBOOK_VIEWER_STRATEGY.md # E-book Viewer stratejisi
 │   ├── TTS_STRATEGY.md         # Text-to-Speech (TTS) strateji ve gereksinimler dokümanı
 │   ├── CHARACTER_CONSISTENCY_STRATEGY.md # Master character multi-book tutarlılığı
@@ -281,6 +285,8 @@ docs/
 ## 🔄 Güncelleme
 
 Dokümantasyon sürekli güncellenir. Son güncellemeler:
+- **6 Mart 2026:**
+  - **Examples Used Photos:** GET /api/examples cevabında `usedPhotos` S3 için 24 saat geçerli presigned URL döndürüyor (bucket private). Modal'da görsel kırpılmıyor (`object-contain`). Used Photos bölümünde sadece karakter thumbnail'ları; ok ve kapak/oluşan görsel kaldırıldı. Detay: `docs/features/EXAMPLES_USED_PHOTOS_FEATURE.md`.
 - **27 Ocak 2026:**
   - Step 6 Pay gizleme: "Pay & Create My Book" sadece üyeli gösteriliyor; üye olmadan ödeme/satın alma yok
   - Üyesiz 1 ücretsiz kapak: email zorunlu, `guest_free_cover_used` (1/email), create-free-cover içinde IP 5/24h, `drafts` (user_id=null)

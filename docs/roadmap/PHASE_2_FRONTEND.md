@@ -396,7 +396,7 @@
     - v0 denemeleri sonrası sade metin + filtreler ile devam kararı; detay ve prompt’lar `docs/analysis/EXAMPLE_BOOKS_HERO_V0_ANALYSIS.md`.
 - [ ] **2.7.9** Ideas sayfası (hikaye fikirleri ve şablonları)
 - [ ] **2.7.10** Tema kartları görsel gösterimi (her tema için thumbnail)
-- [ ] **2.7.11** "Used Photos" gösterimi (örneklerde hangi fotoğraflar kullanılmış) - ✅ Examples sayfasına entegre edildi (2.7.8)
+- [x] **2.7.11** "Used Photos" gösterimi (örneklerde hangi fotoğraflar kullanılmış) - ✅ API güncellendi, generation_metadata.usedPhotos + characters tablosu batch sorgusu (6 Mart 2026)
 - [ ] **2.7.12** "View All Examples" ve "View All Themes" linkleri
 - [ ] **2.7.13** "Sizden Gelenler" bölümü (23 Ocak 2026)
   - Kullanıcıların gönderdiği görselleri ve paylaşımları gösterebileceğimiz bir bölüm

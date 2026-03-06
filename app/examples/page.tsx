@@ -8,7 +8,7 @@ import { useState, useCallback, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Eye, Plus, ChevronLeft, ChevronRight, BookOpen, Search, ArrowRight, X } from "lucide-react"
+import { Eye, Plus, ChevronLeft, ChevronRight, BookOpen, Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -180,7 +180,7 @@ function PhotoModal({
                   alt={currentPhoto.characterName}
                   fill
                   sizes="(max-width: 768px) 100vw,  min(80vw, 800px)"
-                  className="object-cover"
+                  className="object-contain"
                 />
               </motion.div>
             </AnimatePresence>
@@ -357,36 +357,6 @@ function BookCard({ book, onPhotoClick }: { book: ExampleBook; onPhotoClick: (ph
                 >
                   +{remainingCount}
                 </button>
-              )}
-            </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <div className="relative w-10 h-10 md:w-14 md:h-14 rounded overflow-hidden border-2 border-purple-500 bg-muted">
-              {book.coverImage ? (
-                <>
-                  <Image
-                    src={book.coverImage}
-                    alt="Kitap kapağı"
-                    fill
-                    sizes="56px"
-                    className="object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      const parent = target.closest('div')
-                      if (parent) {
-                        const placeholder = parent.querySelector('.cover-placeholder') as HTMLElement
-                        if (placeholder) placeholder.classList.remove('hidden')
-                      }
-                    }}
-                  />
-                  <div className="cover-placeholder hidden w-full h-full absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
-                    <span className="text-[8px] md:text-[10px]">📖</span>
-                  </div>
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                  <span className="text-[8px] md:text-[10px]">📖</span>
-                </div>
               )}
             </div>
           </div>

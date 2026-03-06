@@ -541,8 +541,9 @@
 - [ ] **10+ Yaş Kategorisi** - Şu an sadece 0-2, 3-5, 6-9 var, 10+ eklenmeli
 - [ ] **Kampanya Banner'ları** - "Free shipping when you buy 2+ books", "50% off 3rd book" gibi
 - [ ] **"View Example" Butonları** - Örnek kitapları görüntüleme butonları
-- [ ] **"Used Photos" Gösterimi** - Örneklerde hangi fotoğrafların kullanıldığını gösterme
+- [x] **"Used Photos" Gösterimi** - Örneklerde hangi fotoğrafların kullanıldığını gösterme ✅ (6 Mart 2026)
   - **Karar (4 Ocak 2026):** Örnek Kitaplar Carousel (2.2.3) içinde gösterilecek - Her kitap kartında kullanılan fotoğraf (solda) → Kitap kapağı (sağda) şeklinde before/after gösterimi
+  - **Implementasyon (6 Mart 2026):** API güncellendi - generation_metadata.usedPhotos varsa kullan, yoksa characterIds → characters tablosu batch sorgusu. Sadece /examples sayfası.
 - [ ] **Tema Kartları Görsel Gösterimi** - Her tema için görsel thumbnail
 - [ ] **"View All Examples" Linki** - Tüm örnekleri görüntüleme
 - [ ] **"View All Themes" Linki** - Tüm temaları görüntüleme

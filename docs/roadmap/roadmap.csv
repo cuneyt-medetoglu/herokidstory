@@ -17,136 +17,136 @@ ID,Faz,Alt Faz,Başlık,Durum,Öncelik,Kategori,Priority,Notlar,Tarih,Link
 	1.3.3,1,1.3,"Vercel environment variables ayarla",Tamamlandı,Kritik,Altyapı,,"✅ Dokümante edildi (`docs/guides/ENVIRONMENT_SETUP.md`)",,#1.3
 	1.3.4,1,1.3,"Development/Production config ayrımı",Tamamlandı,Kritik,Altyapı,,"✅ `lib/config.ts` oluşturuldu",,#1.3
 	1.3.5,1,1.3,"Log Yapısı (23 Ocak 2026)",Bekliyor,Kritik,Altyapı,,"",,#1.3
-	2.1.1,2,2.1,"Ana layout component (header, footer, nav)",Tamamlandı,Kritik,Frontend - Layout,,"✅ Header + Footer component'leri entegre edildi (v0.app'den alındı)",,#2.1
-	2.1.2,2,2.1,"Responsive tasarım (mobile-first)",Tamamlandı,Kritik,Frontend - Layout,,"✅ Header ve Footer responsive (mobile menu mevcut)",,#2.1
-	2.1.3,2,2.1,"Tema sistemi (renk paleti, typography)",Bekliyor,Kritik,Frontend - Layout,,"",,#2.1
-	2.1.4,2,2.1,"Loading states ve error boundaries",Bekliyor,Kritik,Frontend - Layout,,"⏸️ **Ertelendi (Faz 2.2 sonrası)**",,#2.1
-	2.1.5,2,2.1,"Header'da ülke/para birimi seçici",Tamamlandı,Kritik,Frontend - Layout,,"✅ DropdownMenu ile entegre edildi",,#2.1
-	2.1.6,2,2.1,"Header'da sepet ikonu (shopping bag)",Tamamlandı,Kritik,Frontend - Layout,,"✅ ShoppingCart icon + badge animasyonu",,#2.1
-	2.1.7,2,2.1,"""Create a children's book"" butonu header'da",Tamamlandı,Kritik,Frontend - Layout,,"✅ Gradient CTA button eklendi",,#2.1
-	2.1.8,2,2.1,"Dark/Light mode toggle butonu (header'da)",Tamamlandı,Kritik,Frontend - Layout,,"✅ next-themes entegre edildi, toggle butonu eklendi",,#2.1
-	2.1.9,2,2.1,"Renk Teması ve Tema Gözden Geçirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Layout,,"",,#2.1
-	2.1.10,2,2.1,"Mobil drawer (menü) tasarım iyileştirmesi (Şubat 2026)",Bekliyor,Kritik,Frontend - Layout,DO,"",,#2.1
-	2.2.1,2,2.2,"Hero section (başlık, CTA, görsel)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.1.1,2,2.2,"""Your Child, The Hero"" – Real Photo & Story Character Görselleri (27 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#2.2
-	2.2.2,2,2.2,"""Nasıl Çalışır?"" bölümü (3 adım)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.3,2,2.2,"Örnek kitaplar carousel",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.4,2,2.2,"Özellikler özeti",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.4.1,2,2.2,"Sesli Hikaye Özelliği Vurgusu (26 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#2.2
-	2.2.5,2,2.2,"Fiyatlandırma özeti",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.6,2,2.2,"FAQ bölümü",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.7,2,2.2,"Kampanya banner'ları (free shipping, indirimler)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.8,2,2.2,"Cookie banner (GDPR/KVKK uyumluluk)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#2.2
-	2.2.9,2,2.2,"Ana Ekrana Video Çizgi Film Örneği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#2.2
-	2.3.1,2,2.3,"Giriş sayfası (email/şifre)",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#2.3
-	2.3.2,2,2.3,"Kayıt sayfası",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#2.3
-	2.3.3,2,2.3,"Şifre sıfırlama",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#2.3
-	2.3.4,2,2.3,"Google OAuth butonu ve entegrasyonu",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#2.3
-	2.3.5,2,2.3,"Facebook OAuth butonu ve entegrasyonu",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#2.3
-	2.3.6,2,2.3,"Instagram OAuth butonu ve entegrasyonu (opsiyonel)",Bekliyor,Kritik,Frontend - Auth,,"⏳ İleride eklenecek",,#2.3
-	2.3.7,2,2.3,"Email doğrulama sayfası",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#2.3
-	2.3.8,2,2.3,"OAuth callback sayfaları",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#2.3
-	2.4.1,2,2.4,"Step 1: Karakter bilgileri formu",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.2,2,2.4,"Step 2: Referans görsel yükleme (çocuk fotoğrafı)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.2.1,2,2.4,"Fotoğraf yükleme sistemi iyileştirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,,"",,#2.4
-	2.4.3,2,2.4,"Step 3: Tema ve yaş grubu seçimi (0-2, 3-5, 6-9)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.3.1,2,2.4,"Custom Theme Seçeneği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#2.4
-	2.4.4,2,2.4,"Step 4: Illustration style seçimi (görsel önizleme)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.5,2,2.4,"Step 5: Özel istekler",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.5.1,2,2.4,"Custom request örnekleri ekleme (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,,"",,#2.4
-	2.4.5.2,2,2.4,"Custom request dil desteği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#2.4
-	2.4.5.3,2,2.4,"Debug boş iken 12 sayfa; kapak sadece Step 6'da (Şubat 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#2.4
-	2.4.6,2,2.4,"Step 6: Önizleme ve onay",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#2.4
-	2.4.6.1,2,2.4,"Step 6 Illustration Style alanında Step 4 örnek görselleri (Şubat 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#2.4
-	2.4.11,2,2.4,"Wizard adımlarını kısaltma (UX iyileştirme)",Bekliyor,Kritik,Frontend - Wizard,,"Şu an 6 adım var, daha kolay bir UX için adımlar birleştirilebilir veya kısaltılabilir. Düşünülecek.",,#2.4
-	2.4.7,2,2.4,"Progress indicator",Tamamlandı,Kritik,Frontend - Wizard,,"✅ Tüm step'lerde (1-6) mevcut, her step'te ""Step X of 6"" ve progress bar gösteriliyor",,#2.4
-	2.4.8,2,2.4,"Form validasyonu (Zod + React Hook Form)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ Tüm step'lerde mevcut (Step 1,3,4,5: Zod + RHF, Step 2: Custom file validation, Step 6: Preview sayfası)",,#2.4
-	2.4.9,2,2.4,"Ücretsiz kapak hakkı kontrolü ve gösterimi",Tamamlandı,Kritik,Frontend - Wizard,,"✅ UI tamamlandı (mock data ile, Faz 3'te gerçek kontrol)",,#2.4
-	2.4.10,2,2.4,"""Ücretsiz Kapak Oluştur"" butonu (hakkı varsa)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ UI tamamlandı (Step 6'da, Faz 3'te API entegrasyonu)",,#2.4
-	2.4.12,2,2.4,"Kitap oluşturma sonrası animasyon ve loading (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#2.4
-	2.4.14,2,2.4,"Next.js Image ve layout konsol uyarıları (Şubat 2026) | ✅ Çözüldü (4 Şubat 2026)",Tamamlandı,Kritik,Frontend - Wizard,,"",,#2.4
-	2.5.1.1,2,2.5,"react-pageflip veya alternatif library araştırması ve seçimi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Framer Motion ile custom implementation seçildi",,#2.5
-	2.5.1.2,2,2.5,"Flipbook animasyonu (sayfa çevirme efekti)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi (Flip, Slide, Fade animasyonları)",,#2.5
-	2.5.1.3,2,2.5,"Sayfa navigasyonu (ileri, geri, sayfa atlama)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Buttons, keyboard, swipe, mouse click desteği",,#2.5
-	2.5.1.4,2,2.5,"Progress indicator (hangi sayfa/toplam sayfa)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Header'da progress bar ve sayfa numarası",,#2.5
-	2.5.1.5,2,2.5,"Page thumbnails / mini map (tüm sayfaları küçük gösterme)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi",,#2.5
-	2.5.1.6,2,2.5,"Tam ekran modu (fullscreen)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Fullscreen toggle button ve keyboard shortcut (F)",,#2.5
-	2.5.1.7,2,2.5,"Zoom in/out (görselleri yakınlaştırma)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım",,#2.5
-	2.5.1.8,2,2.5,"Loading states ve skeleton screens",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım",,#2.5
-	2.5.1.9,2,2.5,"PDF link paylaşma (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.1.10,2,2.5,"Hikaye link paylaşma (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.1.11,2,2.5,"E-book ve PDF Paragraf Formatlaması (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"🔴 **YÜKSEK ÖNCELİK**",,#2.5
-	2.5.2.1,2,2.5,"Mobil swipe desteği (sağa/sola kaydırma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ useSwipeGesture hook ile entegre edildi",,#2.5
-	2.5.2.2,2,2.5,"Hikaye sayfası tasarımı iyileştirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım (zoom ile birlikte)",,#2.5
-	2.5.2.3,2,2.5,"Portrait mode: Tek sayfa gösterimi (dikey)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi",,#2.5
-	2.5.2.4,2,2.5,"Landscape mode: Çift sayfa gösterimi (yatay)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"bir taraf görsel, bir taraf yazı - ✅ v0.app'den alındı ve entegre edildi",,#2.5
-	2.5.2.5,2,2.5,"Screen orientation detection ve otomatik layout değişimi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ window.innerWidth/innerHeight ile otomatik detection",,#2.5
-	2.5.2.6,2,2.5,"PWA optimizasyonu (offline okuma, vb.)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Faz 6'da yapılacak",,#2.5
-	2.5.3.1,2,2.5,"Text-to-Speech entegrasyonu (Gemini Pro TTS)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Backend API ve frontend hook oluşturuldu, WaveNet/Standard sesler kaldırıldı (15 Ocak 2026)",,#2.5
-	2.5.3.2,2,2.5,"Ses seçeneği (Achernar",Tamamlandı,Kritik,Frontend - E-book Viewer,,"Gemini Pro TTS) - ✅ Admin global config (tts_settings); Settings dropdown'da sadece admin TTS düzenleme (15 Ocak / 9 Şubat 2026)",,#2.5
-	2.5.3.3,2,2.5,"Ses hızı kontrolü (0.5x",Tamamlandı,Kritik,Frontend - E-book Viewer,,"2x arası) - ✅ Parent Settings'te (Yavaş/Normal/Hızlı); kullanıcı tercihi localStorage (9 Şubat 2026)",,#2.5
-	2.5.3.4,2,2.5,"Volume kontrolü",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Parent Settings'te ses seviyesi (slider); okuyucuda mute butonu; kullanıcı tercihi localStorage (9 Şubat 2026)",,#2.5
-	2.5.3.5,2,2.5,"Play/Pause/Stop butonları",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Play/Pause mevcut, Stop hook'ta mevcut ama UI'da yok",,#2.5
-	2.5.3.6,2,2.5,"Sesli okuma sırasında sayfa vurgulama (highlight current word/sentence)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Basit implementasyon mevcut, gelişmiş versiyon için Web Speech API word timing gerekli",,#2.5
-	2.5.3.7,2,2.5,"Otomatik sayfa ilerleme (ses bittiğinde sonraki sayfaya geç)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ TTS bittiğinde otomatik sayfa ilerleme",,#2.5
-	2.5.3.8,2,2.5,"TTS Cache mekanizması",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ S3'te cache (signed URL); kitap tamamlanınca TTS prewarm; aynı metin tekrar okutulduğunda cache hit (15 Ocak 2026, S3 + prewarm 9 Şubat 2026)",,#2.5
-	2.5.3.9,2,2.5,"TTS Cache temizleme (hikaye değişikliğinde)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Hikaye metni değiştiğinde eski cache dosyasını sil, yeni ses oluştur",,#2.5
-	2.5.3.10,2,2.5,"Sesli Hikaye Özelliği Pazarlama Vurgusu (26 Ocak 2026)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Kısmen tamamlandı (9 Şubat 2026)",,#2.5
-	2.5.4.1,2,2.5,"Autoplay butonu ve kontrolü",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Autoplay toggle butonu (RotateCcw icon), visual indicator ve Settings'te mod seçimi",,#2.5
-	2.5.4.2,2,2.5,"Autoplay hızı ayarı (sayfa başına kaç saniye)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 5s, 10s, 15s, 20s seçenekleri Settings'te",,#2.5
-	2.5.4.3,2,2.5,"Sesli okuma ile senkronize otomatik ilerleme",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ TTS Synced mode: TTS bittiğinde otomatik sayfa geçişi + otomatik okumaya devam (onEnded callback ile)",,#2.5
-	2.5.4.4,2,2.5,"Autoplay pause/resume (dokunarak durdurma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Ekrana dokunarak TTS pause/resume, Timed mode countdown ile sayfa geçişi",,#2.5
-	2.5.5.1,2,2.5,"Bookmark/favori sayfa işaretleme",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ localStorage ile bookmark sistemi, her sayfa için ayrı bookmark",,#2.5
-	2.5.5.2,2,2.5,"Reading progress save (nerede kaldı, otomatik kaydetme)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ localStorage ile otomatik kaydetme, kitap açıldığında kaldığı yerden devam",,#2.5
-	2.5.5.3,2,2.5,"Share butonu (kitabı/sayfayı paylaşma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ navigator.share API ile paylaşma (fallback: clipboard)",,#2.5
-	2.5.5.4,2,2.5,"Download as PDF butonu",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#2.5
-	2.5.5.5,2,2.5,"Print options",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#2.5
-	2.5.5.6,2,2.5,"Keyboard shortcuts (desktop: arrow keys, space, esc, vb.)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 11 farklı klavye kısayolu eklendi",,#2.5
-	2.5.5.7,2,2.5,"Accessibility features (font size, high contrast, screen reader support)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#2.5
-	2.5.5.8,2,2.5,"Settings UI iyileştirmesi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Ses/hız Parent Settings'e taşındı; okuyucu sadeleştirildi (sadece admin için TTS varsayılanları dropdown'da). Çocuk odaklı sade tasarım (9 Şubat 2026)",,#2.5
-	2.5.6.1,2,2.5,"Sayfa çevirme animasyonu (flip effect, slide, fade, vb.)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 6 farklı animasyon tipi: Flip (3D), Slide, Fade, Page Curl, Zoom, None (Instant)",,#2.5
-	2.5.6.2,2,2.5,"Animasyon hızı/stili seçenekleri",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Settings'te 3 hız seçeneği: Slow, Normal, Fast (configurable)",,#2.5
-	2.5.6.3,2,2.5,"Smooth transitions",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Spring ve tween animasyonları, easeInOut/easeOut transitions",,#2.5
-	2.5.6.4,2,2.5,"Page curl effect (sayfa kıvrılma efekti)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 3D rotateX/rotateY ile page curl animasyonu",,#2.5
-	2.5.6.5,2,2.5,"Shadow ve depth effects (3D görünüm)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Shadow-2xl, drop-shadow, depth effects (z-index)",,#2.5
-	2.5.5.9,2,2.5,"Çocuk UX (footer) (9 Şubat 2026)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Okuyucu footer'da min 44px dokunmatik alan, basınca scale animasyonu (active:scale-95), ikon boyutları md'de büyütüldü. Ref: TTS_GOOGLE_GEMINI_ANALYSIS.md §3.5",,#2.5
-	2.5.8,2,2.5,"Çocuk Modu (Kids Mode) (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.7.1,2,2.5,"Notes/annotations (sayfaya not alma)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.7.2,2,2.5,"Search in book (kitap içinde arama)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.7.3,2,2.5,"Multi-language subtitle support (sesli okuma için altyazı)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.7.4,2,2.5,"Background music (opsiyonel arka plan müziği)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.5.7.5,2,2.5,"Reading statistics (ne kadar süre okudu, hangi sayfaları okudu)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#2.5
-	2.6.1,2,2.6,"Kitaplık sayfası (tüm kitaplar grid)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Dashboard sayfası oluşturuldu, grid/list view toggle",,#2.6
-	2.6.2,2,2.6,"Kitap kartı component",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Book card component (cover, title, status, actions) - Character bilgisi kaldırıldı (26 Ocak 2026)",,#2.6
-	2.6.3,2,2.6,"Filtreleme ve sıralama",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Filter tabs (All, Completed, In Progress, Drafts), Sort dropdown (Date, Title), Search bar",,#2.6
-	2.6.4,2,2.6,"Sipariş geçmişi",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Order History section (table with orders, download/view buttons)",,#2.6
-	2.6.5,2,2.6,"Profil ayarları",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Profile Settings page (6 sections: Profile, Account, Orders, Free Cover, Notifications, Billing)",,#2.6
-	2.6.6,2,2.6,"Ücretsiz kapak hakkı göstergesi (kullanıldı/kullanılmadı)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Free Cover Status section (status badge, used date, info box)",,#2.6
-	2.6.9,2,2.6,"Hardcopy Satın Alma Özellikleri (25 Ocak 2026)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ **TAMAMLANDI**",,#2.6
-	2.6.7,2,2.6,"Characters tab (karakter yönetimi)",Bekliyor,Kritik,Frontend - Dashboard,,"🆕 **Karakter Yönetimi Sistemi (15 Ocak 2026)**",,#2.6
-	2.6.8,2,2.6,"Sipariş Yönetimi (Kullanıcı)",Bekliyor,Kritik,Frontend - Dashboard,,"🆕 **25 Ocak 2026**",,#2.6
-	2.7.1,2,2.7,"Özellikler (Features) sayfası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.2,2,2.7,"Fiyatlandırma sayfası",Tamamlandı,Kritik,Frontend - Statik Sayfalar,DO,"✅ **TAMAMLANDI (25 Ocak 2026)**",,#2.7
-	2.7.4,2,2.7,"İletişim sayfası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.5,2,2.7,"Gizlilik Politikası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.6,2,2.7,"Kullanım Şartları",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.7,2,2.7,"KVKK Aydınlatma Metni",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.8,2,2.7,"Examples sayfası (tüm örnek kitaplar, ""View Example"" butonları)",Tamamlandı,Kritik,Frontend - Statik Sayfalar,,"✅ **TAMAMLANDI (25 Ocak 2026)**",,#2.7
-	2.7.8.1,2,2.7,"Example Books bölümü görsel tasarım iyileştirmesi (Şubat 2026)",Tamamlandı,Kritik,Frontend - Statik Sayfalar,DO,"",,#2.7
-	2.7.9,2,2.7,"Ideas sayfası (hikaye fikirleri ve şablonları)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.10,2,2.7,"Tema kartları görsel gösterimi (her tema için thumbnail)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.11,2,2.7,"""Used Photos"" gösterimi (örneklerde hangi fotoğraflar kullanılmış)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"✅ Examples sayfasına entegre edildi (2.7.8)",,#2.7
-	2.7.12,2,2.7,"""View All Examples"" ve ""View All Themes"" linkleri",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.13,2,2.7,"""Sizden Gelenler"" bölümü (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.7.14,2,2.7,"Blog Sayfası (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#2.7
-	2.8.1,2,2.8,"i18n library seçimi (next-intl önerilir",Bekliyor,Kritik,Frontend,,"Next.js App Router ile mükemmel entegrasyon)",,#2.8
-	2.8.2,2,2.8,"Dil seçici component (header'da, dropdown veya flag icons)",Bekliyor,Kritik,Frontend,,"",,#2.8
-	2.8.3,2,2.8,"Tüm UI metinlerinin çeviri dosyalarına taşınması (JSON veya TypeScript object format)",Bekliyor,Kritik,Frontend,,"",,#2.8
-	2.8.4,2,2.8,"Dinamik dil değiştirme (sayfa yenilenmeden)",Bekliyor,Kritik,Frontend,,"",,#2.8
-	2.8.5,2,2.8,"URL-based dil routing (/tr/, /en/, vb.)",Bekliyor,Kritik,Frontend,,"SEO dostu",,#2.8
-	2.8.6,2,2.8,"Cookie/localStorage ile dil tercihi saklama (kullanıcı tercihi hatırlansın)",Bekliyor,Kritik,Frontend,,"",,#2.8
-	2.8.7,2,2.8,"TR çevirileri (tüm UI metinleri için)",Bekliyor,Kritik,Frontend,,"",,#2.8
-	2.8.8,2,2.8,"Gelecekte 25+ dil desteği (Almanca, Fransızca, İspanyolca, vb.)",Bekliyor,Kritik,Frontend,,"",,#2.8
+	2.1.1,2,2.1,"Ana layout component (header, footer, nav)",Tamamlandı,Kritik,Frontend - Layout,,"✅ Header + Footer component'leri entegre edildi (v0.app'den alındı)",,#1.3
+	2.1.2,2,2.1,"Responsive tasarım (mobile-first)",Tamamlandı,Kritik,Frontend - Layout,,"✅ Header ve Footer responsive (mobile menu mevcut)",,#1.3
+	2.1.3,2,2.1,"Tema sistemi (renk paleti, typography)",Bekliyor,Kritik,Frontend - Layout,,"",,#1.3
+	2.1.4,2,2.1,"Loading states ve error boundaries",Bekliyor,Kritik,Frontend - Layout,,"⏸️ **Ertelendi (Faz 2.2 sonrası)**",,#1.3
+	2.1.5,2,2.1,"Header'da ülke/para birimi seçici",Tamamlandı,Kritik,Frontend - Layout,,"✅ DropdownMenu ile entegre edildi",,#1.3
+	2.1.6,2,2.1,"Header'da sepet ikonu (shopping bag)",Tamamlandı,Kritik,Frontend - Layout,,"✅ ShoppingCart icon + badge animasyonu",,#1.3
+	2.1.7,2,2.1,"""Create a children's book"" butonu header'da",Tamamlandı,Kritik,Frontend - Layout,,"✅ Gradient CTA button eklendi",,#1.3
+	2.1.8,2,2.1,"Dark/Light mode toggle butonu (header'da)",Tamamlandı,Kritik,Frontend - Layout,,"✅ next-themes entegre edildi, toggle butonu eklendi",,#1.3
+	2.1.9,2,2.1,"Renk Teması ve Tema Gözden Geçirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Layout,,"",,#1.3
+	2.1.10,2,2.1,"Mobil drawer (menü) tasarım iyileştirmesi (Şubat 2026)",Bekliyor,Kritik,Frontend - Layout,DO,"",,#1.3
+	2.2.1,2,2.2,"Hero section (başlık, CTA, görsel)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.1.1,2,2.2,"""Your Child, The Hero"" – Real Photo & Story Character Görselleri (27 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#1.3
+	2.2.2,2,2.2,"""Nasıl Çalışır?"" bölümü (3 adım)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.3,2,2.2,"Örnek kitaplar carousel",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.4,2,2.2,"Özellikler özeti",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.4.1,2,2.2,"Sesli Hikaye Özelliği Vurgusu (26 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#1.3
+	2.2.5,2,2.2,"Fiyatlandırma özeti",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.6,2,2.2,"FAQ bölümü",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.7,2,2.2,"Kampanya banner'ları (free shipping, indirimler)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.8,2,2.2,"Cookie banner (GDPR/KVKK uyumluluk)",Tamamlandı,Kritik,Frontend - Ana Sayfa,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.2.9,2,2.2,"Ana Ekrana Video Çizgi Film Örneği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Ana Sayfa,,"",,#1.3
+	2.3.1,2,2.3,"Giriş sayfası (email/şifre)",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.3.2,2,2.3,"Kayıt sayfası",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.3.3,2,2.3,"Şifre sıfırlama",Tamamlandı,Kritik,Frontend - Auth,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.3.4,2,2.3,"Google OAuth butonu ve entegrasyonu",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#1.3
+	2.3.5,2,2.3,"Facebook OAuth butonu ve entegrasyonu",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#1.3
+	2.3.6,2,2.3,"Instagram OAuth butonu ve entegrasyonu (opsiyonel)",Bekliyor,Kritik,Frontend - Auth,,"⏳ İleride eklenecek",,#1.3
+	2.3.7,2,2.3,"Email doğrulama sayfası",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#1.3
+	2.3.8,2,2.3,"OAuth callback sayfaları",Tamamlandı,Kritik,Frontend - Auth,,"✅ UI tamamlandı (Faz 3'te backend entegrasyonu yapılacak)",,#1.3
+	2.4.1,2,2.4,"Step 1: Karakter bilgileri formu",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.2,2,2.4,"Step 2: Referans görsel yükleme (çocuk fotoğrafı)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.2.1,2,2.4,"Fotoğraf yükleme sistemi iyileştirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,,"",,#1.3
+	2.4.3,2,2.4,"Step 3: Tema ve yaş grubu seçimi (0-2, 3-5, 6-9)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.3.1,2,2.4,"Custom Theme Seçeneği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#1.3
+	2.4.4,2,2.4,"Step 4: Illustration style seçimi (görsel önizleme)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.5,2,2.4,"Step 5: Özel istekler",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.5.1,2,2.4,"Custom request örnekleri ekleme (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,,"",,#1.3
+	2.4.5.2,2,2.4,"Custom request dil desteği (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#1.3
+	2.4.5.3,2,2.4,"Debug boş iken 12 sayfa; kapak sadece Step 6'da (Şubat 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#1.3
+	2.4.6,2,2.4,"Step 6: Önizleme ve onay",Tamamlandı,Kritik,Frontend - Wizard,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.4.6.1,2,2.4,"Step 6 Illustration Style alanında Step 4 örnek görselleri (Şubat 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#1.3
+	2.4.11,2,2.4,"Wizard adımlarını kısaltma (UX iyileştirme)",Bekliyor,Kritik,Frontend - Wizard,,"Şu an 6 adım var, daha kolay bir UX için adımlar birleştirilebilir veya kısaltılabilir. Düşünülecek.",,#1.3
+	2.4.7,2,2.4,"Progress indicator",Tamamlandı,Kritik,Frontend - Wizard,,"✅ Tüm step'lerde (1-6) mevcut, her step'te ""Step X of 6"" ve progress bar gösteriliyor",,#1.3
+	2.4.8,2,2.4,"Form validasyonu (Zod + React Hook Form)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ Tüm step'lerde mevcut (Step 1,3,4,5: Zod + RHF, Step 2: Custom file validation, Step 6: Preview sayfası)",,#1.3
+	2.4.9,2,2.4,"Ücretsiz kapak hakkı kontrolü ve gösterimi",Tamamlandı,Kritik,Frontend - Wizard,,"✅ UI tamamlandı (mock data ile, Faz 3'te gerçek kontrol)",,#1.3
+	2.4.10,2,2.4,"""Ücretsiz Kapak Oluştur"" butonu (hakkı varsa)",Tamamlandı,Kritik,Frontend - Wizard,,"✅ UI tamamlandı (Step 6'da, Faz 3'te API entegrasyonu)",,#1.3
+	2.4.12,2,2.4,"Kitap oluşturma sonrası animasyon ve loading (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Wizard,DO,"",,#1.3
+	2.4.14,2,2.4,"Next.js Image ve layout konsol uyarıları (Şubat 2026) | ✅ Çözüldü (4 Şubat 2026)",Tamamlandı,Kritik,Frontend - Wizard,,"",,#1.3
+	2.5.1.1,2,2.5,"react-pageflip veya alternatif library araştırması ve seçimi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Framer Motion ile custom implementation seçildi",,#1.3
+	2.5.1.2,2,2.5,"Flipbook animasyonu (sayfa çevirme efekti)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi (Flip, Slide, Fade animasyonları)",,#1.3
+	2.5.1.3,2,2.5,"Sayfa navigasyonu (ileri, geri, sayfa atlama)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Buttons, keyboard, swipe, mouse click desteği",,#1.3
+	2.5.1.4,2,2.5,"Progress indicator (hangi sayfa/toplam sayfa)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Header'da progress bar ve sayfa numarası",,#1.3
+	2.5.1.5,2,2.5,"Page thumbnails / mini map (tüm sayfaları küçük gösterme)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.5.1.6,2,2.5,"Tam ekran modu (fullscreen)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Fullscreen toggle button ve keyboard shortcut (F)",,#1.3
+	2.5.1.7,2,2.5,"Zoom in/out (görselleri yakınlaştırma)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım",,#1.3
+	2.5.1.8,2,2.5,"Loading states ve skeleton screens",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım",,#1.3
+	2.5.1.9,2,2.5,"PDF link paylaşma (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.1.10,2,2.5,"Hikaye link paylaşma (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.1.11,2,2.5,"E-book ve PDF Paragraf Formatlaması (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"🔴 **YÜKSEK ÖNCELİK**",,#1.3
+	2.5.2.1,2,2.5,"Mobil swipe desteği (sağa/sola kaydırma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ useSwipeGesture hook ile entegre edildi",,#1.3
+	2.5.2.2,2,2.5,"Hikaye sayfası tasarımı iyileştirmesi (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Sonraki adım (zoom ile birlikte)",,#1.3
+	2.5.2.3,2,2.5,"Portrait mode: Tek sayfa gösterimi (dikey)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.5.2.4,2,2.5,"Landscape mode: Çift sayfa gösterimi (yatay)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"bir taraf görsel, bir taraf yazı - ✅ v0.app'den alındı ve entegre edildi",,#1.3
+	2.5.2.5,2,2.5,"Screen orientation detection ve otomatik layout değişimi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ window.innerWidth/innerHeight ile otomatik detection",,#1.3
+	2.5.2.6,2,2.5,"PWA optimizasyonu (offline okuma, vb.)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Faz 6'da yapılacak",,#1.3
+	2.5.3.1,2,2.5,"Text-to-Speech entegrasyonu (Gemini Pro TTS)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Backend API ve frontend hook oluşturuldu, WaveNet/Standard sesler kaldırıldı (15 Ocak 2026)",,#1.3
+	2.5.3.2,2,2.5,"Ses seçeneği (Achernar",Tamamlandı,Kritik,Frontend - E-book Viewer,,"Gemini Pro TTS) - ✅ Admin global config (tts_settings); Settings dropdown'da sadece admin TTS düzenleme (15 Ocak / 9 Şubat 2026)",,#1.3
+	2.5.3.3,2,2.5,"Ses hızı kontrolü (0.5x",Tamamlandı,Kritik,Frontend - E-book Viewer,,"2x arası) - ✅ Parent Settings'te (Yavaş/Normal/Hızlı); kullanıcı tercihi localStorage (9 Şubat 2026)",,#1.3
+	2.5.3.4,2,2.5,"Volume kontrolü",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Parent Settings'te ses seviyesi (slider); okuyucuda mute butonu; kullanıcı tercihi localStorage (9 Şubat 2026)",,#1.3
+	2.5.3.5,2,2.5,"Play/Pause/Stop butonları",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Play/Pause mevcut, Stop hook'ta mevcut ama UI'da yok",,#1.3
+	2.5.3.6,2,2.5,"Sesli okuma sırasında sayfa vurgulama (highlight current word/sentence)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Basit implementasyon mevcut, gelişmiş versiyon için Web Speech API word timing gerekli",,#1.3
+	2.5.3.7,2,2.5,"Otomatik sayfa ilerleme (ses bittiğinde sonraki sayfaya geç)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ TTS bittiğinde otomatik sayfa ilerleme",,#1.3
+	2.5.3.8,2,2.5,"TTS Cache mekanizması",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ S3'te cache (signed URL); kitap tamamlanınca TTS prewarm; aynı metin tekrar okutulduğunda cache hit (15 Ocak 2026, S3 + prewarm 9 Şubat 2026)",,#1.3
+	2.5.3.9,2,2.5,"TTS Cache temizleme (hikaye değişikliğinde)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Hikaye metni değiştiğinde eski cache dosyasını sil, yeni ses oluştur",,#1.3
+	2.5.3.10,2,2.5,"Sesli Hikaye Özelliği Pazarlama Vurgusu (26 Ocak 2026)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Kısmen tamamlandı (9 Şubat 2026)",,#1.3
+	2.5.4.1,2,2.5,"Autoplay butonu ve kontrolü",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Autoplay toggle butonu (RotateCcw icon), visual indicator ve Settings'te mod seçimi",,#1.3
+	2.5.4.2,2,2.5,"Autoplay hızı ayarı (sayfa başına kaç saniye)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 5s, 10s, 15s, 20s seçenekleri Settings'te",,#1.3
+	2.5.4.3,2,2.5,"Sesli okuma ile senkronize otomatik ilerleme",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ TTS Synced mode: TTS bittiğinde otomatik sayfa geçişi + otomatik okumaya devam (onEnded callback ile)",,#1.3
+	2.5.4.4,2,2.5,"Autoplay pause/resume (dokunarak durdurma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Ekrana dokunarak TTS pause/resume, Timed mode countdown ile sayfa geçişi",,#1.3
+	2.5.5.1,2,2.5,"Bookmark/favori sayfa işaretleme",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ localStorage ile bookmark sistemi, her sayfa için ayrı bookmark",,#1.3
+	2.5.5.2,2,2.5,"Reading progress save (nerede kaldı, otomatik kaydetme)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ localStorage ile otomatik kaydetme, kitap açıldığında kaldığı yerden devam",,#1.3
+	2.5.5.3,2,2.5,"Share butonu (kitabı/sayfayı paylaşma)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ navigator.share API ile paylaşma (fallback: clipboard)",,#1.3
+	2.5.5.4,2,2.5,"Download as PDF butonu",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#1.3
+	2.5.5.5,2,2.5,"Print options",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#1.3
+	2.5.5.6,2,2.5,"Keyboard shortcuts (desktop: arrow keys, space, esc, vb.)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 11 farklı klavye kısayolu eklendi",,#1.3
+	2.5.5.7,2,2.5,"Accessibility features (font size, high contrast, screen reader support)",Bekliyor,Kritik,Frontend - E-book Viewer,,"⏳ Post-MVP",,#1.3
+	2.5.5.8,2,2.5,"Settings UI iyileştirmesi",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Ses/hız Parent Settings'e taşındı; okuyucu sadeleştirildi (sadece admin için TTS varsayılanları dropdown'da). Çocuk odaklı sade tasarım (9 Şubat 2026)",,#1.3
+	2.5.6.1,2,2.5,"Sayfa çevirme animasyonu (flip effect, slide, fade, vb.)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 6 farklı animasyon tipi: Flip (3D), Slide, Fade, Page Curl, Zoom, None (Instant)",,#1.3
+	2.5.6.2,2,2.5,"Animasyon hızı/stili seçenekleri",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Settings'te 3 hız seçeneği: Slow, Normal, Fast (configurable)",,#1.3
+	2.5.6.3,2,2.5,"Smooth transitions",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Spring ve tween animasyonları, easeInOut/easeOut transitions",,#1.3
+	2.5.6.4,2,2.5,"Page curl effect (sayfa kıvrılma efekti)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ 3D rotateX/rotateY ile page curl animasyonu",,#1.3
+	2.5.6.5,2,2.5,"Shadow ve depth effects (3D görünüm)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Shadow-2xl, drop-shadow, depth effects (z-index)",,#1.3
+	2.5.5.9,2,2.5,"Çocuk UX (footer) (9 Şubat 2026)",Tamamlandı,Kritik,Frontend - E-book Viewer,,"✅ Okuyucu footer'da min 44px dokunmatik alan, basınca scale animasyonu (active:scale-95), ikon boyutları md'de büyütüldü. Ref: TTS_GOOGLE_GEMINI_ANALYSIS.md §3.5",,#1.3
+	2.5.8,2,2.5,"Çocuk Modu (Kids Mode) (23 Ocak 2026)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.7.1,2,2.5,"Notes/annotations (sayfaya not alma)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.7.2,2,2.5,"Search in book (kitap içinde arama)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.7.3,2,2.5,"Multi-language subtitle support (sesli okuma için altyazı)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.7.4,2,2.5,"Background music (opsiyonel arka plan müziği)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.5.7.5,2,2.5,"Reading statistics (ne kadar süre okudu, hangi sayfaları okudu)",Bekliyor,Kritik,Frontend - E-book Viewer,,"",,#1.3
+	2.6.1,2,2.6,"Kitaplık sayfası (tüm kitaplar grid)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Dashboard sayfası oluşturuldu, grid/list view toggle",,#1.3
+	2.6.2,2,2.6,"Kitap kartı component",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Book card component (cover, title, status, actions) - Character bilgisi kaldırıldı (26 Ocak 2026)",,#1.3
+	2.6.3,2,2.6,"Filtreleme ve sıralama",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Filter tabs (All, Completed, In Progress, Drafts), Sort dropdown (Date, Title), Search bar",,#1.3
+	2.6.4,2,2.6,"Sipariş geçmişi",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Order History section (table with orders, download/view buttons)",,#1.3
+	2.6.5,2,2.6,"Profil ayarları",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Profile Settings page (6 sections: Profile, Account, Orders, Free Cover, Notifications, Billing)",,#1.3
+	2.6.6,2,2.6,"Ücretsiz kapak hakkı göstergesi (kullanıldı/kullanılmadı)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ Free Cover Status section (status badge, used date, info box)",,#1.3
+	2.6.9,2,2.6,"Hardcopy Satın Alma Özellikleri (25 Ocak 2026)",Tamamlandı,Kritik,Frontend - Dashboard,,"✅ **TAMAMLANDI**",,#1.3
+	2.6.7,2,2.6,"Characters tab (karakter yönetimi)",Bekliyor,Kritik,Frontend - Dashboard,,"🆕 **Karakter Yönetimi Sistemi (15 Ocak 2026)**",,#1.3
+	2.6.8,2,2.6,"Sipariş Yönetimi (Kullanıcı)",Bekliyor,Kritik,Frontend - Dashboard,,"🆕 **25 Ocak 2026**",,#1.3
+	2.7.1,2,2.7,"Özellikler (Features) sayfası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.2,2,2.7,"Fiyatlandırma sayfası",Tamamlandı,Kritik,Frontend - Statik Sayfalar,DO,"✅ **TAMAMLANDI (25 Ocak 2026)**",,#1.3
+	2.7.4,2,2.7,"İletişim sayfası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.5,2,2.7,"Gizlilik Politikası",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.6,2,2.7,"Kullanım Şartları",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.7,2,2.7,"KVKK Aydınlatma Metni",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.8,2,2.7,"Examples sayfası (tüm örnek kitaplar, ""View Example"" butonları)",Tamamlandı,Kritik,Frontend - Statik Sayfalar,,"✅ **TAMAMLANDI (25 Ocak 2026)**",,#1.3
+	2.7.8.1,2,2.7,"Example Books bölümü görsel tasarım iyileştirmesi (Şubat 2026)",Tamamlandı,Kritik,Frontend - Statik Sayfalar,DO,"",,#1.3
+	2.7.9,2,2.7,"Ideas sayfası (hikaye fikirleri ve şablonları)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.10,2,2.7,"Tema kartları görsel gösterimi (her tema için thumbnail)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.11,2,2.7,"""Used Photos"" gösterimi (örneklerde hangi fotoğraflar kullanılmış)",Tamamlandı,Kritik,Frontend - Statik Sayfalar,,"✅ API güncellendi, generation_metadata.usedPhotos + characters tablosu batch sorgusu (6 Mart 2026)",,#1.3
+	2.7.12,2,2.7,"""View All Examples"" ve ""View All Themes"" linkleri",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.13,2,2.7,"""Sizden Gelenler"" bölümü (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.7.14,2,2.7,"Blog Sayfası (23 Ocak 2026)",Bekliyor,Kritik,Frontend - Statik Sayfalar,,"",,#1.3
+	2.8.1,2,2.8,"i18n library seçimi (next-intl önerilir",Bekliyor,Kritik,Frontend,,"Next.js App Router ile mükemmel entegrasyon)",,#1.3
+	2.8.2,2,2.8,"Dil seçici component (header'da, dropdown veya flag icons)",Bekliyor,Kritik,Frontend,,"",,#1.3
+	2.8.3,2,2.8,"Tüm UI metinlerinin çeviri dosyalarına taşınması (JSON veya TypeScript object format)",Bekliyor,Kritik,Frontend,,"",,#1.3
+	2.8.4,2,2.8,"Dinamik dil değiştirme (sayfa yenilenmeden)",Bekliyor,Kritik,Frontend,,"",,#1.3
+	2.8.5,2,2.8,"URL-based dil routing (/tr/, /en/, vb.)",Bekliyor,Kritik,Frontend,,"SEO dostu",,#1.3
+	2.8.6,2,2.8,"Cookie/localStorage ile dil tercihi saklama (kullanıcı tercihi hatırlansın)",Bekliyor,Kritik,Frontend,,"",,#1.3
+	2.8.7,2,2.8,"TR çevirileri (tüm UI metinleri için)",Bekliyor,Kritik,Frontend,,"",,#1.3
+	2.8.8,2,2.8,"Gelecekte 25+ dil desteği (Almanca, Fransızca, İspanyolca, vb.)",Bekliyor,Kritik,Frontend,,"",,#1.3
 	3.1.1,3,3.1,"API klasör yapısı oluştur",Tamamlandı,Kritik,Backend - API,,"✅ `app/api/` yapısı mevcut",,#3.1
 	3.1.2,3,3.1,"Middleware (auth, rate limiting, error handling)",Tamamlandı,Kritik,Backend - API,,"✅ Tamamlandı (15 Ocak 2026)",,#3.1
 	3.1.3,3,3.1,"API response formatı standardize et",Tamamlandı,Kritik,Backend - API,,"✅ `lib/api/response.ts` ile standardize edildi",,#3.1
@@ -158,13 +158,13 @@ ID,Faz,Alt Faz,Başlık,Durum,Öncelik,Kategori,Priority,Notlar,Tarih,Link
 	3.2.6,3,3.2,"`GET /api/auth/google`",Tamamlandı,Kritik,Backend - Database,,"Google OAuth callback - ✅ Supabase Auth OAuth kullanılıyor",,#3.2
 	3.2.7,3,3.2,"`GET /api/auth/facebook`",Tamamlandı,Kritik,Backend - Database,,"Facebook OAuth callback - ✅ Supabase Auth OAuth kullanılıyor",,#3.2
 	3.2.8,3,3.2,"`GET /api/auth/instagram`",Bekliyor,Kritik,Backend - Database,,"Instagram OAuth callback - ⏸️ **Opsiyonel, MVP'de gerekli değil**",,#3.2
-	3.4.1,3,3.4,"`POST /api/characters/analyze`",Tamamlandı,Kritik,Backend - Auth,,"Fotoğraf analiz et ve Master Character oluştur - ✅ OpenAI Vision API entegrasyonu",,#3.4
+	3.4.1,3,3.4,"`POST /api/characters/analyze`",Tamamlandı,Kritik,Backend - Auth,,"Fotoğraf analiz et ve Master Character oluştur - ✅ (Not: 2026-03-01 itibarıyla karakter oluşturma Vision kullanmıyor; açıklama form verisinden. Ref: docs/analysis/VISION_ANALYSIS_NECESSITY.md)",,#3.4
 	3.4.2,3,3.4,"`GET /api/characters`",Tamamlandı,Kritik,Backend - Auth,,"Kullanıcının karakterleri - ✅ Character library API",,#3.4
 	3.4.3,3,3.4,"`GET /api/characters/:id`",Tamamlandı,Kritik,Backend - Auth,,"Karakter detayları - ✅ Single character API",,#3.4
 	3.4.4,3,3.4,"`PATCH /api/characters/:id`",Tamamlandı,Kritik,Backend - Auth,,"Karakter güncelle - ✅ Update character API",,#3.4
 	3.4.5,3,3.4,"`DELETE /api/characters/:id`",Tamamlandı,Kritik,Backend - Auth,,"Karakter sil - ✅ Delete character API",,#3.4
 	3.4.6,3,3.4,"`POST /api/characters/:id/set-default`",Tamamlandı,Kritik,Backend - Auth,,"Default karakter olarak ayarla - ✅ Set default API",,#3.4
-	3.4.7,3,3.4,"`POST /api/characters`",Tamamlandı,Kritik,Backend - Auth,,"AI Analysis for Non-Child Characters (25 Ocak 2026) - ✅ Family Members, Pets, Other, Toys için fotoğraf analizi eklendi",,#3.4
+	3.4.7,3,3.4,"`POST /api/characters`",Tamamlandı,Kritik,Backend - Auth,,"Karakter oluştur (form + referans fotoğraf) - ✅ (2026-03-01: Vision kaldırıldı)",,#3.4
 	3.4.8,3,3.4,"`POST /api/characters/upload-photo`",Bekliyor,Kritik,Backend - Auth,,"Referans görsel yükle (Supabase Storage) - ⏳ Sonraki adım",,#3.4
 	3.4.9,3,3.4,"API iyileştirmeleri (Character Library için)",Bekliyor,Kritik,Backend - Auth,,"🆕 **Karakter Yönetimi Sistemi (15 Ocak 2026)**",,#3.4
 	3.6.1,3,3.6,"Books database helper functions",Tamamlandı,Kritik,Backend - Kitap API,,"PDF oluştur ✅ (10 Ocak 2026)",,#3.6

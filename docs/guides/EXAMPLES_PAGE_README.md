@@ -56,7 +56,9 @@ const [selectedAge, setSelectedAge] = useState<AgeGroup | 'All'>('All')
 2. `/examples` sayfasına git
 3. Mobil görünümde test et (Chrome DevTools)
 4. Yaş filtreleme çalışıyor mu kontrol et
-5. "Used Photos" modal açılıyor mu kontrol et
+5. "Used Photos" thumbnail'ları görünüyor mu (API'den presigned URL ile), modal açılıyor mu kontrol et
+
+**Used Photos (6 Mart 2026):** API `usedPhotos` döndürüyor; S3 görselleri 24 saat geçerli presigned URL ile geliyor. Bölümde sadece karakter fotoğrafları gösteriliyor (ok ve kapak thumbnail'ı kaldırıldı). Modal'da görsel tam görünüyor (`object-contain`). Detay: `docs/features/EXAMPLES_USED_PHOTOS_FEATURE.md`.
 
 ## 📱 Mobil Test Checklist
 

@@ -145,6 +145,7 @@ Mevcut create akışı (Step 1–6) aynen kullanılır. Son adımda (Step 6) sad
 | 30 Ocak 2026 | **Madde 1 Faz 1.1–1.3 tamamlandı:** Migration (is_example), /examples/[id] route, admin butonu, Examples page API. Faz 1.4 manuel (admin create). | Madde 1 test hazır, Madde 2'ye geçilebilir. |
 | 31 Ocak 2026 | **Görsel kalite analizi:** 5 problem tespit edildi (log karmaşası, kıyafet değişimi, yan bakış, page bozulma, genel yapay görünüm). Detaylı analiz: `EXAMPLE_BOOKS_CUSTOM_REQUESTS.md` | Full çözüm planı hazırlandı. |
 | 31 Ocak 2026 | **Full çözüm planı:** 4 fazlı implementasyon planı oluşturuldu (`IMAGE_QUALITY_IMPROVEMENT_PLAN.md`). Hedef: %90+ görsel kalite iyileştirmesi. | Faz 1-2 başlayabilir. |
+| 6 Mart 2026 | **Used Photos (Examples):** GET /api/examples usedPhotos presigned URL (24h), modal object-contain, sadece karakter thumbnail'ları (ok + kapak kaldırıldı). Detay: `docs/features/EXAMPLES_USED_PHOTOS_FEATURE.md`. | — |
 
 ---
 
