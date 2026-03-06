@@ -147,7 +147,8 @@ docs/
     ├── TECHNICAL_DECISIONS.md   # Teknik kararlar (Next.js, Supabase, vb.)
     ├── TECHNICAL_RESEARCH.md    # Teknik araştırma
     ├── DATABASE_COMPARISON.md   # Veritabanı karşılaştırması
-    └── PLATFORM_EXPLANATION.md  # Platform açıklamaları
+    ├── PLATFORM_EXPLANATION.md  # Platform açıklamaları
+    └── MONOLITH_VS_SPLIT_ANALYSIS.md  # Monolit vs backend/frontend ayrıştırma, PWA, Puppeteer riski (referans)
 ```
 
 ### 📋 Ana Dosyalar (docs/ root)
@@ -201,6 +202,7 @@ docs/
 ### Teknik Kararlar
 1. **technical/TECHNICAL_DECISIONS.md** - Next.js 14, Supabase seçimleri
 2. **technical/TECHNICAL_RESEARCH.md** - Detaylı teknik araştırma
+3. **technical/MONOLITH_VS_SPLIT_ANALYSIS.md** - Monolit vs backend/frontend ayrıştırma analizi; PWA etkisi; Puppeteer (PDF) riski; ileride karar için referans
 
 ### Deployment (Faz 5.5)
 1. **analysis/DEPLOYMENT_SERVER_ANALYSIS.md** - Deployment kapsamı, roadmap eşlemesi, önerilen sıra (domain/SSL sonraya)

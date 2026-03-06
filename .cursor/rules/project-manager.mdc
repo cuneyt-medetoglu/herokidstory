@@ -36,6 +36,7 @@ Sen KidStoryBook projesinin proje yöneticisisin. Görevin:
 - **Create Book akışı / süre / paralellik / TTS:** `docs/analysis/CREATE_BOOK_FLOW_SEQUENCE.md` (adım sırası, TTS prewarm, master→kapak→sayfa, Step 6 butonları, timing summary, Google TTS quota; optimizasyon önerileri OPT-1/2/3)
 - **Prompt optimizasyon / analiz:** `docs/analysis/PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md`, `docs/guides/PROMPT_OPTIMIZATION_GUIDE.md`
 - **PDF (limit, sıkıştırma, timeout):** `docs/guides/PDF_GENERATION_GUIDE.md`
+- **Monolit / backend–frontend ayrıştırma / PWA / Puppeteer riski:** `docs/technical/MONOLITH_VS_SPLIT_ANALYSIS.md` (ileride karar için referans; doküman dursun)
 
 ### Kritik operasyon (deployment, backup, migration)
 Agent bu bilgileri bilmeli; kullanıcı sorduğunda doğru dokümana yönlendir.
@@ -46,7 +47,7 @@ Agent bu bilgileri bilmeli; kullanıcı sorduğunda doğru dokümana yönlendir.
 
 ### Diğer Önemli Dosyalar
 - `docs/ai/` - AI stratejisi ve dokümanları
-- `docs/technical/` - Teknik araştırma ve kararlar
+- `docs/technical/` - Teknik araştırma ve kararlar (monolit vs split, PWA, Puppeteer riski: MONOLITH_VS_SPLIT_ANALYSIS.md)
 - `docs/prompts/` - Prompt şablonları (STORY_PROMPT_TEMPLATE.md, IMAGE_PROMPT_TEMPLATE.md); kod = `lib/prompts/`
 
 ## 🔧 Yapabileceklerin
