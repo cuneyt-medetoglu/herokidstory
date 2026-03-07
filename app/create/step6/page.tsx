@@ -101,6 +101,7 @@ export default function Step6Page() {
   // Hover state for timeline nodes
   const [hoveredStep, setHoveredStep] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [illustrationStyleImageError, setIllustrationStyleImageError] = useState(false)
 
   // Check free cover status: üyeli → API; üyesiz → 1 hak var varsayımı (API "zaten kullanıldı" dönebilir)
   useEffect(() => {
@@ -183,6 +184,12 @@ export default function Step6Page() {
       }
     }
   }, [])
+
+  // Reset illustration style image error when selected style id changes (e.g. user edited step 4)
+  const styleId = wizardData?.step4?.illustrationStyle?.id ?? (typeof wizardData?.step4?.illustrationStyle === "string" ? wizardData?.step4?.illustrationStyle : null)
+  useEffect(() => {
+    setIllustrationStyleImageError(false)
+  }, [styleId])
   
   // Email validation
   const validateEmail = (email: string): boolean => {
@@ -293,11 +300,13 @@ export default function Step6Page() {
         },
     illustrationStyle: wizardData?.step4?.illustrationStyle
       ? {
+          id: wizardData.step4.illustrationStyle.id ?? (typeof wizardData.step4.illustrationStyle === "string" ? wizardData.step4.illustrationStyle : undefined),
           name: wizardData.step4.illustrationStyle.title || wizardData.step4.illustrationStyle,
           description: wizardData.step4.illustrationStyle.description || "",
           color: wizardData.step4.illustrationStyle.gradientFrom || "from-blue-400",
         }
       : {
+          id: "3d_animation",
           name: "3D Animation",
           description: "Modern 3D animated style",
           color: "from-purple-400",
@@ -952,11 +961,24 @@ export default function Step6Page() {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <div
-                      className={`flex h-20 w-20 items-center justify-center rounded-lg bg-gradient-to-br ${formData.illustrationStyle.color} shadow-lg`}
-                    >
-                      <Palette className="h-10 w-10 text-white" />
-                    </div>
+                    {formData.illustrationStyle.id && !illustrationStyleImageError ? (
+                      <div className="relative h-32 w-24 flex-shrink-0 overflow-hidden rounded-lg shadow-lg">
+                        <Image
+                          src={`/illustration-styles/${formData.illustrationStyle.id}.jpg`}
+                          alt={`${formData.illustrationStyle.name} style example`}
+                          fill
+                          sizes="96px"
+                          className="object-cover"
+                          onError={() => setIllustrationStyleImageError(true)}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className={`flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${formData.illustrationStyle.color} shadow-lg`}
+                      >
+                        <Palette className="h-10 w-10 text-white" />
+                      </div>
+                    )}
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 dark:text-slate-50">{formData.illustrationStyle.name}</h3>
                       <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">

@@ -10,13 +10,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useState, useMemo } from "react"
 
+// Default page count when debug field is left empty
+const DEFAULT_PAGE_COUNT = 12
+
 // Build schema based on whether custom theme is selected (Step 5 requires customRequests when theme is custom)
 function getFormSchema(isCustomTheme: boolean) {
   return z.object({
     customRequests: isCustomTheme
       ? z.string().min(10, "Please describe your story idea").max(500, "Custom requests must not exceed 500 characters")
       : z.string().max(500, "Custom requests must not exceed 500 characters").optional().or(z.literal("")),
-    pageCount: z.number().min(0).max(20).optional(),
+    // Boş/NaN = undefined kabul et; sayı ise 0–20 arası. Boş bırakılınca default 12 kullanılacak.
+    pageCount: z.preprocess(
+      (val) => (val === "" || val === undefined || Number.isNaN(val) ? undefined : Number(val)),
+      z.number().min(0).max(20).optional()
+    ),
   })
 }
 
@@ -64,7 +71,7 @@ export default function Step5Page() {
       
       wizardData.step5 = {
         customRequests: customRequests || undefined,
-        pageCount: pageCount || undefined, // Debug: Optional page count override
+        pageCount: pageCount ?? DEFAULT_PAGE_COUNT, // Boş bırakılırsa default 12
       }
       
       localStorage.setItem("kidstorybook_wizard", JSON.stringify(wizardData))
@@ -283,11 +290,11 @@ export default function Step5Page() {
                 min="0"
                 max="20"
                 {...register("pageCount", { valueAsNumber: true })}
-                placeholder="Leave empty for cover only (no pages)"
+                placeholder="Leave empty for default (12 pages)"
                 className="w-full rounded-lg border-2 border-amber-300 bg-white p-3 text-gray-900 transition-all placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 dark:border-amber-700 dark:bg-slate-800 dark:text-slate-50 dark:placeholder:text-slate-500 dark:focus:border-amber-500"
               />
               <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">
-                For testing: Override default page count (2-20 pages). Leave empty to use default (10 pages).
+                For testing: Override default page count (2-20 pages). Leave empty to use default (12 pages).
               </p>
               {errors.pageCount && (
                 <motion.p
