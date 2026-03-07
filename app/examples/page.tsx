@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { getIllustrationStyleLabel } from "@/lib/illustration-styles"
 import { mockExampleBooks, type ExampleBook, type UsedPhoto, type AgeGroup } from "./types"
 import {
   Pagination,
@@ -302,6 +303,15 @@ function BookCard({ book, onPhotoClick }: { book: ExampleBook; onPhotoClick: (ph
           {book.description}
         </p>
       </div>
+
+      {/* Illustration style badge */}
+      {book.storyDetails?.style && (
+        <div className="mb-4">
+          <Badge variant="outline" className="bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400 border-violet-200 dark:border-violet-800">
+            {getIllustrationStyleLabel(book.storyDetails.style)}
+          </Badge>
+        </div>
+      )}
 
       {/* Used photos section */}
       <div className="mb-4">

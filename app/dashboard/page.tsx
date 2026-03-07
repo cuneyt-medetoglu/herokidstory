@@ -16,6 +16,7 @@ import { Empty } from "@/components/ui/empty"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
 import { useCart } from "@/contexts/CartContext"
+import { getIllustrationStyleLabel } from "@/lib/illustration-styles"
 
 type Book = {
   id: string
@@ -23,6 +24,7 @@ type Book = {
   coverImage: string
   status: "completed" | "in-progress" | "draft"
   createdDate: string
+  illustrationStyle?: string
 }
 
 const mockBooks: Book[] = [
@@ -121,6 +123,7 @@ export default function LibraryPage() {
               day: 'numeric',
               year: 'numeric',
             }),
+            illustrationStyle: book.illustration_style || undefined,
           }))
 
           setBooks(transformedBooks)
@@ -703,6 +706,11 @@ export default function LibraryPage() {
                                 Audio
                               </Badge>
                             </>
+                          )}
+                          {book.illustrationStyle && (
+                            <Badge variant="outline" className="bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400 border-violet-200 dark:border-violet-800">
+                              {getIllustrationStyleLabel(book.illustrationStyle)}
+                            </Badge>
                           )}
                           <Badge variant="secondary" className={statusConfig[book.status].color}>
                             {statusConfig[book.status].label}

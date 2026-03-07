@@ -471,13 +471,19 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
     }
   }, [autoplayMode, autoplaySpeed, currentPage, totalPages, goToNextPage])
 
-  // Play TTS for current page when play button is clicked
+  // Single TTS button: play from current page + autoplay through book, or stop
   const handlePlayPause = useCallback(async () => {
     if (isPlaying) {
-      pause()
+      stop()
+      setAutoplayMode("off")
     } else if (isPaused) {
       resume()
+    } else if (autoplayMode === "tts") {
+      // Autoplay on but not playing (e.g. between pages) – user wants to stop
+      setAutoplayMode("off")
+      stop()
     } else {
+      setAutoplayMode("tts")
       const currentPageText = book?.pages?.[currentPage]?.text
       if (currentPageText) {
         await play(currentPageText, {
@@ -487,7 +493,7 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
         })
       }
     }
-  }, [isPlaying, isPaused, currentPage, book?.pages, play, pause, resume, selectedVoice, ttsSpeed, ttsVolume, isMuted])
+  }, [isPlaying, isPaused, autoplayMode, currentPage, book?.pages, play, resume, stop, selectedVoice, ttsSpeed, ttsVolume, isMuted])
 
   // Toggle autoplay mode
   const handleAutoplayToggle = useCallback(() => {
@@ -1136,47 +1142,26 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
           <ArrowLeft className="h-5 w-5 md:h-6 md:w-6" />
         </Button>
 
-        {/* Autoplay Button */}
+        {/* Single TTS: play from current page + autoplay through book, or stop */}
         <Button
-          onClick={handleAutoplayToggle}
-          className={cn(
-            "h-11 w-11 min-h-[44px] min-w-[44px] text-white transition-transform active:scale-95 md:h-12 md:w-12",
-            autoplayMode !== "off"
-              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              : "bg-slate-400 hover:bg-slate-500"
-          )}
+          onClick={handlePlayPause}
+          disabled={isLoading}
+          className="h-11 w-11 min-h-[44px] min-w-[44px] bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 transition-transform active:scale-95 md:h-12 md:w-12 disabled:opacity-50 disabled:active:scale-100"
           size="icon"
-          aria-label={autoplayMode !== "off" ? "Stop autoplay" : "Start autoplay"}
+          aria-label={isLoading ? "Yükleniyor..." : isPlaying ? "Okumayı durdur" : "Bu sayfadan başla, sayfaları sırayla oku"}
         >
-          {autoplayMode !== "off" ? (
+          {isLoading ? (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="h-5 w-5 border-2 border-white border-t-transparent rounded-full md:h-6 md:w-6"
+            />
+          ) : isPlaying ? (
             <Square className="h-5 w-5 md:h-6 md:w-6" />
           ) : (
-            <RotateCcw className="h-5 w-5 md:h-6 md:w-6" />
+            <Play className="h-5 w-5 md:h-6 md:w-6" />
           )}
         </Button>
-
-        {/* TTS Play/Pause Button (only when autoplay is off) */}
-        {autoplayMode === "off" && (
-          <Button
-            onClick={handlePlayPause}
-            disabled={isLoading}
-            className="h-11 w-11 min-h-[44px] min-w-[44px] bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 transition-transform active:scale-95 md:h-12 md:w-12 disabled:opacity-50 disabled:active:scale-100"
-            size="icon"
-            aria-label={isLoading ? "Loading..." : isPlaying ? "Pause reading" : "Play reading"}
-          >
-            {isLoading ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="h-5 w-5 border-2 border-white border-t-transparent rounded-full md:h-6 md:w-6"
-              />
-            ) : isPlaying ? (
-              <Pause className="h-5 w-5 md:h-6 md:w-6" />
-            ) : (
-              <Play className="h-5 w-5 md:h-6 md:w-6" />
-            )}
-          </Button>
-        )}
 
         {/* Mute */}
         <Button
