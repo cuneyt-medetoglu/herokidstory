@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/db/pool'
 import { getSignedObjectUrl, getKeyFromOurS3Url } from '@/lib/storage/s3'
+import { routing } from '@/i18n/routing'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +30,7 @@ async function presignPhotoUrl(url: string): Promise<string | null> {
  * No authentication required - publicly accessible
  * 
  * Query params:
+ * - locale?: string (e.g. "en", "tr") — filter by book language; default: defaultLocale. Faz 2.
  * - ageGroup?: string (e.g., "3-5")
  * - theme?: string (e.g., "adventure")
  * - limit?: number (default: 20)
@@ -46,15 +48,18 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     
+    const rawLocale = searchParams.get('locale') || routing.defaultLocale
+    const locale = routing.locales.includes(rawLocale as any) ? rawLocale : routing.defaultLocale
+
     const ageGroup = searchParams.get('ageGroup') || undefined
     const theme = searchParams.get('theme') || undefined
     const limit = parseInt(searchParams.get('limit') || '20', 10)
     const offset = parseInt(searchParams.get('offset') || '0', 10)
 
     // Build query
-    let query = 'SELECT * FROM books WHERE is_example = true AND status = $1'
-    const params: any[] = ['completed']
-    let paramCount = 2
+    let query = 'SELECT * FROM books WHERE is_example = true AND status = $1 AND language = $2'
+    const params: any[] = ['completed', locale]
+    let paramCount = 3
 
     // Filters
     if (ageGroup) {

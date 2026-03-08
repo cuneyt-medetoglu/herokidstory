@@ -179,3 +179,4 @@ app/
 - **Analiz ve kararlar:** `docs/analysis/LOCALIZATION_ANALYSIS.md`
 - **Faz 5 iş listesi:** `docs/roadmap/PHASE_5_LAUNCH.md` (5.11 Localization)
 - **Agent kuralı:** `.cursor/rules/localization-agent.mdc`
+- **Örnek kitaplar çok dilli kopya planı:** `docs/analysis/EXAMPLES_MULTILINGUAL_COPY_IMPLEMENTATION_PLAN.md` — Faz 0 (Step 6 örnek kitap dil seçici) tamamlandı ✅

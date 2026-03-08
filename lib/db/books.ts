@@ -36,6 +36,7 @@ export interface Book {
   is_example?: boolean
   edit_quota_used?: number
   edit_quota_limit?: number
+  source_example_book_id?: string
 }
 
 export interface CreateBookInput {
@@ -52,6 +53,7 @@ export interface CreateBookInput {
   generation_metadata?: any
   status?: 'draft' | 'generating' | 'completed'
   is_example?: boolean
+  source_example_book_id?: string
 }
 
 export interface UpdateBookInput {
@@ -82,8 +84,8 @@ export async function createBook(
       `INSERT INTO books (
         user_id, character_id, title, theme, illustration_style, language, age_group,
         story_data, total_pages, custom_requests, images_data, generation_metadata,
-        status, is_example, created_at, updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())
+        status, is_example, source_example_book_id, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW(), NOW())
       RETURNING *`,
       [
         userId,
@@ -100,6 +102,7 @@ export async function createBook(
         JSON.stringify(input.generation_metadata || {}),
         input.status || 'draft',
         input.is_example || false,
+        input.source_example_book_id || null,
       ]
     )
 
@@ -136,12 +139,18 @@ export async function getUserBooks(
     status?: string
     limit?: number
     offset?: number
+    /** Kitaplık (Dashboard) için true: örnek kitaplar hariç, sadece kullanıcının kendi kitapları */
+    excludeExamples?: boolean
   }
 ): Promise<{ data: Book[] | null; error: Error | null }> {
   try {
     let query = 'SELECT * FROM books WHERE user_id = $1'
     const params: any[] = [userId]
     let paramCount = 2
+
+    if (options?.excludeExamples) {
+      query += ' AND (is_example = false OR is_example IS NULL)'
+    }
 
     if (options?.status) {
       query += ` AND status = $${paramCount++}`

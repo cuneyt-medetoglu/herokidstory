@@ -29,7 +29,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 // Loading skeleton component
 function BookCardSkeleton() {
@@ -402,6 +402,7 @@ function BookCard({ book, onPhotoClick }: { book: ExampleBook; onPhotoClick: (ph
 
 function ExamplesPageContent() {
   const t = useTranslations("examples")
+  const locale = useLocale()
 
   const ageFilters = [
     { value: "all", label: t("ageFilter.all") },
@@ -419,12 +420,12 @@ function ExamplesPageContent() {
   const [modalInitialIndex, setModalInitialIndex] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Fetch example books from API
+  // Fetch example books from API (locale-filtered: /en/examples → en, /tr/examples → tr)
   useEffect(() => {
     const fetchExampleBooks = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch('/api/examples')
+        const response = await fetch(`/api/examples?locale=${locale}`)
         const result = await response.json()
 
         if (result.success && result.data) {
@@ -442,7 +443,7 @@ function ExamplesPageContent() {
     }
 
     fetchExampleBooks()
-  }, [])
+  }, [locale])
 
   // Reset to page 1 when age filter changes
   useEffect(() => {

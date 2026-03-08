@@ -44,7 +44,7 @@ Sen KidStoryBook projesinin **localization (i18n)** işlerinden sorumlusun. Tüm
 - **`app/[locale]/create/step3/page.tsx`** — themes/ageGroups/languages dizileri key tabanlı; themeDescriptions/ageGroupDescriptions/ageGroupFeatures namespace ✅ DEV-4
 - **`app/[locale]/create/step4/page.tsx`** — illustrationStyles array key tabanlı; styleDescriptions namespace ✅ DEV-4
 - **`app/[locale]/create/step5/page.tsx`** — başlık, placeholder, pageCountPlaceholder ✅ DEV-4
-- **`app/[locale]/create/step6/page.tsx`** — step progress, noCharacters, noPhotos, createButton ✅ DEV-4
+- **`app/[locale]/create/step6/page.tsx`** — step progress, noCharacters, noPhotos, createButton; admin blokta **örnek kitap dili seçici** (`exampleBookLanguage`, `create.step6.localeLabel.*`, `routing.locales`); `handleCreateExampleBook` seçilen dili API'ye gönderir ✅ DEV-4, Faz 0
 - **`app/[locale]/create/from-example/page.tsx`** — title, backToExamples, labels; hairColorOptions step1 key'lerinden ✅ DEV-4
 - **`app/[locale]/dashboard/page.tsx`** — `useTranslations('dashboard')`; status labels, tabs, sort, bulk actions, toast mesajları ✅ DEV-5
 - **`app/[locale]/dashboard/settings/page.tsx`** — `useTranslations('dashboard.settings')`; sidebarItems component içinde; profil/hesap/sipariş/faturalama bölümleri ✅ DEV-5

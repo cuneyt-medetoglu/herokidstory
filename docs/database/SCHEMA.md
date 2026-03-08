@@ -218,6 +218,18 @@ CREATE INDEX idx_books_character_id ON books(character_id);
 CREATE INDEX idx_books_user_character ON books(user_id, character_id);
 ```
 
+### source_example_book_id (Faz 1 — Örnek kitaplar çok dilli kopya)
+
+Kopya örnek kitapların kaynak kitabını işaretler. Migration: `migrations/022_books_source_example_book_id.sql`.
+
+```sql
+ALTER TABLE books
+ADD COLUMN source_example_book_id UUID REFERENCES books(id) ON DELETE SET NULL;
+
+CREATE INDEX idx_books_source_example_book_id ON books(source_example_book_id)
+WHERE source_example_book_id IS NOT NULL;
+```
+
 ### Trigger
 
 **Auto-update character's used_in_books array:**

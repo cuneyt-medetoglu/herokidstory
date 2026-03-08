@@ -2791,6 +2791,7 @@ export async function GET(request: NextRequest) {
       status: status || undefined,
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
+      excludeExamples: true, // Kitaplıkta sadece kullanıcının kendi kitapları; örnek kitaplar Examples sayfasında
     })
 
     if (dbError) {

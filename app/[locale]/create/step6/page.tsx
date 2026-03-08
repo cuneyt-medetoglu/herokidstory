@@ -23,7 +23,7 @@ import { Link } from "@/i18n/navigation"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
@@ -33,6 +33,8 @@ import { useCurrency } from "@/contexts/CurrencyContext"
 import { DebugQualityPanel } from "@/components/debug/DebugQualityPanel"
 import { TraceViewerModal, type DebugTraceEntry } from "@/components/debug/TraceViewerModal"
 import { Checkbox } from "@/components/ui/checkbox"
+import { routing } from "@/i18n/routing"
+import type { Locale } from "@/i18n/routing"
 import {
   Dialog,
   DialogContent,
@@ -75,9 +77,15 @@ export default function Step6Page() {
   const t = useTranslations("create.step6")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const locale = useLocale()
   const { toast } = useToast()
   const [isCreating, setIsCreating] = useState(false)
   const [wizardData, setWizardData] = useState<any>(null)
+
+  // Example book language (admin block): defaults to current site locale if in list
+  const [exampleBookLanguage, setExampleBookLanguage] = useState<Locale>(() =>
+    routing.locales.includes(locale as Locale) ? (locale as Locale) : routing.locales[0]
+  )
 
   // Auth and email state
   const { data: session, status } = useSession()
@@ -507,7 +515,7 @@ export default function Step6Page() {
       wizardData?.step4?.illustrationStyle?.id ||
       (typeof wizardData?.step4?.illustrationStyle === "string" ? wizardData.step4.illustrationStyle : "") ||
       "watercolor"
-    const language = (wizardData?.step3?.language?.id || formData.language?.id || "en") as "en" | "tr" | "de" | "fr" | "es" | "zh" | "pt" | "ru"
+    const language = exampleBookLanguage
 
     const payload = {
       ...(characterIds.length > 0 ? { characterIds } : singleId || fallbackId ? { characterId: singleId || fallbackId } : {}),
@@ -1316,8 +1324,22 @@ export default function Step6Page() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.4, duration: 0.4 }}
-                  className="w-full"
+                  className="w-full space-y-2"
                 >
+                  <label className="block text-sm font-medium text-muted-foreground">
+                    {t("exampleBookLanguage")}
+                  </label>
+                  <select
+                    value={exampleBookLanguage}
+                    onChange={(e) => setExampleBookLanguage(e.target.value as Locale)}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    {routing.locales.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {t(`localeLabel.${loc}`)}
+                      </option>
+                    ))}
+                  </select>
                   <Button
                     type="button"
                     variant="outline"

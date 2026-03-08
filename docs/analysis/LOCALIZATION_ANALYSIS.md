@@ -325,7 +325,9 @@ Her dil için ayrı example kitap seti oluşturulacak (`language` kolonu ile fil
 
 | Konu | Ne Zaman | Not |
 |------|----------|-----|
+| **Kitaplığım / Hikaye içeriği dil uyumu** | Sonraki faz | Site EN iken kullanıcı kitaplarının başlık ve sayfa metinleri hâlâ kitabın oluşturulduğu dilde (örn. TR). İstenirse: site locale’e göre DB’den ilgili dil versiyonu çekmek veya çeviri üretmek — analizde “her dil için ayrı DB kaydı / AI ile çeviri” olarak ertelendi. |
 | Admin/debug metinleri i18n | Admin panel sonrası | DebugQualityPanel, TraceViewerModal vb. |
+| **Örnek kitapları eksik dillere kopyalama** | Admin panel / script | Examples sayfası tanıtım amaçlı; her site dilinde (en, tr) o dilde içerik gösterilmeli. Bir dildeki örneklerin diğer dillere kopyası: önce script, sonra admin panelde "Eksik dillere kopyala" benzeri akış. Ayrı analiz: `docs/analysis/EXAMPLES_MULTILINGUAL_COPY_STRATEGY.md`. |
 | Karakter isim mapping UI yönetimi | Admin panel hazır olunca | Şimdilik `character-names.ts` dosyasında |
 | Dil ekleme/çıkarma UI | Admin panel hazır olunca | Şimdilik `lib/i18n.ts` config'de |
 | Email şablonları lokalizasyonu | Email altyapısı kurulunca | Resend/SendGrid sonrası |

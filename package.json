@@ -14,6 +14,7 @@
     "lint": "next lint",
     "generate-style-examples": "tsx scripts/generate-style-examples.ts",
     "generate-hero-transformation": "tsx scripts/generate-hero-transformation.ts",
+    "copy-examples-to-locale": "tsx scripts/copy-examples-to-locale.ts",
     "roadmap": "node scripts/generate-roadmap-csv.js",
     "ssh:server": "ssh -i kidstorybook-key.pem ubuntu@18.184.150.1",
     "ssh:tunnel": "ssh -i kidstorybook-key.pem -L 5432:localhost:5432 ubuntu@18.184.150.1",
