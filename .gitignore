@@ -70,6 +70,7 @@ poc/Untitled
 !postcss.config.js
 !eslintrc.json
 !.prettierrc
+!messages/*.json
 nul
 
 kidstorybook-key.pem

@@ -1,0 +1,1154 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "back": "Geri",
+    "next": "İleri",
+    "error": "Hata",
+    "success": "Başarılı",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "open": "Aç",
+    "search": "Ara",
+    "submit": "Gönder",
+    "confirm": "Onayla",
+    "yes": "Evet",
+    "no": "Hayır",
+    "or": "veya",
+    "and": "ve",
+    "create": "Oluştur",
+    "update": "Güncelle",
+    "view": "Görüntüle",
+    "download": "İndir",
+    "share": "Paylaş",
+    "retry": "Tekrar Dene"
+  },
+  "metadata": {
+    "siteName": "KidStoryBook",
+    "home": {
+      "title": "KidStoryBook - AI ile Kişiselleştirilmiş Çocuk Kitapları",
+      "description": "Çocuğunuzun fotoğrafıyla AI destekli, kişiselleştirilmiş hikaye kitapları oluşturun. Çocuğunuzun kahraman olduğu sihirli hikayeler.",
+      "ogTitle": "KidStoryBook - AI ile Kişiselleştirilmiş Çocuk Kitapları",
+      "ogDescription": "Çocuğunuzun fotoğrafıyla sihirli kişiselleştirilmiş hikaye kitapları oluşturun. AI destekli, sevgiyle basılmış."
+    },
+    "examples": {
+      "title": "Örnek Kitaplar - KidStoryBook",
+      "description": "Kişiselleştirilmiş çocuk kitabı örneklerimize göz atın ve çocuğunuzun hikayesinin nasıl görüneceğini keşfedin.",
+      "ogTitle": "Kişiselleştirilmiş Çocuk Kitabı Örnekleri",
+      "ogDescription": "Çocuğunuzun kişiselleştirilmiş hikaye kitabının nasıl görüneceğini görün. AI ile oluşturulmuş örnekler."
+    },
+    "pricing": {
+      "title": "Fiyatlandırma - KidStoryBook",
+      "description": "Kişiselleştirilmiş hikaye kitabınız için en uygun planı seçin. E-kitap veya baskı seçenekleri mevcut.",
+      "ogTitle": "KidStoryBook Fiyatlandırma Planları",
+      "ogDescription": "Kişiselleştirilmiş çocuk hikaye kitabınız için uygun fiyatlı planlar. E-kitap ve ciltli baskı seçenekleri."
+    },
+    "dashboard": {
+      "title": "Kitaplığım - KidStoryBook",
+      "description": "Kişiselleştirilmiş çocuk kitaplarınızı yönetin"
+    },
+    "cart": {
+      "title": "Sepet - KidStoryBook",
+      "description": "Alışveriş sepetiniz"
+    },
+    "checkout": {
+      "title": "Ödeme - KidStoryBook",
+      "description": "Siparişinizi tamamlayın"
+    },
+    "create": {
+      "title": "Kitabınızı Oluşturun - KidStoryBook",
+      "description": "Çocuğunuz için kişiselleştirilmiş hikaye kitabı oluşturmaya başlayın"
+    },
+    "authLogin": {
+      "title": "Giriş Yap - KidStoryBook",
+      "description": "KidStoryBook hesabınıza giriş yapın"
+    },
+    "authRegister": {
+      "title": "Hesap Oluştur - KidStoryBook",
+      "description": "Ücretsiz KidStoryBook hesabınızı oluşturun"
+    }
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "examples": "Örnekler",
+    "pricing": "Fiyatlandırma",
+    "createBook": "Çocuk kitabı oluştur",
+    "create": "Oluştur",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "logout": "Çıkış Yap",
+    "myLibrary": "Kitaplığım",
+    "settings": "Ayarlar",
+    "shoppingCart": "Alışveriş Sepeti",
+    "lightMode": "Açık Tema",
+    "darkMode": "Koyu Tema"
+  },
+  "hero": {
+    "badge": "AI Destekli Kişiselleştirme",
+    "titlePart1": "Çocuğunuzu Kahramanı Olduğu ",
+    "titleHighlight": "Sihirli Hikayeler",
+    "titlePart2": " Yaratın",
+    "subtitle": "AI ile üretilen kişiselleştirilmiş hikaye kitaplarıyla çocuğunuzu kendi macerasının kahramanına dönüştürün. Hayal gücünü besleyen ve kalıcı anılar yaratan güzel illüstrasyonlu masallar.",
+    "cta": "Kitabınızı Oluşturun",
+    "seeExamples": "Örneklere Bak",
+    "transformation": {
+      "title": "Çocuğunuz, Kahraman",
+      "subtitle": "Büyünün gerçekleşmesini izleyin",
+      "realPhotoLabel": "Gerçek Fotoğraf",
+      "storyCharacterLabel": "Hikaye Karakteri",
+      "magicLabel": "Sihir!",
+      "aiPowered": "Yapay Zeka Destekli",
+      "personalized": "%100 Kişiselleştirilmiş",
+      "themes": {
+        "forest": "Orman Yolculuğu",
+        "space": "Uzay Macerası",
+        "castle": "Sihirli Kale",
+        "dinosaur": "Dinozor Ormanı"
+      },
+      "realPhotoName": "Arya",
+      "realPhotoAge": "1 Yaşında",
+      "ariaSwitchTheme": "{name} temasına geç",
+      "character": "karakter"
+    }
+  },
+  "howItWorks": {
+    "title": "Nasıl Çalışır?",
+    "subtitle": "Kişiselleştirilmiş hikaye kitabınızı sadece 3 adımda oluşturun",
+    "stepLabel": "Adım",
+    "step1": {
+      "title": "Karakteri Kişiselleştir",
+      "description": "Çocuğunuzun fotoğrafını yükleyin ve bilgilerini ekleyin (isim, yaş, görünüm)"
+    },
+    "step2": {
+      "title": "Hikaye Oluştur",
+      "description": "Tema ve illüstrasyon stili seçin. AI kişiselleştirilmiş bir hikaye üretir"
+    },
+    "step3": {
+      "title": "Kitabınızı Alın",
+      "description": "E-kitabınızı anında alın veya basılı ciltli versiyonu sipariş edin"
+    },
+    "cta": "Çocuğunuz için sihirli bir hikaye oluşturmaya hazır mısınız?"
+  },
+  "features": {
+    "title": "Neden KidStoryBook?",
+    "subtitle": "Sihirli hikayeler oluşturmak için ihtiyacınız olan her şey",
+    "aiPowered": {
+      "title": "AI Destekli Hikayeler",
+      "description": "Gelişmiş AI, çocuğunuza özel benzersiz hikayeler yaratır"
+    },
+    "artStyles": {
+      "title": "Çoklu Sanat Stilleri",
+      "description": "Suluboya, 3D animasyon, çizgi roman ve daha fazlasından seçin"
+    },
+    "characterMatch": {
+      "title": "Gerçek Karakter Eşleşmesi",
+      "description": "Çocuğunuz hikayenin gerçek kahramanı olur"
+    },
+    "ageAppropriate": {
+      "title": "Yaşa Uygun Hikayeler",
+      "description": "Çocuğunuzun yaşına ve gelişimine mükemmel şekilde uyarlanmış içerik"
+    },
+    "themes": {
+      "title": "Macera Temaları",
+      "description": "Uzaydan sualtına onlarca heyecan verici tema"
+    },
+    "digitalPhysical": {
+      "title": "Dijital ve Fiziksel",
+      "description": "Anında e-kitap alın veya güzel basılı ciltli sipariş edin"
+    }
+  },
+  "footer": {
+    "tagline": "Her çocukta hayal gücü ve merak uyandıran, sihirli kişiselleştirilmiş hikaye kitapları yaratıyoruz.",
+    "quickLinks": "Hızlı Bağlantılar",
+    "support": "Destek",
+    "newsletter": "Bülten",
+    "newsletterDesc": "Özel teklifler ve güncellemeler için abone olun.",
+    "emailPlaceholder": "E-posta adresinizi girin",
+    "subscribe": "Abone Ol",
+    "allRightsReserved": "Tüm hakları saklıdır.",
+    "scrollToTop": "Başa dön",
+    "links": {
+      "home": "Ana Sayfa",
+      "examples": "Örnekler",
+      "pricing": "Fiyatlandırma"
+    },
+    "supportLinks": {
+      "helpCenter": "Yardım Merkezi",
+      "contact": "İletişim",
+      "faq": "SSS",
+      "terms": "Koşullar"
+    },
+    "legalLinks": {
+      "privacyPolicy": "Gizlilik Politikası",
+      "termsOfService": "Kullanım Koşulları",
+      "cookiePolicy": "Çerez Politikası"
+    }
+  },
+  "auth": {
+    "common": {
+      "orContinueWith": "Veya şununla devam et",
+      "dataSecure": "Verileriniz güvende ve şifrelidir"
+    },
+    "login": {
+      "title": "Tekrar Hoş Geldiniz",
+      "subtitle": "Sihirli hikayeler oluşturmaya devam etmek için giriş yapın",
+      "emailLabel": "E-posta",
+      "emailPlaceholder": "email@adresiniz.com",
+      "passwordLabel": "Şifre",
+      "passwordPlaceholder": "Şifrenizi girin",
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifremi unuttum?",
+      "signInButton": "Giriş Yap",
+      "signingIn": "Giriş yapılıyor...",
+      "continueWithGoogle": "Google ile devam et",
+      "continueWithFacebook": "Facebook ile devam et",
+      "noAccount": "Hesabınız yok mu?",
+      "signUpLink": "Kayıt ol",
+      "errors": {
+        "invalidEmail": "Geçerli bir e-posta adresi girin",
+        "shortPassword": "Şifre en az 6 karakter olmalıdır",
+        "verifyEmail": "Giriş yapmadan önce e-posta adresinizi doğrulayın.",
+        "invalidCredentials": "Geçersiz e-posta veya şifre",
+        "generic": "Giriş başarısız. Lütfen tekrar deneyin."
+      }
+    },
+    "register": {
+      "title": "Hesabınızı Oluşturun",
+      "subtitle": "Çocuğunuz için sihirli hikayeler oluşturmaya başlayın",
+      "freeBenefitBadge": "Kayıt olduğunuzda 1 ücretsiz kitap kapağı alın!",
+      "fullNameLabel": "Ad Soyad",
+      "emailLabel": "E-posta",
+      "passwordLabel": "Şifre",
+      "confirmPasswordLabel": "Şifreyi Onayla",
+      "namePlaceholder": "Ahmet Yılmaz",
+      "emailPlaceholder": "email@adresiniz.com",
+      "passwordPlaceholder": "Şifre oluşturun",
+      "confirmPasswordPlaceholder": "Şifreyi onaylayın",
+      "agreeToTermsText": "Kabul ediyorum:",
+      "termsLink": "Kullanım Koşulları",
+      "agreeToPrivacyText": "Kabul ediyorum:",
+      "privacyLink": "Gizlilik Politikası",
+      "createButton": "Hesap Oluştur",
+      "creatingAccount": "Hesap oluşturuluyor...",
+      "alreadyHaveAccount": "Zaten bir hesabınız var mı?",
+      "signInLink": "Giriş yap",
+      "continueWithGoogle": "Google ile devam et",
+      "continueWithFacebook": "Facebook ile devam et",
+      "errors": {
+        "shortName": "İsim en az 2 karakter olmalıdır",
+        "termsRequired": "Kullanım Koşullarını kabul etmelisiniz",
+        "privacyRequired": "Gizlilik Politikasını kabul etmelisiniz",
+        "passwordMismatch": "Şifreler eşleşmiyor"
+      }
+    },
+    "forgotPassword": {
+      "title": "Şifrenizi mi Unuttunuz?",
+      "subtitle": "Endişelenmeyin! E-posta adresinizi girin, şifre sıfırlama bağlantısı gönderelim.",
+      "emailLabel": "E-posta Adresi",
+      "sendButton": "Sıfırlama Bağlantısı Gönder",
+      "sending": "Gönderiliyor...",
+      "backToSignIn": "Girişe Dön",
+      "successTitle": "E-postanızı Kontrol Edin",
+      "successSubtitle": "Şifre sıfırlama bağlantısı şu adrese gönderildi:",
+      "didntReceive": "E-postayı almadınız mı?",
+      "checkSpam": "Spam klasörünüzü kontrol edin veya birkaç dakika sonra tekrar deneyin.",
+      "sendAgain": "Tekrar Gönder",
+      "expiryNote": "Şifre sıfırlama bağlantınız 24 saat içinde geçerliliğini yitirir"
+    },
+    "verifyEmail": {
+      "loadingTitle": "E-posta Doğrulanıyor...",
+      "loadingSubtitle": "E-posta adresinizi doğrularken lütfen bekleyin",
+      "successTitle": "E-posta Doğrulandı!",
+      "successSubtitle": "E-posta adresiniz başarıyla doğrulandı. Artık hesabınıza giriş yapabilirsiniz.",
+      "signInNow": "Şimdi Giriş Yap",
+      "errorTitle": "Doğrulama Başarısız",
+      "errorSubtitle": "Doğrulama bağlantısı geçersiz veya süresi dolmuş. Lütfen yeni bir tane isteyin.",
+      "resendButton": "Doğrulama E-postasını Tekrar Gönder",
+      "pendingTitle": "E-postanızı Kontrol Edin",
+      "pendingSubtitle": "E-posta adresinize bir doğrulama e-postası gönderdik. Hesabınızı doğrulamak için e-postadaki bağlantıya tıklayın.",
+      "pendingSubtitleWithEmail": "{email} adresine bir doğrulama e-postası gönderdik. Hesabınızı doğrulamak için e-postadaki bağlantıya tıklayın.",
+      "didntReceive": "E-postayı almadınız mı?",
+      "checkSpam": "Spam klasörünüzü kontrol edin veya tekrar göndermek için aşağıdaki düğmeye tıklayın.",
+      "backToSignIn": "Girişe Dön"
+    }
+  },
+  "create": {
+    "common": {
+      "needHelp": "Yardıma mı ihtiyacınız var?",
+      "contactSupport": "Destek ile İletişim",
+      "back": "Geri",
+      "next": "İleri",
+      "saving": "Kaydediliyor..."
+    },
+    "step1": {
+      "stepProgress": "Adım 1 / 6",
+      "stepTitle": "Karakter Bilgileri",
+      "title": "Karakter Bilgileri",
+      "subtitle": "Çocuğunuz hakkında bize bilgi verin",
+      "nameLabel": "Çocuğun Adı",
+      "ageLabel": "Yaş",
+      "genderLabel": "Cinsiyet",
+      "hairLabel": "Saç Rengi",
+      "eyeLabel": "Göz Rengi",
+      "hairSelect": "Saç rengi seçin",
+      "eyeSelect": "Göz rengi seçin",
+      "namePlaceholder": "Çocuğun adını girin",
+      "agePlaceholder": "Yaşı girin (0-12)",
+      "genderBoy": "Erkek",
+      "genderGirl": "Kız",
+      "hairColors": {
+        "lightBlonde": "Açık Sarı",
+        "blonde": "Sarı",
+        "darkBlonde": "Koyu Sarı",
+        "black": "Siyah",
+        "brown": "Kahverengi",
+        "red": "Kızıl",
+        "white": "Beyaz"
+      },
+      "eyeColors": {
+        "blue": "Mavi",
+        "green": "Yeşil",
+        "brown": "Kahverengi",
+        "black": "Siyah",
+        "hazel": "Ela"
+      }
+    },
+    "step2": {
+      "stepProgress": "Adım 2 / 6",
+      "stepTitle": "Karakter ve Fotoğraf Ekle",
+      "title": "Karakter ve Fotoğraf Ekle",
+      "subtitle": "Karakterleriniz için fotoğraf yükleyin",
+      "photoTips": {
+        "title": "En iyi sonuç için",
+        "frontFacing": "Tam karşıdan fotoğraf (yüz kameraya baksın)",
+        "naturalLight": "Doğal ışık (güneş ışığı, yumuşak gölge)",
+        "plainBackground": "Sade arka plan (dikkat dağıtmayan)",
+        "naturalPose": "Doğal, rahat duruş",
+        "avoidProfile": "Yan veya profil açı tüm sayfalarda aynı açıya yol açar"
+      },
+      "characterTypes": {
+        "child": "Çocuk",
+        "familyMembers": "Aile Üyeleri",
+        "pets": "Evcil Hayvanlar",
+        "toys": "Oyuncaklar",
+        "other": "Diğer",
+        "dog": "Köpek",
+        "cat": "Kedi",
+        "mom": "Anne",
+        "dad": "Baba"
+      },
+      "gender": {
+        "boy": "Erkek",
+        "girl": "Kız"
+      },
+      "labels": {
+        "name": "İsim:",
+        "age": "Yaş:",
+        "gender": "Cinsiyet:",
+        "hair": "Saç:",
+        "eye": "Göz:"
+      },
+      "addCharacter": "Başka Karakter Ekle",
+      "photoReady": "Fotoğraf Hazır"
+    },
+    "step3": {
+      "stepProgress": "Adım 3 / 6",
+      "stepTitle": "Hikaye Ayarları",
+      "themeTitle": "Hikaye Temanızı Seçin",
+      "themeSubtitle": "Çocuğunuz nasıl bir macera yaşasın?",
+      "ageGroupTitle": "Yaş Grubu Seçin",
+      "languageTitle": "Hikaye Dili",
+      "themeDescriptions": {
+        "adventure": "Heyecanlı yolculuklar ve serüvenler",
+        "fairyTale": "Prensesler ve şatolarla dolu büyülü hikayeler",
+        "learning": "Bilim, gerçekler ve keşif maceraları",
+        "nature": "Doğada vahşi yaşam maceraları",
+        "sports": "Aktif maceralar ve takım ruhu",
+        "custom": "Kendi özgün hikaye fikriniz"
+      },
+      "ageGroupDescriptions": {
+        "0-2": "Basit kelimeler, parlak renkler, temel kavramlar",
+        "3-5": "Basit hikayeler, kolay kelime dağarcığı",
+        "6-9": "Daha karmaşık hikayeler, zengin kelime dağarcığı"
+      },
+      "ageGroupFeatures": {
+        "0-2": "Çok kısa cümleler, tekrarlayan kalıplar",
+        "3-5": "5-8 kelimelik cümleler, eğlenceli dil",
+        "6-9": "8-12 kelimelik cümleler, ilgi çekici olay örgüsü"
+      },
+      "themes": {
+        "adventure": "Macera",
+        "fairyTale": "Peri Masalı",
+        "learning": "Öğrenme ve Keşif",
+        "nature": "Doğa ve Hayvanlar",
+        "sports": "Spor ve Aktiviteler",
+        "custom": "Özel"
+      },
+      "ageGroups": {
+        "0-2": "0-2 Yaş",
+        "3-5": "3-5 Yaş",
+        "6-9": "6-9 Yaş",
+        "10+": "10+ Yaş"
+      },
+      "languages": {
+        "en": "English",
+        "tr": "Türkçe",
+        "de": "Deutsch",
+        "fr": "Français",
+        "es": "Español",
+        "zh": "中文",
+        "pt": "Português",
+        "ru": "Русский"
+      }
+    },
+    "step4": {
+      "stepProgress": "Adım 4 / 6",
+      "stepTitle": "İllüstrasyon Stili",
+      "title": "İllüstrasyon Stilini Seçin",
+      "subtitle": "Kitabınız nasıl görünsün?",
+      "styleDescriptions": {
+        "3d_animation": "Pixar tarzı 3D karakterler ve sahneler",
+        "comic": "Kalın çizgiler ve renkli paneller",
+        "geometric": "Modern şekiller ve desenler",
+        "kawaii": "Sevimli Japon tarzı karakterler",
+        "watercolor": "Yumuşak suluboya illüstrasyonlar",
+        "clay": "Çekici durak hareketi kil tarzı",
+        "collage": "Yaratıcı karma medya kolaj sanatı",
+        "block_world": "Bloklu piksel dünyası karakterleri",
+        "sticker": "Eğlenceli çıkartma tarzı sanat"
+      },
+      "styles": {
+        "3d_animation": "3D Animasyon (Pixar Tarzı)",
+        "comic": "Çizgi Roman",
+        "geometric": "Geometrik",
+        "kawaii": "Kawaii",
+        "watercolor": "Suluboya",
+        "clay": "Kil Animasyon",
+        "collage": "Kolaj",
+        "block_world": "Blok Dünya",
+        "sticker": "Çıkartma Sanatı"
+      }
+    },
+    "step5": {
+      "stepProgress": "Adım 5 / 6",
+      "stepTitle": "Hikaye Detayları",
+      "title": "Hikaye Detayları",
+      "subtitle": "Hikayen için özel isteklerini ekle",
+      "label": "Hikaye Fikriniz",
+      "pageCountLabel": "Sayfa Sayısı (İsteğe Bağlı)",
+      "placeholder": "Örn. Emma gizli bir kapı keşfediyor...",
+      "pageCountPlaceholder": "Boş bırakın (varsayılan: 12 sayfa)"
+    },
+    "step6": {
+      "stepProgress": "Adım 6 / 6",
+      "stepTitle": "İncele ve Oluştur",
+      "title": "İncele ve Oluştur",
+      "noCharacters": "Karakter eklenmedi",
+      "noPhotos": "Fotoğraf yüklenmedi",
+      "labels": {
+        "age": "Yaş:",
+        "gender": "Cinsiyet:",
+        "hairColor": "Saç Rengi:",
+        "eyeColor": "Göz Rengi:",
+        "type": "Tür:"
+      },
+      "createButton": "Ücretsiz Kapak Oluştur",
+      "exampleBookLanguage": "Örnek kitap dili",
+      "localeLabel": { "en": "İngilizce", "tr": "Türkçe" },
+      "toasts": {
+        "bookCreated": "Kitap oluşturuldu",
+        "freeCoverCreated": "Ücretsiz Kapak Oluşturuldu!",
+        "freeCoverCreatedDesc": "Ücretsiz kitap kapağınız önizlemeye hazır.",
+        "freeCoverError": "Ücretsiz kapak oluşturulamadı",
+        "storyRequired": "Hikaye fikri gerekli",
+        "storyRequiredDesc": "Özel tema için lütfen 5. adımda hikaye fikrinizi açıklayın.",
+        "charactersRequired": "Karakter gerekli",
+        "charactersRequiredDesc": "Önceki adımlarda önce karakter kaydedin.",
+        "bookStarted": "Kitap oluşturma başladı",
+        "bookStartedDesc": "Kitabınız oluşturuluyor.",
+        "createError": "Kitap oluşturulamadı",
+        "exampleCreated": "Örnek Kitap Oluşturuldu!",
+        "exampleCreatedDesc": "Örnek kitabınız oluşturuluyor. Hazır olduğunda Örnekler sayfasında görünecek.",
+        "exampleCreateError": "Örnek kitap oluşturulamadı",
+        "errorTitle": "Hata"
+      }
+    },
+    "fromExample": {
+      "title": "Kendi Kitabını Oluştur",
+      "backToExamples": "Örneklere Dön",
+      "labels": {
+        "childName": "Çocuğun Adı",
+        "age": "Yaş",
+        "gender": "Cinsiyet",
+        "hairColor": "Saç Rengi",
+        "eyeColor": "Göz Rengi",
+        "photo": "Fotoğraf *"
+      },
+      "namePlaceholder": "Çocuğun adını girin",
+      "agePlaceholder": "Yaşı girin (0-12)",
+      "hairPlaceholder": "Saç rengi seçin",
+      "eyePlaceholder": "Göz rengi seçin",
+      "uploadText": "Karakter fotoğrafı yükle",
+      "uploadSubtext": "Sürükle bırak veya göz at",
+      "uploadHint": "JPG veya PNG, max 5MB",
+      "toasts": {
+        "errorTitle": "Hata",
+        "exampleNotFound": "Örnek bulunamadı",
+        "failedToLoad": "Örnek yüklenemedi",
+        "uploadErrorTitle": "Yükleme Hatası",
+        "bookStartedTitle": "Kitap başladı",
+        "bookStartedDesc": "Kitabınız örnekten oluşturuluyor.",
+        "missingFieldsTitle": "Eksik alanlar",
+        "missingFieldsDesc": "Her karakter için isim, cinsiyet ve fotoğraf gereklidir.",
+        "errorDesc": "Bir şeyler yanlış gitti"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Kitaplığım",
+    "loading": "Yükleniyor...",
+    "selectAll": "Tümünü Seç",
+    "selectedCount": "{count} seçildi",
+    "total": "Toplam:",
+    "cancel": "İptal",
+    "addSelectedToCart": "Seçilenleri Sepete Ekle ({count})",
+    "selectBooks": "Kitap Seç",
+    "selectBooksShort": "Seç",
+    "createBookShort": "Kitap Oluştur",
+    "read": "Oku",
+    "edit": "Düzenle",
+    "addToCartHardcopy": "Sepete Ekle (Basılı)",
+    "createdOn": "Oluşturuldu",
+    "status": {
+      "completed": "Tamamlandı",
+      "inProgress": "Devam Ediyor",
+      "draft": "Taslak"
+    },
+    "tabs": {
+      "all": "Tüm Kitaplar",
+      "completed": "Tamamlanan",
+      "inProgress": "Devam Eden",
+      "drafts": "Taslaklar"
+    },
+    "sort": {
+      "dateNewest": "Tarih (Yeniden Eskiye)",
+      "dateOldest": "Tarih (Eskiden Yeniye)",
+      "titleAZ": "Başlık (A-Z)",
+      "titleZA": "Başlık (Z-A)"
+    },
+    "searchPlaceholder": "Kitaplarınızda arayın...",
+    "createNewBook": "Yeni Kitap Oluştur",
+    "empty": {
+      "title": "Henüz kitabınız yok",
+      "subtitle": "İlk sihirli hikaye kitabınızı oluşturun!"
+    },
+    "tooltips": {
+      "audio": "Sesli Okuma",
+      "downloadPdf": "PDF İndir",
+      "share": "Paylaş",
+      "delete": "Sil"
+    },
+    "toasts": {
+      "loadError": "Hata",
+      "loadErrorDesc": "Kitaplar yüklenemedi. Lütfen tekrar deneyin.",
+      "bookDeletedTitle": "Kitap Silindi",
+      "deleteConfirm": "Bu kitabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "deleteSuccess": "Kitap başarıyla silindi",
+      "deleteFailed": "Kitap silinemedi",
+      "deleteFailedTitle": "Silme Başarısız",
+      "pdfSuccessTitle": "PDF İndirildi!",
+      "pdfSuccessDesc": "Kitap PDF'iniz başarıyla indirildi.",
+      "pdfFailedTitle": "İndirme Başarısız",
+      "pdfFailedDesc": "PDF indirilemedi. Lütfen tekrar deneyin.",
+      "pdfSuccess": "PDF başarıyla indirildi",
+      "shareSoon": "Paylaşım özelliği yakında kullanılabilir olacak",
+      "noBooksSelectedTitle": "Kitap Seçilmedi",
+      "noBooksSelectedDesc": "Sepete eklemek için en az bir kitap seçin.",
+      "noValidBooksTitle": "Geçerli Kitap Yok",
+      "noValidBooksDesc": "Yalnızca tamamlanmış (satın alınmış) E-Kitaplar basılıya dönüştürülebilir.",
+      "someBooksSkippedTitle": "Bazı Kitaplar Atlandı",
+      "someBooksSkippedDesc": "Yalnızca tamamlanan kitaplar sepete eklendi. Taslak veya devam eden kitaplar basılıya dönüştürülemez.",
+      "addedToCartTitle": "Sepete Eklendi",
+      "addedToCartDesc": "{count} kitap sepete başarıyla eklendi.",
+      "addedSingleToCartDesc": "{title} sepete başarıyla eklendi.",
+      "failedAddToCartTitle": "Sepete Eklenemedi",
+      "failedAddToCartDesc": "Kitaplar sepete eklenemedi. Lütfen tekrar deneyin.",
+      "cannotAddToCartTitle": "Sepete Eklenemiyor",
+      "cannotAddToCartDesc": "Yalnızca tamamlanmış (satın alınmış) E-Kitaplar basılıya dönüştürülebilir."
+    },
+    "settings": {
+      "title": "Profil Ayarları",
+      "subtitle": "Hesap ayarlarınızı ve tercihlerinizi yönetin",
+      "openMenu": "Menüyü Aç",
+      "closeMenu": "Menüyü Kapat",
+      "nav": {
+        "profile": "Profil",
+        "account": "Hesap Ayarları",
+        "orders": "Sipariş Geçmişi",
+        "freeCover": "Ücretsiz Kapak Durumu",
+        "notifications": "Bildirimler",
+        "billing": "Faturalama"
+      },
+      "profile": {
+        "title": "Profil Bilgileri",
+        "subtitle": "Kişisel bilgilerinizi buradan güncelleyin",
+        "nameLabel": "Ad",
+        "namePlaceholder": "Adınızı girin",
+        "emailLabel": "E-posta",
+        "bioLabel": "Biyografi (İsteğe Bağlı)",
+        "bioPlaceholder": "Kendinizden bahsedin...",
+        "bioCharCount": "{count}/200 karakter",
+        "verified": "Doğrulandı",
+        "cancel": "İptal",
+        "saveChanges": "Değişiklikleri Kaydet",
+        "saving": "Kaydediliyor..."
+      },
+      "account": {
+        "title": "Hesap Ayarları",
+        "subtitle": "Hesap güvenliğinizi ve tercihlerinizi yönetin",
+        "emailLabel": "E-posta Adresi",
+        "passwordLabel": "Şifre",
+        "changePassword": "Şifre Değiştir",
+        "connectedAccounts": "Bağlı Hesaplar",
+        "connected": "Bağlandı",
+        "notConnected": "Bağlı değil",
+        "connect": "Bağlan",
+        "dangerZone": "Tehlikeli Bölge",
+        "dangerSubtitle": "Hesabınızı ve tüm verilerinizi kalıcı olarak silin",
+        "deleteAccount": "Hesabı Sil"
+      },
+      "orders": {
+        "title": "Sipariş Geçmişi",
+        "subtitle": "Kitap siparişlerinizi görüntüleyin ve yönetin",
+        "empty": "Henüz sipariş yok",
+        "orderId": "Sipariş No",
+        "bookTitle": "Kitap Adı",
+        "date": "Tarih",
+        "type": "Tür",
+        "status": "Durum",
+        "actions": "İşlemler",
+        "download": "İndir",
+        "view": "Görüntüle"
+      },
+      "freeCover": {
+        "title": "Ücretsiz Kapak Durumu",
+        "subtitle": "Ücretsiz kitap kapağı hakkınızı takip edin",
+        "used": "Kullanıldı",
+        "usedTitle": "Ücretsiz kapağınızı kullandınız",
+        "usedOn": "Kullanım tarihi:",
+        "howItWorksTitle": "Ücretsiz Kapak Nasıl Çalışır",
+        "item1": "Her kullanıcı bir ücretsiz özel kitap kapağı hakkı alır",
+        "item2": "Oluşturduğunuz herhangi bir kitap projesi için kullanın",
+        "item3": "Ek kapaklar her biri 9,99 $ karşılığında satın alınabilir",
+        "item4": "Ücretsiz kapağınız kullanılana kadar sona ermez"
+      },
+      "notifications": {
+        "title": "Bildirim Tercihleri",
+        "subtitle": "Almak istediğiniz bildirimleri seçin",
+        "emailLabel": "E-posta Bildirimleri",
+        "emailDesc": "Önemli güncellemeler için e-posta bildirimleri alın",
+        "orderUpdatesLabel": "Sipariş Güncellemeleri",
+        "orderUpdatesDesc": "Sipariş durumunuz ve kargo hakkında bildirim alın",
+        "newFeaturesLabel": "Yeni Özellikler",
+        "newFeaturesDesc": "Yeni özellikler ve ürün güncellemeleri hakkında bilgi edinin",
+        "marketingLabel": "Pazarlama E-postaları",
+        "marketingDesc": "Promosyon teklifleri ve özel fırsatlar alın",
+        "savePreferences": "Tercihleri Kaydet",
+        "saving": "Kaydediliyor..."
+      },
+      "billing": {
+        "paymentTitle": "Ödeme Yöntemleri",
+        "paymentSubtitle": "Ödeme yöntemlerinizi yönetin",
+        "endingIn": "ile biten",
+        "expires": "Son kullanma",
+        "addPaymentMethod": "Ödeme Yöntemi Ekle",
+        "historyTitle": "Fatura Geçmişi",
+        "historySubtitle": "Geçmiş işlemlerinizi görüntüleyin",
+        "date": "Tarih",
+        "description": "Açıklama",
+        "amount": "Tutar",
+        "status": "Durum",
+        "invoice": "Fatura"
+      },
+      "deleteDialog": {
+        "title": "Hesabı Sil",
+        "description": "Bu işlem geri alınamaz. Hesabınız ve sunucularımızdaki tüm verileriniz kalıcı olarak silinecektir.",
+        "cancel": "İptal",
+        "confirm": "Hesabı Sil"
+      },
+      "toasts": {
+        "profileSavedTitle": "Başarılı",
+        "profileSavedDesc": "Profil başarıyla güncellendi",
+        "notificationsSavedTitle": "Başarılı",
+        "notificationsSavedDesc": "Bildirim tercihleri kaydedildi",
+        "accountDeletedTitle": "Hesap Silindi",
+        "accountDeletedDesc": "Hesabınız kalıcı olarak silindi"
+      }
+    }
+  },
+  "examples": {
+    "title": "Örnek Kitaplar",
+    "subtitle": "Çocuğunuzun fotoğraflarından nasıl büyülü hikayeler oluşturduğumuzu keşfedin",
+    "loading": "Yükleniyor...",
+    "ageYrsSuffix": "yaş",
+    "ageFilter": {
+      "all": "Tümü",
+      "0-2": "0-2 yaş",
+      "3-5": "3-5 yaş",
+      "6-9": "6-9 yaş",
+      "10+": "10+ yaş"
+    },
+    "noExamples": "Bu yaş grubu için henüz örnek yok",
+    "noExamplesSubtitle": "Farklı bir yaş grubu seçebilir veya tüm örnekleri görüntüleyebilirsiniz.",
+    "viewAll": "Tüm Örnekleri Görüntüle",
+    "usedPhotos": "Kullanılan Fotoğraflar",
+    "noPhotos": "Fotoğraflar yakında eklenecek",
+    "before": "Önce",
+    "after": "Sonra",
+    "viewExample": "Örneği Görüntüle",
+    "createOwnBook": "Kendi Kitabını Oluştur",
+    "themes": {
+      "Adventure": "Macera",
+      "Science Fiction": "Bilim Kurgu",
+      "Fantasy": "Fantezi",
+      "Friendship": "Dostluk",
+      "Technology": "Teknoloji"
+    },
+    "characterNames": {
+      "Luna": "Ada",
+      "FriendMaya": "Arkadaş Mia",
+      "Alex": "Can",
+      "Emma": "Ece",
+      "HelperCoral": "Yardımcı Mercan",
+      "CaptainDolphin": "Kaptan Yunus",
+      "Baby": "Bebek",
+      "Zoe": "Zeynep",
+      "PrincessAria": "Prenses Arya"
+    },
+    "books": {
+      "lunas-forest": {
+        "title": "Ada'nın Sihirli Ormanı",
+        "description": "Küçük Ada, gizli bir ormanda konuşan hayvanlarla tanışır ve unutulmaz bir maceraya atılır.",
+        "theme": "Macera"
+      },
+      "journey-stars": {
+        "title": "Yıldızlara Yolculuk",
+        "description": "Cesur astronot Can, uzayın derinliklerinde yeni gezegenler keşfeder.",
+        "theme": "Bilim Kurgu"
+      },
+      "underwater-secret": {
+        "title": "Su Altındaki Sır",
+        "description": "Denizkızı Ece, okyanus derinliklerinde kayıp hazineyi arar.",
+        "theme": "Fantezi"
+      },
+      "baby-bear": {
+        "title": "Küçük Ayı ve Arkadaşları",
+        "description": "Sevimli küçük ayı, tüm mevsimlerde ormandaki arkadaşlarıyla eğlenir.",
+        "theme": "Dostluk"
+      },
+      "digital-heroes": {
+        "title": "Dijital Kahramanlar",
+        "description": "Teknoloji meraklısı çocuklar, sanal dünyada kötü yazılımlara karşı savaşır.",
+        "theme": "Teknoloji"
+      },
+      "princess-dragon": {
+        "title": "Prenses ve Ejderha",
+        "description": "Cesur prenses, ejderhayı yenmek yerine onunla arkadaş olur.",
+        "theme": "Fantezi"
+      }
+    }
+  },
+  "pricing": {
+    "ebooks": "tamamlanmış E-Kitap",
+    "securePayment": "Güvenli ödeme",
+    "hero": {
+      "title": "Mükemmel Hikaye Kitabını Oluştur",
+      "subtitle": "Dakikalar içinde kişiselleştirilmiş çocuk kitapları"
+    },
+    "ebook": {
+      "type": "E-Kitap",
+      "typeLabel": "Dijital",
+      "pages": "12 sayfa",
+      "feature1": "Anında indirme",
+      "feature2": "PDF formatı",
+      "feature3": "Yüksek kaliteli illüstrasyonlar",
+      "feature4": "Kişiselleştirilmiş hikaye",
+      "cta": "Kitabını Oluşturmaya Başla",
+      "ctaSubtitle": "Adım adım kişiselleştirilmiş kitabını oluştur"
+    },
+    "hardcoverInfo": {
+      "title": "Kitaplığımda sert kapağa dönüştür",
+      "subtitle": "Tamamlanan E-Kitaplardan basılı kitap sipariş et"
+    },
+    "bookAppearance": {
+      "title": "Kitabın Görünümü",
+      "format": "A4 Format",
+      "dimensions": "21 x 29,7 cm",
+      "dimensionsCm": "(8.27 x 11.69 inç)",
+      "qualityTitle": "Kalite ve Detaylar",
+      "quality1Title": "Büyük A4 Format (21 x 29,7 cm):",
+      "quality1Desc": "Renkli illüstrasyonlar ve optimal okuma deneyimi için mükemmel",
+      "quality2Title": "Dayanıklı Sert Kapak:",
+      "quality2Desc": "Sayısız sayfa çevirmeden sonra bile güzel kalır",
+      "quality3Title": "Premium Renk Kalitesi:",
+      "quality3Desc": "Parlak ve canlı renkler hikayeyi hayata geçirir",
+      "quality4Title": "Yüksek Kaliteli Kaplamalı Kağıt:",
+      "quality4Desc": "Lüks bir görünüm ve ekstra koruma için",
+      "quality5Title": "Sihirle Dolu 12 Sayfa:",
+      "quality5Desc": "Güzel bir hikaye ve büyüleyici görseller için yeterli alan",
+      "quality6Title": "Mat veya Parlak Kapak:",
+      "quality6Desc": "Sert kapak için istediğiniz yüzeyi seçin"
+    },
+    "trust": {
+      "securePayment": "Güvenli ödeme",
+      "moneyBack": "Para iade garantisi",
+      "trustedBy": "Binlerce ebeveynin güveni"
+    }
+  },
+  "cart": {
+    "title": "Alışveriş Sepeti",
+    "subtitle": "Sert kapak kitap seçimlerinizi inceleyin",
+    "continueShopping": "Alışverişe Devam Et",
+    "empty": {
+      "title": "Sepetiniz boş",
+      "subtitle": "Başlamak için Kitaplığımdan kitap ekleyin",
+      "goToLibrary": "Kitaplığıma Git"
+    },
+    "hardcoverBook": "Sert Kapak Kitap",
+    "ebookPlan": "E-Kitap Planı ({n} sayfa)",
+    "quantity": "Miktar:",
+    "remove": "Kaldır",
+    "orderSummary": "Sipariş Özeti",
+    "subtotal": "Ara Toplam",
+    "shipping": "Kargo",
+    "shippingFree": "Ücretsiz",
+    "shippingNA": "Yok",
+    "total": "Toplam",
+    "proceedToCheckout": "Ödemeye Geç"
+  },
+  "checkout": {
+    "title": "Ödeme",
+    "subtitle": "Satın alımınızı tamamlayın",
+    "backToCart": "Sepete Dön",
+    "customerInfo": "Müşteri Bilgileri",
+    "emailLabel": "E-posta",
+    "fullNameLabel": "Ad Soyad (İsteğe Bağlı)",
+    "paymentMethod": "Ödeme Yöntemi",
+    "paymentPlaceholder": "Ödeme entegrasyonu yakında eklenecek. Şu an deneme ödeme akışı.",
+    "completePurchase": "Satın Almayı Tamamla",
+    "processing": "İşleniyor...",
+    "success": {
+      "title": "Sipariş Onaylandı!",
+      "subtitle": "Satın alımınız için teşekkür ederiz",
+      "orderIdLabel": "Sipariş No",
+      "emailSent": "E-posta başarıyla gönderildi",
+      "emailSending": "Onay e-postası gönderiliyor...",
+      "emailSentDesc": "İndirme bağlantıları için gelen kutunuzu kontrol edin",
+      "emailSendingDesc": "Sipariş onayınızı gönderirken lütfen bekleyin",
+      "whatsNext": "Sırada Ne Var?",
+      "step1": "Siparişiniz onaylandı",
+      "step2": "İndirme bağlantıları için e-postanızı kontrol edin (varsa)",
+      "step3": "Kitaplarınızı Kitaplığımda görüntüleyin",
+      "viewLibrary": "Kitaplığımda Görüntüle",
+      "continueShopping": "Alışverişe Devam Et"
+    },
+    "shipping": {
+      "title": "Teslimat Adresi",
+      "streetLabel": "Sokak Adresi *",
+      "streetPlaceholder": "Örn. Atatürk Cad. No:1",
+      "cityLabel": "Şehir",
+      "cityPlaceholder": "İstanbul",
+      "stateLabel": "İlçe/Bölge",
+      "statePlaceholder": "Kadıköy",
+      "zipLabel": "Posta Kodu",
+      "zipPlaceholder": "34710",
+      "phoneLabel": "Telefon Numarası",
+      "phonePlaceholder": "+90 555 123 4567"
+    },
+    "plan": {
+      "title": "Kitap Planınızı Seçin",
+      "subtitle": "Kişiselleştirilmiş kitabınız için sayfa sayısını seçin",
+      "selected": "Seçildi",
+      "pages": "{n} Sayfa",
+      "cancel": "İptal",
+      "addToCart": "Sepete Ekle",
+      "10pages": {
+        "title": "10 Sayfa",
+        "description": "Kısa ve tatlı bir hikaye için mükemmel",
+        "feature1": "10 sayfa",
+        "feature2": "Hızlı okuma",
+        "feature3": "Uyku vakti için ideal"
+      },
+      "15pages": {
+        "title": "15 Sayfa",
+        "description": "Çoğu hikaye için ideal uzunluk",
+        "feature1": "15 sayfa",
+        "feature2": "Dengeli hikaye",
+        "feature3": "Daha fazla illüstrasyon"
+      },
+      "20pages": {
+        "title": "20 Sayfa",
+        "description": "Daha fazla detaylı uzun macera",
+        "feature1": "20 sayfa",
+        "feature2": "Detaylı hikaye",
+        "feature3": "Zengin illüstrasyonlar"
+      }
+    }
+  },
+  "draftPreview": {
+    "title": "Taslak Önizleme",
+    "subtitle": "Kişiselleştirilmiş kitap kapağınız hazır!",
+    "backToLibrary": "Kitaplığıma Dön",
+    "backToHome": "Ana Sayfaya Dön",
+    "characterLabel": "Karakter:",
+    "themeLabel": "Tema:",
+    "styleLabel": "Stil:",
+    "createdLabel": "Oluşturuldu:",
+    "draftCover": "Taslak Kapak",
+    "buyFullBook": "Tam Kitabı Satın Al",
+    "loginToSave": "Kaydetmek için Giriş Yap",
+    "shareEmail": "E-posta ile Paylaş",
+    "toasts": {
+      "draftNotFoundTitle": "Taslak bulunamadı",
+      "draftNotFoundDesc": "Bu taslak süresi dolmuş veya mevcut değil",
+      "loadErrorTitle": "Hata",
+      "loadErrorDesc": "Taslak yüklenemedi",
+      "emailComingSoonTitle": "Yakında",
+      "emailComingSoonDesc": "E-posta paylaşım özelliği yakında kullanılabilir olacak",
+      "addedToCartTitle": "Sepete eklendi",
+      "addedToCartDesc": "E-Kitap planı sepetinize eklendi"
+    },
+    "planModal": {
+      "title": "E-Kitap Planını Seç",
+      "subtitle": "Hikaye kitabınız için sayfa sayısını seçin",
+      "pages": "{n} Sayfa",
+      "youngerChildren": "küçük",
+      "middleChildren": "orta yaş",
+      "olderChildren": "büyük",
+      "perfectFor": "{age} çocuklar için mükemmel",
+      "cancel": "İptal",
+      "addToCart": "Sepete Ekle"
+    }
+  },
+  "bookViewer": {
+    "loadError": "Kitap yüklenemedi. Giriş yapmanız gerekebilir.",
+    "loading": "Yükleniyor...",
+    "loadingBook": "Kitap yükleniyor...",
+    "bookNotFound": "Kitap bulunamadı",
+    "goBack": "Geri Dön",
+    "noPagesYet": "Bu kitabın henüz sayfası yok. Yalnızca kapak içeren bir kitap.",
+    "pageOf": "Sayfa {current} / {total}",
+    "autoReading": "Otomatik okuma",
+    "autoSeconds": "Otomatik ({count}s)",
+    "parentSettings": "Ebeveyn Ayarları",
+    "stopReading": "Okumayı durdur",
+    "startReading": "Bu sayfadan başla, sayfaları sırayla oku",
+    "saveFailed": "Kaydetme başarısız",
+    "settings": {
+      "backToBook": "Kitaba Dön",
+      "title": "Kitap Ayarları",
+      "quotaUnlimited": "Sınırsız (Admin)",
+      "quotaRemaining": "{remaining}/{total} Değişiklik Hakkı",
+      "bookInfoTitle": "Kitap Bilgileri",
+      "titleLabel": "Başlık",
+      "themeLabel": "Tema",
+      "illustrationStyleLabel": "Çizim Stili",
+      "languageLabel": "Dil",
+      "statusLabel": "Durum",
+      "totalPagesLabel": "Toplam Sayfa",
+      "editImagesTitle": "Görselleri Düzenle",
+      "editImagesDesc": "Sayfa görsellerini düzeltin veya yeniden oluşturun. {count} değişiklik hakkınız kaldı (düzenleme veya yeniden oluşturma).",
+      "editImagesDescUnlimited": "Sayfa görsellerini düzeltin veya yeniden oluşturun. Sınırsız değişiklik (admin).",
+      "coverLabel": "Kapak",
+      "storyLabel": "Hikaye",
+      "pageLabel": "{n}. Sayfa",
+      "editImage": "Görseli Düzenle",
+      "regenerate": "Yeniden Oluştur",
+      "editHistoryTitle": "Düzenleme Geçmişi",
+      "viewAllVersions": "Tüm Versiyonları Görüntüle",
+      "actionsTitle": "İşlemler",
+      "downloadPdf": "PDF İndir",
+      "downloading": "İndiriliyor...",
+      "shareBook": "Kitabı Paylaş",
+      "deleteBook": "Kitabı Sil",
+      "deleting": "Siliniyor...",
+      "loading": "Kitap ayarları yükleniyor...",
+      "bookNotFound": "Kitap bulunamadı",
+      "backToDashboard": "Kitaplığa Dön",
+      "toasts": {
+        "pdfSuccessTitle": "Başarılı",
+        "pdfSuccessDesc": "PDF başarıyla indirildi",
+        "pdfErrorTitle": "Hata",
+        "pdfErrorDesc": "PDF indirilemedi",
+        "shareTitle": "Yakında",
+        "shareDesc": "Paylaşım özelliği yakında kullanılabilir olacak",
+        "deleteSuccessTitle": "Başarılı",
+        "deleteSuccessDesc": "Kitap başarıyla silindi",
+        "deleteErrorTitle": "Hata",
+        "deleteErrorDesc": "Kitap silinemedi",
+        "loadErrorTitle": "Hata",
+        "deleteConfirm": "Bu kitabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+      }
+    },
+    "regenerate": {
+      "title": "Görseli Yeniden Oluştur",
+      "description": "Bu sayfa için yeni bir görsel oluşturun. Hikaye metni aynı kalır; sahne değişebilir.",
+      "storyTextLabel": "Bu sayfanın hikaye metni",
+      "instructionLabel": "Yeni sahne nasıl görünmeli? (isteğe bağlı)",
+      "placeholder": "örn. Aynı karakterler ama ormanda yerine güneşli bir parkta",
+      "button": "Yeniden Oluştur",
+      "success": "Başarılı!",
+      "failed": "Yeniden Oluşturma Başarısız"
+    },
+    "editImage": {
+      "title": "Görseli Düzenle",
+      "paintLabel": "Düzenlemek İstediğiniz Alanları Boyayın (Kırmızı = Düzenleme Bölgesi)",
+      "instructionLabel": "Ne düzeltmek veya değiştirmek istiyorsunuz? *",
+      "placeholder": "Örnek: Ellerini ayırın, el ele tutuşmasınlar",
+      "brush": "Fırça",
+      "eraser": "Silgi",
+      "clear": "Temizle",
+      "editButton": "Görseli Düzenle",
+      "promptRequired": "Açıklama Gerekli",
+      "success": "Başarılı!",
+      "failed": "Düzenleme Başarısız"
+    },
+    "editHistory": {
+      "title": "Düzenleme Geçmişi",
+      "totalEdits": "Toplam Kullanılan Düzenleme",
+      "cover": "Kapak",
+      "page": "{n}. Sayfa",
+      "original": "Orijinal",
+      "version": "{n}. Sürüm",
+      "current": "Güncel",
+      "empty": "Henüz düzenleme geçmişi yok",
+      "revert": "Bu sürüme geri dön",
+      "loadFailed": "Düzenleme geçmişi yüklenemedi",
+      "revertFailed": "Görsel geri alınamadı"
+    }
+  },
+  "cookies": {
+    "title": "Çerez Tercihleri",
+    "customizeTitle": "Çerez Tercihlerini Özelleştirin",
+    "description": "Deneyiminizi geliştirmek için çerezler kullanıyoruz. Hangi çerezlere izin verdiğinizi seçin.",
+    "bannerDescription": "Deneyiminizi geliştirmek, site kullanımını analiz etmek ve pazarlama çalışmalarımıza yardımcı olmak için çerezler kullanıyoruz. 'Tümünü Kabul Et' seçeneğine tıklayarak çerez kullanımımıza onay vermiş olursunuz.",
+    "acceptAll": "Tümünü Kabul Et",
+    "decline": "Reddet",
+    "customize": "Özelleştir",
+    "learnMore": "Daha fazla bilgi",
+    "savePreferences": "Tercihleri Kaydet",
+    "essential": {
+      "title": "Zorunlu Çerezler (Her Zaman Aktif)",
+      "description": "Web sitesinin düzgün çalışması için gereklidir."
+    },
+    "analytics": {
+      "title": "Analitik Çerezler",
+      "description": "Ziyaretçilerin sitemizi nasıl kullandığını anlamamıza yardımcı olur."
+    },
+    "marketing": {
+      "title": "Pazarlama Çerezleri",
+      "description": "Size ilgili reklamlar göstermek için kullanılır."
+    }
+  },
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "KidStoryBook hakkında bilmeniz gereken her şey",
+    "stillHaveQuestions": "Hâlâ sorunuz var mı?",
+    "contactUs": "Bize Ulaşın",
+    "q0": "Nasıl çalışır?",
+    "a0": "Çok basit! Çocuğunuzun fotoğrafını yükleyin, tema ve stil seçin; yapay zekamız kişiselleştirilmiş bir hikaye kitabı oluşturur. E-kitap olarak indirebilir veya basılı ciltli versiyon sipariş edebilirsiniz.",
+    "q1": "Kitap oluşturmak ne kadar sürer?",
+    "a1": "E-kitaplar 2 saat içinde hazır olur. Basılı kitaplar baskı ve kargo için 3-5 hafta sürer.",
+    "q2": "Hikayeyi özelleştirebilir miyim?",
+    "a2": "Evet! Çeşitli temalar (macera, peri masalı, bilim kurgu vb.) arasından seçim yapabilir ve çocuğunuzun yaş grubunu belirleyebilirsiniz. Yapay zeka hikayeyi buna göre şekillendirir.",
+    "q3": "Hangi yaş grupları destekleniyor?",
+    "a3": "Kitaplarımız 0-2, 3-5, 6-9 ve 10+ yaş çocuklar için tasarlanmıştır. İçerik ve karmaşıklık seçilen yaş grubuna göre ayarlanır.",
+    "q4": "Birden fazla fotoğraf kullanabilir miyim?",
+    "a4": "Evet, kitap başına 5 karakter fotoğrafına kadar yükleyebilirsiniz. Bunlar çocuğunuz, aile üyeleri, evcil hayvanlar veya oyuncaklar olabilir.",
+    "q5": "Hangi formatlar mevcut?",
+    "a5": "E-kitaplar anında indirme için PDF dosyası olarak sunulmaktadır. Basılı kitaplar yüksek kaliteli baskıyla A4 (21x29,7 cm) ciltli olarak gelmektedir.",
+    "q6": "Çocuğumun fotoğrafı güvende mi?",
+    "a6": "Güvenli şifreleme kullanıyor ve katı gizlilik politikalarına uyuyoruz. Fotoğraflarınız yalnızca kişiselleştirilmiş kitabınızı oluşturmak için kullanılır ve üçüncü taraflarla paylaşılmaz.",
+    "q7": "İade alabilir miyim?",
+    "a7": "Evet, para iade garantisi sunuyoruz. E-kitabınızdan memnun kalmazsanız tam iade için 30 gün içinde bizimle iletişime geçin.",
+    "q8": "Uluslararası gönderim yapıyor musunuz?",
+    "a8": "Evet! Dünya genelinde 26'dan fazla ülkeye basılı kitap gönderimi yapıyoruz. Kargo süreleri konuma göre değişir (genellikle 3-5 hafta).",
+    "q9": "Birden fazla kopya sipariş edebilir miyim?",
+    "a9": "Evet! Aynı kitabın birden fazla kopyasını sipariş edebilirsiniz. 3 veya daha fazla kitap siparişlerinde indirim sunuyoruz."
+  },
+  "campaign": {
+    "shipping": {
+      "title": "Tüm Basılı Kitaplarda Ücretsiz Kargo",
+      "description": "Minimum sipariş şartı yok",
+      "cta": "Hemen Sipariş Ver"
+    },
+    "discount": {
+      "title": "İlk Siparişinizde %10 İndirim",
+      "description": "Ödeme sırasında kodu kullanın: FIRST10",
+      "cta": "Başla"
+    },
+    "bundle": {
+      "title": "Sınırlı Süre: E-Kitap + Basılı Kitap Paketi",
+      "description": "Paket alımlarda %15 tasarruf edin",
+      "cta": "Teklifi Görüntüle"
+    }
+  },
+  "authCallback": {
+    "loadingTitle": "Giriş Tamamlanıyor...",
+    "loadingDesc": "Kimlik doğrulamanız tamamlanırken lütfen bekleyin",
+    "successTitle": "Giriş Başarılı!",
+    "successDesc": "Başarıyla giriş yaptınız. Yönlendiriliyorsunuz...",
+    "successButton": "Ana Sayfaya Git",
+    "errorTitle": "Giriş Başarısız",
+    "errorButton": "Tekrar Dene",
+    "errorHomeButton": "Ana Sayfaya Git"
+  },
+  "homePricing": {
+    "title": "Fiyatlandırma",
+    "subtitle": "Çocuğunuz için mükemmel seçeneği belirleyin",
+    "ebook": {
+      "title": "E-Kitap",
+      "type": "Dijital",
+      "pages": "12 sayfa",
+      "feature1": "Anında indirme",
+      "feature2": "PDF formatı",
+      "feature3": "Yüksek kaliteli illüstrasyonlar",
+      "feature4": "Kişiselleştirilmiş hikaye",
+      "cta": "Başlayın"
+    },
+    "hardcover": {
+      "title": "Baskı Kitap",
+      "type": "Fiziksel",
+      "feature1": "Ciltli kitap",
+      "feature2": "A4 format",
+      "feature3": "Ücretsiz kargo",
+      "availableIn": "Kitaplığımda Mevcut",
+      "convertText": "E-Kitaplarınızı ciltliye dönüştürün",
+      "viewInLibrary": "Kitaplıkta Görüntüle"
+    },
+    "trust": "Güvenli ödeme • Para iade garantisi • Binlerce ebeveyn tarafından güvenilen"
+  },
+  "homeExamples": {
+    "title": "Örnek Kitaplar",
+    "subtitle": "Fotoğrafların sihirli hikayelere nasıl dönüştüğünü görün",
+    "viewExample": "Örneği Görüntüle",
+    "ageYearsSuffix": "yaş",
+    "ageYearsPlus": "10+ yaş"
+  },
+  "errors": {
+    "unauthorized": "Yetkisiz erişim",
+    "forbidden": "Erişim yasak",
+    "notFound": "Kaynak bulunamadı",
+    "badRequest": "Geçersiz istek",
+    "validation": "Doğrulama hatası",
+    "server": "Sunucu hatası",
+    "unavailable": "Servis kullanılamıyor",
+    "rateLimit": "İstek limiti aşıldı",
+    "unexpected": "Beklenmedik bir hata oluştu",
+    "networkError": "Bağlantı hatası. İnternet bağlantınızı kontrol edin.",
+    "timeout": "İşlem çok uzun sürdü. Lütfen tekrar deneyin.",
+    "tryAgain": "Bir sorun oluştu. Lütfen tekrar deneyin."
+  }
+}

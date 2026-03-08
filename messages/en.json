@@ -1,0 +1,1154 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "error": "Error",
+    "success": "Success",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "open": "Open",
+    "search": "Search",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "create": "Create",
+    "update": "Update",
+    "view": "View",
+    "download": "Download",
+    "share": "Share",
+    "retry": "Try Again"
+  },
+  "metadata": {
+    "siteName": "KidStoryBook",
+    "home": {
+      "title": "KidStoryBook - Personalized Children's Books with AI",
+      "description": "Create AI-powered personalized storybooks with your child's photo. Magical stories where your child is the hero.",
+      "ogTitle": "KidStoryBook - Personalized Children's Books with AI",
+      "ogDescription": "Create magical personalized storybooks with your child's photo. Powered by AI, printed with love."
+    },
+    "examples": {
+      "title": "Example Books - KidStoryBook",
+      "description": "Browse our example personalized children's books and see how your child's story could look.",
+      "ogTitle": "Example Personalized Children's Books",
+      "ogDescription": "See how your child's personalized storybook could look. Browse AI-generated examples."
+    },
+    "pricing": {
+      "title": "Pricing - KidStoryBook",
+      "description": "Choose the perfect plan for your personalized storybook. E-book or hardcover printing available.",
+      "ogTitle": "KidStoryBook Pricing Plans",
+      "ogDescription": "Affordable plans for your personalized children's storybook. E-book and hardcover options."
+    },
+    "dashboard": {
+      "title": "My Library - KidStoryBook",
+      "description": "Manage your personalized children's books"
+    },
+    "cart": {
+      "title": "Cart - KidStoryBook",
+      "description": "Your shopping cart"
+    },
+    "checkout": {
+      "title": "Checkout - KidStoryBook",
+      "description": "Complete your order"
+    },
+    "create": {
+      "title": "Create Your Book - KidStoryBook",
+      "description": "Start creating a personalized storybook for your child"
+    },
+    "authLogin": {
+      "title": "Sign In - KidStoryBook",
+      "description": "Sign in to your KidStoryBook account"
+    },
+    "authRegister": {
+      "title": "Create Account - KidStoryBook",
+      "description": "Create your free KidStoryBook account"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "examples": "Examples",
+    "pricing": "Pricing",
+    "createBook": "Create a children's book",
+    "create": "Create",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "logout": "Logout",
+    "myLibrary": "My Library",
+    "settings": "Settings",
+    "shoppingCart": "Shopping Cart",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "hero": {
+    "badge": "AI-Powered Personalization",
+    "titlePart1": "Create ",
+    "titleHighlight": "Magical Stories",
+    "titlePart2": " Starring Your Child",
+    "subtitle": "Transform your child into the hero of their own adventure with AI-generated personalized storybooks. Beautifully illustrated tales that inspire imagination and create lasting memories.",
+    "cta": "Create Your Book",
+    "seeExamples": "See Examples",
+    "transformation": {
+      "title": "Your Child, The Hero",
+      "subtitle": "Watch the magic happen",
+      "realPhotoLabel": "Real Photo",
+      "storyCharacterLabel": "Story Character",
+      "magicLabel": "Magic!",
+      "aiPowered": "AI Powered",
+      "personalized": "100% Personalized",
+      "themes": {
+        "forest": "Forest Journey",
+        "space": "Space Adventure",
+        "castle": "Magical Castle",
+        "dinosaur": "Dinosaur Jungle"
+      },
+      "realPhotoName": "Arya",
+      "realPhotoAge": "Age 1",
+      "ariaSwitchTheme": "Switch to {name}",
+      "character": "character"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Create your personalized storybook in just 3 simple steps",
+    "stepLabel": "Step",
+    "step1": {
+      "title": "Personalize Your Character",
+      "description": "Upload your child's photo and add their details (name, age, appearance)"
+    },
+    "step2": {
+      "title": "Create Your Story",
+      "description": "Choose a theme and illustration style. AI generates a personalized story"
+    },
+    "step3": {
+      "title": "Get Your Book",
+      "description": "Receive your e-book instantly or order a printed hardcover version"
+    },
+    "cta": "Ready to create a magical story for your child?"
+  },
+  "features": {
+    "title": "Why KidStoryBook?",
+    "subtitle": "Everything you need to create magical stories",
+    "aiPowered": {
+      "title": "AI-Powered Stories",
+      "description": "Advanced AI creates personalized stories uniquely tailored to your child"
+    },
+    "artStyles": {
+      "title": "Multiple Art Styles",
+      "description": "Choose from watercolor, 3D animation, comic book and more"
+    },
+    "characterMatch": {
+      "title": "True Character Match",
+      "description": "Your child becomes the real hero of the story"
+    },
+    "ageAppropriate": {
+      "title": "Age-Appropriate Stories",
+      "description": "Content perfectly matched to your child's age and development"
+    },
+    "themes": {
+      "title": "Adventure Themes",
+      "description": "Dozens of exciting themes from space to underwater adventures"
+    },
+    "digitalPhysical": {
+      "title": "Digital & Physical",
+      "description": "Get an instant e-book or order a beautiful printed hardcover"
+    }
+  },
+  "footer": {
+    "tagline": "Creating magical personalized storybooks that inspire imagination and wonder in every child.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "newsletter": "Newsletter",
+    "newsletterDesc": "Subscribe to get special offers and updates.",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "allRightsReserved": "All rights reserved.",
+    "scrollToTop": "Scroll to top",
+    "links": {
+      "home": "Home",
+      "examples": "Examples",
+      "pricing": "Pricing"
+    },
+    "supportLinks": {
+      "helpCenter": "Help Center",
+      "contact": "Contact",
+      "faq": "FAQ",
+      "terms": "Terms"
+    },
+    "legalLinks": {
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "cookiePolicy": "Cookie Policy"
+    }
+  },
+  "auth": {
+    "common": {
+      "orContinueWith": "Or continue with",
+      "dataSecure": "Your data is secure and encrypted"
+    },
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to continue creating magical stories",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing in...",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithFacebook": "Continue with Facebook",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "errors": {
+        "invalidEmail": "Please enter a valid email address",
+        "shortPassword": "Password must be at least 6 characters",
+        "verifyEmail": "Please verify your email address before logging in.",
+        "invalidCredentials": "Invalid email or password",
+        "generic": "Login failed. Please try again."
+      }
+    },
+    "register": {
+      "title": "Create Your Account",
+      "subtitle": "Start creating magical stories for your child",
+      "freeBenefitBadge": "Get 1 free book cover when you sign up!",
+      "fullNameLabel": "Full Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "namePlaceholder": "John Doe",
+      "emailPlaceholder": "your@email.com",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "agreeToTermsText": "I agree to the",
+      "termsLink": "Terms & Conditions",
+      "agreeToPrivacyText": "I agree to the",
+      "privacyLink": "Privacy Policy",
+      "createButton": "Create Account",
+      "creatingAccount": "Creating account...",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithFacebook": "Continue with Facebook",
+      "errors": {
+        "shortName": "Name must be at least 2 characters",
+        "termsRequired": "You must agree to the Terms & Conditions",
+        "privacyRequired": "You must agree to the Privacy Policy",
+        "passwordMismatch": "Passwords do not match"
+      }
+    },
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "No worries! Enter your email address and we'll send you a link to reset your password.",
+      "emailLabel": "Email Address",
+      "sendButton": "Send Reset Link",
+      "sending": "Sending...",
+      "backToSignIn": "Back to Sign In",
+      "successTitle": "Check Your Email",
+      "successSubtitle": "We've sent a password reset link to",
+      "didntReceive": "Didn't receive the email?",
+      "checkSpam": "Check your spam folder or try again in a few minutes.",
+      "sendAgain": "Send Again",
+      "expiryNote": "Your password reset link will expire in 24 hours"
+    },
+    "verifyEmail": {
+      "loadingTitle": "Verifying Email...",
+      "loadingSubtitle": "Please wait while we verify your email address",
+      "successTitle": "Email Verified!",
+      "successSubtitle": "Your email address has been successfully verified. You can now sign in to your account.",
+      "signInNow": "Sign In Now",
+      "errorTitle": "Verification Failed",
+      "errorSubtitle": "The verification link is invalid or has expired. Please request a new one.",
+      "resendButton": "Resend Verification Email",
+      "pendingTitle": "Check Your Email",
+      "pendingSubtitle": "We've sent a verification email to your email address. Please click the link in the email to verify your account.",
+      "pendingSubtitleWithEmail": "We've sent a verification email to {email}. Please click the link in the email to verify your account.",
+      "didntReceive": "Didn't receive the email?",
+      "checkSpam": "Check your spam folder or click the button below to resend.",
+      "backToSignIn": "Back to Sign In"
+    }
+  },
+  "create": {
+    "common": {
+      "needHelp": "Need help?",
+      "contactSupport": "Contact Support",
+      "back": "Back",
+      "next": "Next",
+      "saving": "Saving..."
+    },
+    "step1": {
+      "stepProgress": "Step 1 of 6",
+      "stepTitle": "Character Information",
+      "title": "Character Information",
+      "subtitle": "Tell us about your child",
+      "nameLabel": "Child's Name",
+      "ageLabel": "Age",
+      "genderLabel": "Gender",
+      "hairLabel": "Hair Color",
+      "eyeLabel": "Eye Color",
+      "hairSelect": "Select hair color",
+      "eyeSelect": "Select eye color",
+      "namePlaceholder": "Enter child's name",
+      "agePlaceholder": "Enter age (0-12)",
+      "genderBoy": "Boy",
+      "genderGirl": "Girl",
+      "hairColors": {
+        "lightBlonde": "Light Blonde",
+        "blonde": "Blonde",
+        "darkBlonde": "Dark Blonde",
+        "black": "Black",
+        "brown": "Brown",
+        "red": "Red",
+        "white": "White"
+      },
+      "eyeColors": {
+        "blue": "Blue",
+        "green": "Green",
+        "brown": "Brown",
+        "black": "Black",
+        "hazel": "Hazel"
+      }
+    },
+    "step2": {
+      "stepProgress": "Step 2 of 6",
+      "stepTitle": "Add Characters & Photos",
+      "title": "Add Characters & Photos",
+      "subtitle": "Upload photos for your characters",
+      "photoTips": {
+        "title": "Tips for best results",
+        "frontFacing": "Front-facing photo (face looking at camera)",
+        "naturalLight": "Natural light (sunlight, soft shadow)",
+        "plainBackground": "Plain background (non-distracting)",
+        "naturalPose": "Natural, relaxed pose",
+        "avoidProfile": "Side/profile angle leads to same angle on all pages"
+      },
+      "characterTypes": {
+        "child": "Child",
+        "familyMembers": "Family Members",
+        "pets": "Pets",
+        "toys": "Toys",
+        "other": "Other",
+        "dog": "Dog",
+        "cat": "Cat",
+        "mom": "Mom",
+        "dad": "Dad"
+      },
+      "gender": {
+        "boy": "Boy",
+        "girl": "Girl"
+      },
+      "labels": {
+        "name": "Name:",
+        "age": "Age:",
+        "gender": "Gender:",
+        "hair": "Hair:",
+        "eye": "Eye:"
+      },
+      "addCharacter": "Add Another Character",
+      "photoReady": "Photo Ready"
+    },
+    "step3": {
+      "stepProgress": "Step 3 of 6",
+      "stepTitle": "Story Settings",
+      "themeTitle": "Choose Your Story Theme",
+      "themeSubtitle": "What kind of adventure should your child have?",
+      "ageGroupTitle": "Select Age Group",
+      "languageTitle": "Story Language",
+      "themeDescriptions": {
+        "adventure": "Exciting journeys and thrilling quests",
+        "fairyTale": "Magical stories with princesses and castles",
+        "learning": "Science, facts, and cosmic adventures",
+        "nature": "Wildlife adventures in nature",
+        "sports": "Active adventures and team spirit",
+        "custom": "Your own unique story idea"
+      },
+      "ageGroupDescriptions": {
+        "0-2": "Simple words, bright colors, basic concepts",
+        "3-5": "Simple stories, easy vocabulary",
+        "6-9": "More complex stories, richer vocabulary"
+      },
+      "ageGroupFeatures": {
+        "0-2": "Very short sentences, repetitive patterns",
+        "3-5": "5-8 word sentences, playful language",
+        "6-9": "8-12 word sentences, engaging plots"
+      },
+      "themes": {
+        "adventure": "Adventure",
+        "fairyTale": "Fairy Tale",
+        "learning": "Learning & Discovery",
+        "nature": "Nature & Animals",
+        "sports": "Sports & Activities",
+        "custom": "Custom"
+      },
+      "ageGroups": {
+        "0-2": "0-2 Years",
+        "3-5": "3-5 Years",
+        "6-9": "6-9 Years",
+        "10+": "10+ Years"
+      },
+      "languages": {
+        "en": "English",
+        "tr": "Türkçe",
+        "de": "Deutsch",
+        "fr": "Français",
+        "es": "Español",
+        "zh": "中文",
+        "pt": "Português",
+        "ru": "Русский"
+      }
+    },
+    "step4": {
+      "stepProgress": "Step 4 of 6",
+      "stepTitle": "Illustration Style",
+      "title": "Choose Your Illustration Style",
+      "subtitle": "How should your book look?",
+      "styleDescriptions": {
+        "3d_animation": "Pixar-like 3D characters and scenes",
+        "comic": "Bold lines and colorful panels",
+        "geometric": "Modern shapes and patterns",
+        "kawaii": "Cute Japanese-inspired characters",
+        "watercolor": "Soft painted watercolor illustrations",
+        "clay": "Charming stop-motion clay style",
+        "collage": "Creative mixed-media collage art",
+        "block_world": "Blocky pixel-world characters",
+        "sticker": "Fun and playful sticker-style art"
+      },
+      "styles": {
+        "3d_animation": "3D Animation (Pixar Style)",
+        "comic": "Comic Book",
+        "geometric": "Geometric",
+        "kawaii": "Kawaii",
+        "watercolor": "Watercolor",
+        "clay": "Clay Animation",
+        "collage": "Collage",
+        "block_world": "Block World",
+        "sticker": "Sticker Art"
+      }
+    },
+    "step5": {
+      "stepProgress": "Step 5 of 6",
+      "stepTitle": "Story Details",
+      "title": "Story Details",
+      "subtitle": "Add any special requests for your story",
+      "label": "Your Story Idea",
+      "pageCountLabel": "Page Count (Optional)",
+      "placeholder": "E.g., Emma discovers a hidden door...",
+      "pageCountPlaceholder": "Leave empty for default (12 pages)"
+    },
+    "step6": {
+      "stepProgress": "Step 6 of 6",
+      "stepTitle": "Review & Create",
+      "title": "Review & Create",
+      "noCharacters": "No characters added",
+      "noPhotos": "No photos uploaded",
+      "labels": {
+        "age": "Age:",
+        "gender": "Gender:",
+        "hairColor": "Hair Color:",
+        "eyeColor": "Eye Color:",
+        "type": "Type:"
+      },
+      "createButton": "Create Free Cover",
+      "exampleBookLanguage": "Example book language",
+      "localeLabel": { "en": "English", "tr": "Turkish" },
+      "toasts": {
+        "bookCreated": "Book created",
+        "freeCoverCreated": "Free Cover Created!",
+        "freeCoverCreatedDesc": "Your free book cover is ready to preview.",
+        "freeCoverError": "Failed to create free cover",
+        "storyRequired": "Story idea required",
+        "storyRequiredDesc": "For Custom theme, please describe your story idea in Step 5.",
+        "charactersRequired": "Characters required",
+        "charactersRequiredDesc": "Save character(s) in previous steps first.",
+        "bookStarted": "Book creation started",
+        "bookStartedDesc": "Your book is being generated.",
+        "createError": "Failed to create book",
+        "exampleCreated": "Example Book Created!",
+        "exampleCreatedDesc": "Your example book is being generated. It will appear on the Examples page when ready.",
+        "exampleCreateError": "Failed to create example book",
+        "errorTitle": "Error"
+      }
+    },
+    "fromExample": {
+      "title": "Create Your Own Book",
+      "backToExamples": "Back to Examples",
+      "labels": {
+        "childName": "Child's Name",
+        "age": "Age",
+        "gender": "Gender",
+        "hairColor": "Hair Color",
+        "eyeColor": "Eye Color",
+        "photo": "Photo *"
+      },
+      "namePlaceholder": "Enter child's name",
+      "agePlaceholder": "Enter age (0-12)",
+      "hairPlaceholder": "Select hair color",
+      "eyePlaceholder": "Select eye color",
+      "uploadText": "Upload character photo",
+      "uploadSubtext": "Drag and drop or click to browse",
+      "uploadHint": "JPG or PNG, max 5MB",
+      "toasts": {
+        "errorTitle": "Error",
+        "exampleNotFound": "Example not found",
+        "failedToLoad": "Failed to load example",
+        "uploadErrorTitle": "Upload Error",
+        "bookStartedTitle": "Book started",
+        "bookStartedDesc": "Your book is being generated from the example.",
+        "missingFieldsTitle": "Missing fields",
+        "missingFieldsDesc": "Each character needs a name, gender, and photo.",
+        "errorDesc": "Something went wrong"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "My Library",
+    "loading": "Loading...",
+    "selectAll": "Select All",
+    "selectedCount": "{count} selected",
+    "total": "Total:",
+    "cancel": "Cancel",
+    "addSelectedToCart": "Add Selected to Cart ({count})",
+    "selectBooks": "Select Books",
+    "selectBooksShort": "Select",
+    "createBookShort": "Create Book",
+    "read": "Read",
+    "edit": "Edit",
+    "addToCartHardcopy": "Add to Cart (Hardcopy)",
+    "createdOn": "Created",
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "draft": "Draft"
+    },
+    "tabs": {
+      "all": "All Books",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "drafts": "Drafts"
+    },
+    "sort": {
+      "dateNewest": "Date (Newest)",
+      "dateOldest": "Date (Oldest)",
+      "titleAZ": "Title (A-Z)",
+      "titleZA": "Title (Z-A)"
+    },
+    "searchPlaceholder": "Search your books...",
+    "createNewBook": "Create New Book",
+    "empty": {
+      "title": "No books yet",
+      "subtitle": "Create your first magical storybook!"
+    },
+    "tooltips": {
+      "audio": "Audio",
+      "downloadPdf": "Download PDF",
+      "share": "Share",
+      "delete": "Delete"
+    },
+    "toasts": {
+      "loadError": "Error",
+      "loadErrorDesc": "Failed to load books. Please try again.",
+      "bookDeletedTitle": "Book Deleted",
+      "deleteConfirm": "Are you sure you want to delete this book? This action cannot be undone.",
+      "deleteSuccess": "Book deleted successfully",
+      "deleteFailed": "Failed to delete book",
+      "deleteFailedTitle": "Delete Failed",
+      "pdfSuccessTitle": "PDF Downloaded!",
+      "pdfSuccessDesc": "Your book PDF has been downloaded successfully.",
+      "pdfFailedTitle": "Download Failed",
+      "pdfFailedDesc": "Failed to download PDF. Please try again.",
+      "pdfSuccess": "PDF downloaded successfully",
+      "shareSoon": "Share functionality will be available soon",
+      "noBooksSelectedTitle": "No Books Selected",
+      "noBooksSelectedDesc": "Please select at least one book to add to cart.",
+      "noValidBooksTitle": "No Valid Books",
+      "noValidBooksDesc": "Only completed (purchased) E-Books can be converted to hardcopy.",
+      "someBooksSkippedTitle": "Some Books Skipped",
+      "someBooksSkippedDesc": "Only completed books were added to cart. Draft or in-progress books cannot be converted to hardcopy.",
+      "addedToCartTitle": "Added to Cart",
+      "addedToCartDesc": "{count} book(s) added to cart successfully.",
+      "addedSingleToCartDesc": "{title} added to cart successfully.",
+      "failedAddToCartTitle": "Failed to Add to Cart",
+      "failedAddToCartDesc": "Failed to add books to cart. Please try again.",
+      "cannotAddToCartTitle": "Cannot Add to Cart",
+      "cannotAddToCartDesc": "Only completed (purchased) E-Books can be converted to hardcopy."
+    },
+    "settings": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your account settings and preferences",
+      "openMenu": "Open Menu",
+      "closeMenu": "Close Menu",
+      "nav": {
+        "profile": "Profile",
+        "account": "Account Settings",
+        "orders": "Order History",
+        "freeCover": "Free Cover Status",
+        "notifications": "Notifications",
+        "billing": "Billing"
+      },
+      "profile": {
+        "title": "Profile Information",
+        "subtitle": "Update your personal details here",
+        "nameLabel": "Name",
+        "namePlaceholder": "Enter your name",
+        "emailLabel": "Email",
+        "bioLabel": "Bio (Optional)",
+        "bioPlaceholder": "Tell us about yourself...",
+        "bioCharCount": "{count}/200 characters",
+        "verified": "Verified",
+        "cancel": "Cancel",
+        "saveChanges": "Save Changes",
+        "saving": "Saving..."
+      },
+      "account": {
+        "title": "Account Settings",
+        "subtitle": "Manage your account security and preferences",
+        "emailLabel": "Email Address",
+        "passwordLabel": "Password",
+        "changePassword": "Change Password",
+        "connectedAccounts": "Connected Accounts",
+        "connected": "Connected",
+        "notConnected": "Not connected",
+        "connect": "Connect",
+        "dangerZone": "Danger Zone",
+        "dangerSubtitle": "Permanently delete your account and all data",
+        "deleteAccount": "Delete Account"
+      },
+      "orders": {
+        "title": "Order History",
+        "subtitle": "View and manage your book orders",
+        "empty": "No orders yet",
+        "orderId": "Order ID",
+        "bookTitle": "Book Title",
+        "date": "Date",
+        "type": "Type",
+        "status": "Status",
+        "actions": "Actions",
+        "download": "Download",
+        "view": "View"
+      },
+      "freeCover": {
+        "title": "Free Cover Status",
+        "subtitle": "Track your free book cover benefit",
+        "used": "Used",
+        "usedTitle": "You've used your free cover",
+        "usedOn": "Used on:",
+        "howItWorksTitle": "How Free Cover Works",
+        "item1": "Every user receives one free custom book cover",
+        "item2": "Use it for any book project you create",
+        "item3": "Additional covers can be purchased at $9.99 each",
+        "item4": "Your free cover never expires until used"
+      },
+      "notifications": {
+        "title": "Notification Preferences",
+        "subtitle": "Choose what notifications you want to receive",
+        "emailLabel": "Email Notifications",
+        "emailDesc": "Receive email notifications for important updates",
+        "orderUpdatesLabel": "Order Updates",
+        "orderUpdatesDesc": "Get notified about your order status and shipping",
+        "newFeaturesLabel": "New Features",
+        "newFeaturesDesc": "Learn about new features and product updates",
+        "marketingLabel": "Marketing Emails",
+        "marketingDesc": "Receive promotional offers and special deals",
+        "savePreferences": "Save Preferences",
+        "saving": "Saving..."
+      },
+      "billing": {
+        "paymentTitle": "Payment Methods",
+        "paymentSubtitle": "Manage your payment methods",
+        "endingIn": "ending in",
+        "expires": "Expires",
+        "addPaymentMethod": "Add Payment Method",
+        "historyTitle": "Billing History",
+        "historySubtitle": "View your past transactions",
+        "date": "Date",
+        "description": "Description",
+        "amount": "Amount",
+        "status": "Status",
+        "invoice": "Invoice"
+      },
+      "deleteDialog": {
+        "title": "Delete Account",
+        "description": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
+        "cancel": "Cancel",
+        "confirm": "Delete Account"
+      },
+      "toasts": {
+        "profileSavedTitle": "Success",
+        "profileSavedDesc": "Profile updated successfully",
+        "notificationsSavedTitle": "Success",
+        "notificationsSavedDesc": "Notification preferences saved",
+        "accountDeletedTitle": "Account Deleted",
+        "accountDeletedDesc": "Your account has been permanently deleted"
+      }
+    }
+  },
+  "examples": {
+    "title": "Example Books",
+    "subtitle": "Discover how we create magical stories from your child's photos",
+    "loading": "Loading...",
+    "ageYrsSuffix": "yrs",
+    "ageFilter": {
+      "all": "All",
+      "0-2": "0-2 years",
+      "3-5": "3-5 years",
+      "6-9": "6-9 years",
+      "10+": "10+ years"
+    },
+    "noExamples": "No examples available for this age group yet",
+    "noExamplesSubtitle": "You can select a different age group or view all examples.",
+    "viewAll": "View All Examples",
+    "usedPhotos": "Used Photos",
+    "noPhotos": "Photos will be added soon",
+    "before": "Before",
+    "after": "After",
+    "viewExample": "View Example",
+    "createOwnBook": "Create Your Own Book",
+    "themes": {
+      "Adventure": "Adventure",
+      "Science Fiction": "Science Fiction",
+      "Fantasy": "Fantasy",
+      "Friendship": "Friendship",
+      "Technology": "Technology"
+    },
+    "characterNames": {
+      "Luna": "Luna",
+      "FriendMaya": "Friend Maya",
+      "Alex": "Alex",
+      "Emma": "Emma",
+      "HelperCoral": "Helper Coral",
+      "CaptainDolphin": "Captain Dolphin",
+      "Baby": "Baby",
+      "Zoe": "Zoe",
+      "PrincessAria": "Princess Aria"
+    },
+    "books": {
+      "lunas-forest": {
+        "title": "Luna's Magical Forest",
+        "description": "Little Luna meets talking animals in a hidden forest and embarks on an unforgettable adventure.",
+        "theme": "Adventure"
+      },
+      "journey-stars": {
+        "title": "Journey to the Stars",
+        "description": "Brave astronaut Alex explores new planets in the depths of space.",
+        "theme": "Science Fiction"
+      },
+      "underwater-secret": {
+        "title": "The Underwater Secret",
+        "description": "Mermaid Emma searches for lost treasure in the ocean depths.",
+        "theme": "Fantasy"
+      },
+      "baby-bear": {
+        "title": "Baby Bear and Friends",
+        "description": "Adorable baby bear has fun with friends in the forest throughout the seasons.",
+        "theme": "Friendship"
+      },
+      "digital-heroes": {
+        "title": "Digital Heroes",
+        "description": "Tech-savvy kids battle evil software in the virtual world.",
+        "theme": "Technology"
+      },
+      "princess-dragon": {
+        "title": "The Princess and the Dragon",
+        "description": "Brave princess befriends the dragon instead of defeating it.",
+        "theme": "Fantasy"
+      }
+    }
+  },
+  "pricing": {
+    "ebooks": "completed E-Books",
+    "securePayment": "Secure payment",
+    "hero": {
+      "title": "Create Your Perfect Storybook",
+      "subtitle": "Personalized children's books in minutes"
+    },
+    "ebook": {
+      "type": "E-Book",
+      "typeLabel": "Digital",
+      "pages": "12 pages",
+      "feature1": "Instant download",
+      "feature2": "PDF format",
+      "feature3": "High-quality illustrations",
+      "feature4": "Personalized story",
+      "cta": "Start Creating Your Book",
+      "ctaSubtitle": "Create your personalized book step by step"
+    },
+    "hardcoverInfo": {
+      "title": "Convert to hardcover in My Library",
+      "subtitle": "Order printed books from completed E-Books"
+    },
+    "bookAppearance": {
+      "title": "Appearance of the Book",
+      "format": "A4 Format",
+      "dimensions": "8.27 x 11.69 inches",
+      "dimensionsCm": "(21 x 29.7 cm)",
+      "qualityTitle": "Quality and Details",
+      "quality1Title": "Large A4 Format (8.27 x 11.69 inches):",
+      "quality1Desc": "Perfect for colorful illustrations and optimal reading experience",
+      "quality2Title": "Durable Hardcover Finish:",
+      "quality2Desc": "Remains beautiful, even after countless page turns",
+      "quality3Title": "Premium Color Quality:",
+      "quality3Desc": "Brilliant and vibrant colors bring the story to life",
+      "quality4Title": "High-Quality Coated Paper:",
+      "quality4Desc": "For a luxurious appearance and extra protection",
+      "quality5Title": "12 Pages Full of Magic:",
+      "quality5Desc": "Enough space for a beautiful story and enchanting images",
+      "quality6Title": "Matte or Glossy Cover:",
+      "quality6Desc": "Choose the desired finish for the hardcover cover"
+    },
+    "trust": {
+      "securePayment": "Secure payment",
+      "moneyBack": "Money-back guarantee",
+      "trustedBy": "Trusted by thousands of parents"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "subtitle": "Review your hardcover book selections",
+    "continueShopping": "Continue Shopping",
+    "empty": {
+      "title": "Your cart is empty",
+      "subtitle": "Add books from My Library to get started",
+      "goToLibrary": "Go to My Library"
+    },
+    "hardcoverBook": "Hardcover Book",
+    "ebookPlan": "E-Book Plan ({n} pages)",
+    "quantity": "Quantity:",
+    "remove": "Remove",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingFree": "Free",
+    "shippingNA": "N/A",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Complete your purchase",
+    "backToCart": "Back to Cart",
+    "customerInfo": "Customer Information",
+    "emailLabel": "Email",
+    "fullNameLabel": "Full Name (Optional)",
+    "paymentMethod": "Payment Method",
+    "paymentPlaceholder": "Payment integration will be added soon. This is a mock checkout flow.",
+    "completePurchase": "Complete Purchase",
+    "processing": "Processing...",
+    "success": {
+      "title": "Order Confirmed!",
+      "subtitle": "Thank you for your purchase",
+      "orderIdLabel": "Order ID",
+      "emailSent": "Email sent successfully",
+      "emailSending": "Sending confirmation email...",
+      "emailSentDesc": "Check your inbox for download links",
+      "emailSendingDesc": "Please wait while we send your order confirmation",
+      "whatsNext": "What's Next?",
+      "step1": "Your order has been confirmed",
+      "step2": "Check your email for download links (if applicable)",
+      "step3": "View your books in My Library",
+      "viewLibrary": "View in My Library",
+      "continueShopping": "Continue Shopping"
+    },
+    "shipping": {
+      "title": "Shipping Address",
+      "streetLabel": "Street Address *",
+      "streetPlaceholder": "123 Main St",
+      "cityLabel": "City",
+      "cityPlaceholder": "Istanbul",
+      "stateLabel": "State/Province",
+      "statePlaceholder": "Istanbul",
+      "zipLabel": "ZIP/Postal Code",
+      "zipPlaceholder": "34000",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+90 555 123 4567"
+    },
+    "plan": {
+      "title": "Choose Your Book Plan",
+      "subtitle": "Select the number of pages for your personalized book",
+      "selected": "Selected",
+      "pages": "{n} Pages",
+      "cancel": "Cancel",
+      "addToCart": "Add to Cart",
+      "10pages": {
+        "title": "10 Pages",
+        "description": "Perfect for a short, sweet story",
+        "feature1": "10 pages",
+        "feature2": "Quick read",
+        "feature3": "Perfect for bedtime"
+      },
+      "15pages": {
+        "title": "15 Pages",
+        "description": "Ideal length for most stories",
+        "feature1": "15 pages",
+        "feature2": "Balanced story",
+        "feature3": "More illustrations"
+      },
+      "20pages": {
+        "title": "20 Pages",
+        "description": "Extended adventure with more details",
+        "feature1": "20 pages",
+        "feature2": "Detailed story",
+        "feature3": "Rich illustrations"
+      }
+    }
+  },
+  "draftPreview": {
+    "title": "Draft Preview",
+    "subtitle": "Your personalized book cover is ready!",
+    "backToLibrary": "Back to My Library",
+    "backToHome": "Back to Home",
+    "characterLabel": "Character:",
+    "themeLabel": "Theme:",
+    "styleLabel": "Style:",
+    "createdLabel": "Created:",
+    "draftCover": "Draft Cover",
+    "buyFullBook": "Buy Full Book",
+    "loginToSave": "Login to Save",
+    "shareEmail": "Share via Email",
+    "toasts": {
+      "draftNotFoundTitle": "Draft not found",
+      "draftNotFoundDesc": "This draft may have expired or doesn't exist",
+      "loadErrorTitle": "Error",
+      "loadErrorDesc": "Failed to load draft",
+      "emailComingSoonTitle": "Coming soon",
+      "emailComingSoonDesc": "Email sharing feature will be available soon",
+      "addedToCartTitle": "Added to cart",
+      "addedToCartDesc": "E-Book plan has been added to your cart"
+    },
+    "planModal": {
+      "title": "Select E-Book Plan",
+      "subtitle": "Choose the number of pages for your storybook",
+      "pages": "{n} Pages",
+      "youngerChildren": "younger",
+      "middleChildren": "middle",
+      "olderChildren": "older",
+      "perfectFor": "Perfect for {age} children",
+      "cancel": "Cancel",
+      "addToCart": "Add to Cart"
+    }
+  },
+  "bookViewer": {
+    "loadError": "Book could not be loaded. You may need to sign in.",
+    "loading": "Loading...",
+    "loadingBook": "Loading book...",
+    "bookNotFound": "Book not found",
+    "goBack": "Go Back",
+    "noPagesYet": "This book has no pages yet. It's a cover-only book.",
+    "pageOf": "Page {current} of {total}",
+    "autoReading": "Auto-reading",
+    "autoSeconds": "Auto ({count}s)",
+    "parentSettings": "Parent Settings",
+    "stopReading": "Stop reading",
+    "startReading": "Play pages in order starting from this page",
+    "saveFailed": "Save failed",
+    "settings": {
+      "backToBook": "Back to Book",
+      "title": "Book Settings",
+      "quotaUnlimited": "Unlimited (Admin)",
+      "quotaRemaining": "{remaining}/{total} Changes Left",
+      "bookInfoTitle": "Book Information",
+      "titleLabel": "Title",
+      "themeLabel": "Theme",
+      "illustrationStyleLabel": "Illustration Style",
+      "languageLabel": "Language",
+      "statusLabel": "Status",
+      "totalPagesLabel": "Total Pages",
+      "editImagesTitle": "Edit Images",
+      "editImagesDesc": "Fix or regenerate page images. You have {count} change(s) remaining (edit or regenerate).",
+      "editImagesDescUnlimited": "Fix or regenerate page images. Unlimited changes (admin).",
+      "coverLabel": "Cover",
+      "storyLabel": "Story",
+      "pageLabel": "Page {n}",
+      "editImage": "Edit Image",
+      "regenerate": "Regenerate",
+      "editHistoryTitle": "Edit History",
+      "viewAllVersions": "View All Versions",
+      "actionsTitle": "Actions",
+      "downloadPdf": "Download PDF",
+      "downloading": "Downloading...",
+      "shareBook": "Share Book",
+      "deleteBook": "Delete Book",
+      "deleting": "Deleting...",
+      "loading": "Loading book settings...",
+      "bookNotFound": "Book not found",
+      "backToDashboard": "Back to Dashboard",
+      "toasts": {
+        "pdfSuccessTitle": "Success",
+        "pdfSuccessDesc": "PDF downloaded successfully",
+        "pdfErrorTitle": "Error",
+        "pdfErrorDesc": "Failed to download PDF",
+        "shareTitle": "Coming Soon",
+        "shareDesc": "Share functionality will be available soon",
+        "deleteSuccessTitle": "Success",
+        "deleteSuccessDesc": "Book deleted successfully",
+        "deleteErrorTitle": "Error",
+        "deleteErrorDesc": "Failed to delete book",
+        "loadErrorTitle": "Error",
+        "deleteConfirm": "Are you sure you want to delete this book? This action cannot be undone."
+      }
+    },
+    "regenerate": {
+      "title": "Regenerate Image",
+      "description": "Create a new image for this page. Story text stays the same; the scene can change.",
+      "storyTextLabel": "Story text for this page",
+      "instructionLabel": "How should the new scene look? (optional)",
+      "placeholder": "e.g. Same characters but in a sunny park instead of the forest",
+      "button": "Regenerate",
+      "success": "Success!",
+      "failed": "Regenerate Failed"
+    },
+    "editImage": {
+      "title": "Edit Image",
+      "paintLabel": "Paint the Areas You Want to Edit (Red = Edit Zone)",
+      "instructionLabel": "What do you want to fix or change? *",
+      "placeholder": "Example: Separate their hands so they're not holding hands",
+      "brush": "Brush",
+      "eraser": "Eraser",
+      "clear": "Clear",
+      "editButton": "Edit Image",
+      "promptRequired": "Prompt Required",
+      "success": "Success!",
+      "failed": "Edit Failed"
+    },
+    "editHistory": {
+      "title": "Edit History",
+      "totalEdits": "Total Edits Used",
+      "cover": "Cover",
+      "page": "Page {n}",
+      "original": "Original",
+      "version": "Version {n}",
+      "current": "Current",
+      "empty": "No edit history yet",
+      "revert": "Revert to this version",
+      "loadFailed": "Failed to load edit history",
+      "revertFailed": "Failed to revert image"
+    }
+  },
+  "cookies": {
+    "title": "Cookie Preferences",
+    "customizeTitle": "Customize Cookie Preferences",
+    "description": "We use cookies to enhance your experience. Choose which cookies you allow.",
+    "bannerDescription": "We use cookies to enhance your experience, analyze site usage, and assist in our marketing efforts. By clicking 'Accept All', you consent to our use of cookies.",
+    "acceptAll": "Accept All",
+    "decline": "Decline",
+    "customize": "Customize",
+    "learnMore": "Learn more",
+    "savePreferences": "Save Preferences",
+    "essential": {
+      "title": "Essential Cookies (Always Active)",
+      "description": "Required for the website to function properly."
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "description": "Help us understand how visitors use our website."
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "description": "Used to show you relevant advertisements."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about KidStoryBook",
+    "stillHaveQuestions": "Still have questions?",
+    "contactUs": "Contact Us",
+    "q0": "How does it work?",
+    "a0": "It's simple! Upload your child's photo, choose a theme and style, and our AI creates a personalized storybook. You can download it as an e-book or order a printed hardcover version.",
+    "q1": "How long does it take to create a book?",
+    "a1": "E-books are ready within 2 hours. Printed books take 3-5 weeks for printing and delivery.",
+    "q2": "Can I customize the story?",
+    "a2": "Yes! You can choose from various themes (adventure, fairy tale, science fiction, etc.) and select your child's age group. The AI tailors the story accordingly.",
+    "q3": "What age groups are supported?",
+    "a3": "Our books are designed for children aged 0-2, 3-5, 6-9, and 10+ years. The content and complexity are adjusted based on the selected age group.",
+    "q4": "Can I use multiple photos?",
+    "a4": "Yes, you can upload up to 5 character photos per book. These can include your child, family members, pets, or toys.",
+    "q5": "What formats are available?",
+    "a5": "E-books are available as PDF files for instant download. Printed books come as hardcover, A4 format (21x29.7 cm) with high-quality printing.",
+    "q6": "Is my child's photo secure?",
+    "a6": "We use secure encryption and follow strict privacy policies. Your photos are used solely for creating your personalized book and are not shared with third parties.",
+    "q7": "Can I get a refund?",
+    "a7": "Yes, we offer a money-back guarantee. If you're not satisfied with your e-book, contact us within 30 days for a full refund.",
+    "q8": "Do you ship internationally?",
+    "a8": "Yes! We ship printed books to over 26 countries worldwide. Shipping times vary by location (typically 3-5 weeks).",
+    "q9": "Can I order multiple copies?",
+    "a9": "Yes! You can order multiple copies of the same book. We offer discounts for orders of 3 or more books."
+  },
+  "campaign": {
+    "shipping": {
+      "title": "Free Shipping on All Printed Books",
+      "description": "No minimum order required",
+      "cta": "Order Now"
+    },
+    "discount": {
+      "title": "10% Off Your First Order",
+      "description": "Use code: FIRST10 at checkout",
+      "cta": "Get Started"
+    },
+    "bundle": {
+      "title": "Limited Time: Get E-Book + Printed Book Bundle",
+      "description": "Save 15% on combo packages",
+      "cta": "View Offer"
+    }
+  },
+  "authCallback": {
+    "loadingTitle": "Completing Sign In...",
+    "loadingDesc": "Please wait while we complete your authentication",
+    "successTitle": "Sign In Successful!",
+    "successDesc": "You have been successfully signed in. Redirecting...",
+    "successButton": "Go to Home",
+    "errorTitle": "Sign In Failed",
+    "errorButton": "Try Again",
+    "errorHomeButton": "Go to Home"
+  },
+  "homePricing": {
+    "title": "Pricing",
+    "subtitle": "Choose the perfect option for your child",
+    "ebook": {
+      "title": "E-Book",
+      "type": "Digital",
+      "pages": "12 pages",
+      "feature1": "Instant download",
+      "feature2": "PDF format",
+      "feature3": "High-quality illustrations",
+      "feature4": "Personalized story",
+      "cta": "Get Started"
+    },
+    "hardcover": {
+      "title": "Printed Book",
+      "type": "Physical",
+      "feature1": "Hardcover book",
+      "feature2": "A4 format",
+      "feature3": "Free shipping",
+      "availableIn": "Available in My Library",
+      "convertText": "Convert your E-Books to hardcover",
+      "viewInLibrary": "View in Library"
+    },
+    "trust": "Secure payment • Money-back guarantee • Trusted by thousands of parents"
+  },
+  "homeExamples": {
+    "title": "Example Books",
+    "subtitle": "See how photos become magical stories",
+    "viewExample": "View Example",
+    "ageYearsSuffix": "years",
+    "ageYearsPlus": "10+ years"
+  },
+  "errors": {
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Resource not found",
+    "badRequest": "Bad Request",
+    "validation": "Validation Error",
+    "server": "Internal Server Error",
+    "unavailable": "Service Unavailable",
+    "rateLimit": "Rate Limit Exceeded",
+    "unexpected": "An unexpected error occurred",
+    "networkError": "Connection error. Please check your internet connection.",
+    "timeout": "The operation took too long. Please try again.",
+    "tryAgain": "Something went wrong. Please try again."
+  }
+}
