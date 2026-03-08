@@ -3,31 +3,20 @@
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Heart, BookOpen, Star } from "lucide-react"
-import { useRef, useState, useEffect } from "react"
+import { useRef } from "react"
 import { HeroBookTransformation } from "./HeroBookTransformation"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 
-const MD_BREAKPOINT_PX = 768
-
 export function Hero() {
   const t = useTranslations("hero")
   const heroRef = useRef<HTMLDivElement>(null)
-  const [isMobile, setIsMobile] = useState(true)
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   })
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
-
-  useEffect(() => {
-    const m = window.matchMedia(`(max-width: ${MD_BREAKPOINT_PX - 1}px)`)
-    setIsMobile(m.matches)
-    const handler = () => setIsMobile(m.matches)
-    m.addEventListener("change", handler)
-    return () => m.removeEventListener("change", handler)
-  }, [])
 
   const getFloatingAnimation = (i: number) => ({
     y: [0, -20, 0],
@@ -160,7 +149,7 @@ export function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
             className="relative"
-            style={isMobile ? undefined : { y: imageY }}
+            style={{ y: imageY }}
           >
             <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-primary/20 to-brand-2/20 blur-3xl" />
             <HeroBookTransformation />
