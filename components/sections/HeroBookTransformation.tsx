@@ -128,27 +128,6 @@ export function HeroBookTransformation() {
 
   return (
     <div className="relative flex w-full flex-col items-center justify-center px-3 pb-2 sm:px-4 sm:pb-12 md:h-full md:pb-0 md:px-3 lg:px-4">
-      {/* Preload: tüm hero görselleri mount’ta yüklensin; carousel geçişinde cache’ten gelsin (bkz. HERO_TRANSFORMATION_PERFORMANCE_ANALYSIS.md) */}
-      <div aria-hidden="true" className="pointer-events-none absolute left-[-9999px] top-0 h-1 w-1 overflow-hidden opacity-0">
-        <Image
-          src={heroTransformationConfig[0].realPhoto.src}
-          alt=""
-          width={384}
-          height={384}
-          sizes="(max-width: 768px) 100vw, 40vw"
-        />
-        {heroTransformationConfig.map((item) => (
-          <Image
-            key={item.id}
-            src={item.storyCharacter.src}
-            alt=""
-            width={384}
-            height={384}
-            sizes="(max-width: 768px) 100vw, 40vw"
-          />
-        ))}
-      </div>
-
       {/* Title - tablet proportionally smaller */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -235,7 +214,6 @@ export function HeroBookTransformation() {
                   src={currentItem.realPhoto.src}
                   alt="Child photo"
                   fill
-                  priority={currentIndex === 0}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 40vw"
                 />
@@ -312,7 +290,6 @@ export function HeroBookTransformation() {
                     src={currentItem.storyCharacter.src}
                     alt={`${t(`themes.${currentItem.id}`)} ${t("character")}`}
                     fill
-                    priority={currentIndex === 0}
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, 40vw"
                   />
