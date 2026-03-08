@@ -8,7 +8,7 @@ import { FeaturesSection } from '@/components/sections/FeaturesSection'
 import { PricingSection } from '@/components/sections/PricingSection'
 import { FAQSection } from '@/components/sections/FAQSection'
 
-// İlk yüklemede JS/hydration’ı azaltmak için alt bölümler ayrı chunk (bkz. HERO_TRANSFORMATION_PERFORMANCE_ANALYSIS.md – ilk yükleme gözlemi)
+// Lazy: ilk ekranda sadece Hero yüklü olsun; alt bölümler ayrı chunk ile sonra yüklensin (mobil donma denemesi – bkz. docs/analysis/HERO_TRANSFORMATION_PERFORMANCE_ANALYSIS.md)
 const DynamicHowItWorks = dynamic(
   () => import('@/components/sections/HowItWorks').then((m) => ({ default: m.HowItWorks })),
   { ssr: true }
