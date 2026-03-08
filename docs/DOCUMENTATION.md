@@ -84,6 +84,7 @@ docs/
 │   ├── CURRENCY_DETECTION.md # Currency detection sistemi dokümantasyonu
 │   ├── STEP6_PAY_AND_GUEST_FREE_COVER_SPEC.md # Step 6 Pay gizleme + Üyesiz ücretsiz kapak (email + IP) spec
 │   ├── HERO_YOUR_CHILD_THE_HERO_IMAGES_ANALYSIS.md # "Your Child, The Hero" real photo + story character görselleri (config, format, rehber)
+│   ├── HERO_IMAGES_OPTIMIZATION_GUIDE.md # Hero görselleri build-time webp optimizasyonu; yeni görsel eklerken adımlar (script, config, npm run optimize-images)
 │   ├── HERO_TRANSFORMATION_CORNER_ARTIFACTS_ANALYSIS.md # HeroBookTransformation kartlarında köşe beyazlığı/iz analizi ve denenen çözümler
 │   ├── DB_BACKUP_RUNBOOK.md # DB yedekleme (1.2.7): script, cron, S3, restore
 │   ├── PRODUCTION_MIGRATION_RUNBOOK.md # Production şema migration (5.5.10): backup öncesi, psql -f, rollback

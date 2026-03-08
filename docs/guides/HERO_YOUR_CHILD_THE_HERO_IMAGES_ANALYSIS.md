@@ -148,10 +148,13 @@ Bkz. `scripts/README.md` (generate-hero-transformation) ve `scripts/generate-her
 
 1. Görseli uygun formatta hazırla (1:1, yeterli çözünürlük).
 2. `public/hero-transformation/real/` veya `stories/` içine koy.
-3. `lib/config/hero-transformation.ts` (veya seçilen config dosyası) içinde `heroTransformationConfig` dizisine bir eleman ekle:
-   - `realPhoto`: `src` (+ istenirse `name`, `age`)
-   - `storyCharacter`: `src`, `themeName`
-4. Aynı real photo’ya birden fazla story eklemek için aynı `realPhoto` objesini, farklı `storyCharacter` ile birden fazla kez kullan (yukarıdaki örnekteki gibi).
+3. **Build-time optimizasyon (zorunlu):** Hero görselleri sunucuda runtime dönüşüm yapılmaması için build time’da webp’ye dönüştürülür. Yeni görsel eklediğinde:
+   - **`scripts/optimize-hero-images.mjs`** içindeki `images` listesine bu görselin `input` (kaynak dosya) ve `output` (optimized webp yolu) girdisini ekle.
+   - **`lib/config/hero-transformation.ts`** içinde ilgili `src` değerini optimized dosyaya çevir (`/hero-transformation/optimized/...webp`).
+   - **`npm run optimize-images`** çalıştır; çıkan webp’leri commit et.
+   
+   Adım adım rehber: **`docs/guides/HERO_IMAGES_OPTIMIZATION_GUIDE.md`**
+4. Config’e ekle: `heroTransformationConfig` dizisine eleman ekle (realPhoto, storyCharacter; `src` her zaman optimized webp path). Aynı real photo’ya birden fazla story eklemek için aynı `realPhoto` objesini, farklı `storyCharacter` ile birden fazla kez kullan (yukarıdaki örnekteki gibi).
 
 ---
 

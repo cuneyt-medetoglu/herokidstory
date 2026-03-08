@@ -118,7 +118,12 @@ export function HeroBookTransformation() {
     return () => mq.removeEventListener("change", set)
   }, [])
 
-  return (
+  // Sıradaki hikaye görselini arka planda preload et; carousel geçişinde hazır olsun
+  useEffect(() => {
+    const nextIndex = (currentIndex + 1) % heroTransformationConfig.length
+    const img = new window.Image()
+    img.src = heroTransformationConfig[nextIndex].storyCharacter.src
+  }, [currentIndex])
     <div className="relative flex w-full flex-col items-center justify-center px-3 pb-2 sm:px-4 sm:pb-12 md:h-full md:pb-0 md:px-3 lg:px-4">
       {/* Title */}
       <motion.div
@@ -185,6 +190,7 @@ export function HeroBookTransformation() {
                   src={currentItem.realPhoto.src}
                   alt="Child photo"
                   fill
+                  unoptimized
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 40vw"
                   priority
@@ -249,6 +255,7 @@ export function HeroBookTransformation() {
                         src={item.storyCharacter.src}
                         alt={`${t(`themes.${item.id}`)} ${t("character")}`}
                         fill
+                        unoptimized
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, 40vw"
                         priority={index === 0}
