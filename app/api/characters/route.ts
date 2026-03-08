@@ -166,10 +166,10 @@ export async function POST(request: NextRequest) {
         reference_photo_path: referencePhotoPath,
         description: characterDescription,
         is_default: true, // First character is default
-        ai_analysis: null,
-        full_description: null,
-        analysis_raw: null,
-        analysis_confidence: null,
+        ai_analysis: undefined,
+        full_description: undefined,
+        analysis_raw: undefined,
+        analysis_confidence: undefined,
       }
     )
 
