@@ -56,6 +56,8 @@ export interface ImageLogContext {
 
 type ImageAPIResult = {
   data: Array<{ url?: string; b64_json?: string; revised_prompt?: string }>
+  /** Some API variants return a top-level URL instead of data[].url */
+  url?: string
 }
 
 // ============================================================================
