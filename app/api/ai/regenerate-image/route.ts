@@ -364,7 +364,7 @@ export async function POST(request: NextRequest) {
         const fromS3 = await getObjectBufferFromUrl(refUrl)
         if (fromS3) {
           imageBlobs.push({
-            blob: new Blob([fromS3.buffer], { type: fromS3.contentType }),
+            blob: new Blob([new Uint8Array(fromS3.buffer)], { type: fromS3.contentType }),
             filename: `${label}.png`,
           })
           continue
@@ -372,7 +372,7 @@ export async function POST(request: NextRequest) {
         if (refUrl.startsWith("data:")) {
           const base64Data = refUrl.split(",")[1]
           const binaryData = Buffer.from(base64Data, "base64")
-          imageBlobs.push({ blob: new Blob([binaryData], { type: "image/png" }), filename: `${label}.png` })
+          imageBlobs.push({ blob: new Blob([new Uint8Array(binaryData)], { type: "image/png" }), filename: `${label}.png` })
         } else {
           const imageRes = await fetch(refUrl)
           if (!imageRes.ok) throw new Error(`HTTP ${imageRes.status}`)
