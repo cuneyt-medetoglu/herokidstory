@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Sparkles, Star, Wand2, ArrowRight } from "lucide-react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { heroTransformationConfig } from "@/lib/config/hero-transformation"
 
 // Floating magical particles
@@ -102,6 +103,7 @@ function MagicArrow() {
 }
 
 export function HeroBookTransformation() {
+  const t = useTranslations("hero.transformation")
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showTransformation, setShowTransformation] = useState(false)
 
@@ -136,7 +138,7 @@ export function HeroBookTransformation() {
         <h3 className="flex items-center justify-center gap-2 text-lg font-bold text-gray-800 dark:text-white sm:text-xl md:text-lg md:gap-1.5 lg:text-xl xl:text-2xl">
           <Wand2 className="h-4 w-4 text-primary sm:h-5 sm:w-5 md:h-4 md:w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6" />
           <span className="bg-gradient-to-r from-primary to-brand-2 bg-clip-text text-transparent">
-            Your Child, The Hero
+            {t("title")}
           </span>
           <Wand2 className="h-4 w-4 scale-x-[-1] text-brand-2 sm:h-5 sm:w-5 md:h-4 md:w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6" />
         </h3>
@@ -146,7 +148,7 @@ export function HeroBookTransformation() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-1.5 text-xs text-gray-600 dark:text-gray-400 sm:mt-2 sm:text-sm md:mt-1.5 md:text-xs lg:mt-2 lg:text-sm"
         >
-          Watch the magic happen
+          {t("subtitle")}
         </motion.p>
       </motion.div>
 
@@ -181,7 +183,7 @@ export function HeroBookTransformation() {
             <Icon className="h-3 w-3 text-white md:h-3 md:w-3 lg:h-4 lg:w-4" />
           </div>
           <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 md:text-xs lg:text-sm">
-            {currentItem.name}
+            {t(`themes.${currentItem.id}`)}
           </span>
         </motion.div>
 
@@ -203,7 +205,7 @@ export function HeroBookTransformation() {
                 className="mb-1.5 flex items-center justify-center gap-2 md:mb-1 lg:mb-2"
               >
                 <div className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Real Photo</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("realPhotoLabel")}</span>
               </motion.div>
 
               {/* Photo frame - image only (5.1: footer outside to avoid corner artifacts) */}
@@ -218,7 +220,7 @@ export function HeroBookTransformation() {
               </div>
               {/* Footer outside image container */}
               <div className="rounded-b-xl bg-white/95 px-2 py-1.5 text-center dark:bg-slate-800/95 md:px-2 md:py-1.5 lg:px-3 lg:py-2">
-                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{currentItem.realPhoto.name}, {currentItem.realPhoto.age}</p>
+                <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{t("realPhotoName")}, {t("realPhotoAge")}</p>
               </div>
 
               {/* Corner decoration */}
@@ -247,7 +249,7 @@ export function HeroBookTransformation() {
               >
                 <ArrowRight className="h-8 w-8 rotate-90 text-primary" strokeWidth={3} />
               </motion.div>
-              <span className="text-xs font-bold text-primary">Magic!</span>
+              <span className="text-xs font-bold text-primary">{t("magicLabel")}</span>
             </motion.div>
           </div>
 
@@ -271,7 +273,7 @@ export function HeroBookTransformation() {
                 >
                   <Sparkles className="h-3 w-3 text-brand-2" />
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                    Story Character
+                    {t("storyCharacterLabel")}
                   </span>
                   <Sparkles className="h-3 w-3 text-brand-2" />
                 </motion.div>
@@ -286,7 +288,7 @@ export function HeroBookTransformation() {
                   <div className={`absolute inset-0 bg-gradient-to-br ${currentItem.gradient}`} />
                   <Image
                     src={currentItem.storyCharacter.src}
-                    alt={`${currentItem.name} character`}
+                    alt={`${t(`themes.${currentItem.id}`)} ${t("character")}`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, 40vw"
@@ -300,7 +302,7 @@ export function HeroBookTransformation() {
                   <div className="flex items-center justify-center gap-1.5">
                     <Icon className="h-3 w-3 text-primary" />
                     <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                      {currentItem.name}
+                      {t(`themes.${currentItem.id}`)}
                     </p>
                   </div>
                 </div>
@@ -353,7 +355,7 @@ export function HeroBookTransformation() {
                   ? "shadow-md ring-2 ring-slate-800/40 dark:ring-white/50"
                   : "bg-slate-300 hover:bg-slate-400 dark:bg-slate-400 dark:hover:bg-slate-300"
               }`}
-              aria-label={`Switch to ${item.name}`}
+              aria-label={t("ariaSwitchTheme", { name: t(`themes.${item.id}`) })}
             />
           ))}
         </motion.div>
@@ -367,11 +369,11 @@ export function HeroBookTransformation() {
         className="mt-4 mb-20 flex flex-wrap justify-center gap-2 sm:mb-6 md:mb-0 md:mt-3 md:gap-2 lg:mt-5 lg:gap-3"
       >
         {[
-          { label: "AI Powered", icon: Sparkles },
-          { label: "100% Personalized", icon: Star },
+          { labelKey: "aiPowered", icon: Sparkles },
+          { labelKey: "personalized", icon: Star },
         ].map((stat, index) => (
           <motion.div
-            key={stat.label}
+            key={stat.labelKey}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.3 + index * 0.1, duration: 0.4 }}
@@ -379,7 +381,7 @@ export function HeroBookTransformation() {
             className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-gray-700 shadow-md backdrop-blur-sm ring-1 ring-gray-200 dark:bg-slate-800/90 dark:text-gray-200 dark:ring-slate-700 md:gap-1 md:px-2.5 md:py-1 lg:gap-1.5 lg:px-4 lg:py-2"
           >
             <stat.icon className="h-3.5 w-3.5 text-primary md:h-3 md:w-3 lg:h-4 lg:w-4" />
-            <span className="whitespace-nowrap">{stat.label}</span>
+            <span className="whitespace-nowrap">{t(stat.labelKey)}</span>
           </motion.div>
         ))}
       </motion.div>

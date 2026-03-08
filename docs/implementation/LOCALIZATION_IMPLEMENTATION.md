@@ -52,12 +52,13 @@
 ## ✅ DEV-3: Ana Sayfa + Genel Bileşenler — TAMAMLANDI (7 Mart 2026)
 
 - [x] **3.1** `Hero.tsx` — `useTranslations('hero')`: badge, titlePart1/titleHighlight/titlePart2 (gradient-aware split), subtitle, cta, seeExamples; CTA butonları `Link` (@/i18n/navigation) ile locale-aware
+- [x] **3.1b** `HeroBookTransformation.tsx` — (8 Mart 2026) `useTranslations('hero.transformation')`: title, subtitle, realPhotoLabel, storyCharacterLabel, magicLabel, aiPowered, personalized; tema adları `themes.forest/space/castle/dinosaur`; realPhotoName, realPhotoAge; ariaSwitchTheme. Bkz. `docs/analysis/HERO_TRANSFORMATION_LOCALIZATION_ANALYSIS.md`
 - [x] **3.2** `HowItWorks.tsx` — `useTranslations('howItWorks')`: title, subtitle, stepLabel, step1-3 title/description, cta; steps dizisi component içine taşındı
 - [x] **3.3** `FeaturesSection.tsx` — `useTranslations('features')`: title, subtitle (yeni eklendi), tüm feature title/description; feature dizisi key tabanlı
 - [x] **3.4** `CookieConsentBanner.tsx` — `useTranslations('cookies')`: tüm buton/başlık/açıklamalar; `Link` (@/i18n/navigation) ile learn more linki; `bannerDescription` key eklendi
 - [x] **3.5** `FAQSection.tsx` — `useTranslations('faq')`: title, subtitle, stillHaveQuestions, contactUs; 10 soru/cevap `q0-q9` / `a0-a9` key pattern; `faq` namespace eklendi
 - [x] **3.6** `CampaignBanners.tsx` — `useTranslations('campaign')`: 3 banner (shipping/discount/bundle) title/description/cta; `titleTR` field kaldırıldı; `campaign` namespace eklendi
-- [x] **3.7** `messages/en.json` ve `tr.json` — hero titlePart1/2/Highlight, howItWorks.stepLabel, features.subtitle, cookies.bannerDescription, faq namespace (10 Q&A), campaign namespace eklendi
+- [x] **3.7** `messages/en.json` ve `tr.json` — hero titlePart1/2/Highlight, **hero.transformation** (title, subtitle, realPhotoLabel, storyCharacterLabel, magicLabel, aiPowered, personalized, themes.*, realPhotoName, realPhotoAge, ariaSwitchTheme, character), howItWorks.stepLabel, features.subtitle, cookies.bannerDescription, faq namespace (10 Q&A), campaign namespace eklendi
 
 ---
 

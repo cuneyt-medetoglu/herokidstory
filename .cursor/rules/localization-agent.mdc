@@ -31,6 +31,7 @@ Sen KidStoryBook projesinin **localization (i18n)** işlerinden sorumlusun. Tüm
 - **`components/layout/Footer.tsx`** — `useTranslations('footer')`, `@/i18n/navigation` Link ✅ DEV-2
 - **`components/layout/CookieConsentBanner.tsx`** — `useTranslations('cookies')`, `@/i18n/navigation` Link ✅ DEV-3
 - **`components/sections/Hero.tsx`** — `useTranslations('hero')`: titlePart1/titleHighlight/titlePart2 (gradient split), `@/i18n/navigation` Link ✅ DEV-3
+- **`components/sections/HeroBookTransformation.tsx`** — `useTranslations('hero.transformation')`: title, subtitle, realPhotoLabel, storyCharacterLabel, magicLabel, aiPowered, personalized, themes.*, realPhotoName, realPhotoAge, ariaSwitchTheme ✅ DEV-3 (8 Mart 2026)
 - **`components/sections/HowItWorks.tsx`** — `useTranslations('howItWorks')`: title/subtitle/stepLabel/step1-3/cta ✅ DEV-3
 - **`components/sections/FeaturesSection.tsx`** — `useTranslations('features')`: title/subtitle/6 feature key ✅ DEV-3
 - **`components/sections/FAQSection.tsx`** — `useTranslations('faq')`: title/subtitle/q0-q9/a0-a9 pattern ✅ DEV-3
