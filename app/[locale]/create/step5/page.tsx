@@ -15,11 +15,14 @@ import { useState, useMemo } from "react"
 const DEFAULT_PAGE_COUNT = 12
 
 // Build schema based on whether custom theme is selected (Step 5 requires customRequests when theme is custom)
-function getFormSchema(isCustomTheme: boolean) {
+function getFormSchema(
+  isCustomTheme: boolean,
+  messages: { minLength: string; maxLength: string }
+) {
   return z.object({
     customRequests: isCustomTheme
-      ? z.string().min(10, "Please describe your story idea").max(500, "Custom requests must not exceed 500 characters")
-      : z.string().max(500, "Custom requests must not exceed 500 characters").optional().or(z.literal("")),
+      ? z.string().min(10, messages.minLength).max(500, messages.maxLength)
+      : z.string().max(500, messages.maxLength).optional().or(z.literal("")),
     // Boş/NaN = undefined kabul et; sayı ise 0–20 arası. Boş bırakılınca default 12 kullanılacak.
     pageCount: z.preprocess(
       (val) => (val === "" || val === undefined || Number.isNaN(val) ? undefined : Number(val)),
@@ -45,7 +48,14 @@ export default function Step5Page() {
     }
   })
 
-  const formSchema = useMemo(() => getFormSchema(isCustomTheme), [isCustomTheme])
+  const formSchema = useMemo(
+    () =>
+      getFormSchema(isCustomTheme, {
+        minLength: t("validationMinLength"),
+        maxLength: t("validationMaxLength"),
+      }),
+    [isCustomTheme, t]
+  )
 
   const {
     register,
@@ -184,10 +194,10 @@ export default function Step5Page() {
                 className="mb-6 rounded-xl border-2 border-amber-200 bg-amber-50/80 p-4 dark:border-amber-700 dark:bg-amber-900/30"
               >
                 <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                  Custom Theme Selected
+                  {t("customThemeSelected")}
                 </p>
                 <p className="mt-1 text-sm text-amber-800 dark:text-amber-200">
-                  Since you chose a custom theme, please describe your story idea below. This field is required.
+                  {t("customThemeRequired")}
                 </p>
               </motion.div>
             )}
@@ -205,14 +215,14 @@ export default function Step5Page() {
               >
                 {isCustomTheme ? (
                   <>
-                    Story Idea{" "}
-                    <span className="text-amber-600 dark:text-amber-400">(required for Custom theme)</span>
+                    {t("label")}{" "}
+                    <span className="text-amber-600 dark:text-amber-400">{t("storyIdeaRequiredSuffix")}</span>
                   </>
                 ) : (
                   <>
-                    Story Idea{" "}
+                    {t("label")}{" "}
                     <span className="text-sm font-normal text-gray-500 dark:text-slate-400">
-                      (optional)
+                      {t("storyIdeaOptionalSuffix")}
                     </span>
                   </>
                 )}
@@ -224,7 +234,7 @@ export default function Step5Page() {
                   {...register("customRequests")}
                   placeholder={t("placeholder")}
                   className="min-h-[200px] w-full resize-y rounded-lg border-2 border-gray-300 bg-white p-4 text-gray-900 transition-all placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50 dark:placeholder:text-slate-500 dark:focus:border-primary md:min-h-[250px]"
-                  aria-label="Custom Requests"
+                  aria-label={t("ariaCustomRequests")}
                   aria-describedby="custom-requests-help custom-requests-counter"
                 />
 
@@ -242,7 +252,7 @@ export default function Step5Page() {
                     }`}
                     aria-live="polite"
                   >
-                    {remainingChars} characters remaining
+                    {t("charactersRemaining", { count: remainingChars })}
                   </span>
                 </motion.div>
               </div>
@@ -266,7 +276,7 @@ export default function Step5Page() {
                 id="custom-requests-help"
                 className="mt-3 text-sm text-gray-600 dark:text-slate-400"
               >
-                Describe the story you have in mind — a scene, a journey, a problem to solve. The AI will use your idea as the backbone of the entire story. The more vivid and specific, the better the result.
+                {t("storyIdeaHelp")}
               </motion.p>
             </motion.div>
 
@@ -281,7 +291,7 @@ export default function Step5Page() {
                 htmlFor="pageCount"
                 className="mb-2 block text-sm font-semibold text-amber-900 dark:text-amber-200"
               >
-                🐛 Debug: Page Count (Optional)
+                🐛 {t("debugPageCountLabel")}
               </label>
               <input
                 id="pageCount"
@@ -293,7 +303,7 @@ export default function Step5Page() {
                 className="w-full rounded-lg border-2 border-amber-300 bg-white p-3 text-gray-900 transition-all placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 dark:border-amber-700 dark:bg-slate-800 dark:text-slate-50 dark:placeholder:text-slate-500 dark:focus:border-amber-500"
               />
               <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">
-                For testing: Override default page count (2-20 pages). Leave empty to use default (12 pages).
+                {t("debugPageCountHelp")}
               </p>
               {errors.pageCount && (
                 <motion.p
