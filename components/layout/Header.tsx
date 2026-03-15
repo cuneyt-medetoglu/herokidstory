@@ -343,7 +343,7 @@ export function Header() {
             <SheetContent
               side="right"
               hideCloseButton
-              className="w-[320px] max-w-[calc(100vw-2rem)] rounded-l-3xl border-l-0 bg-gradient-to-br from-white via-primary/5 to-brand-2/5 backdrop-blur-md dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900"
+              className="w-[320px] max-w-[calc(100vw-2rem)] rounded-l-3xl border-l-0 bg-white dark:bg-slate-900"
             >
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -351,7 +351,8 @@ export function Header() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full min-h-0 flex-col overflow-y-auto"
               >
-                <div className="mb-8 flex shrink-0 items-center justify-between">
+                {/* 1. Üst: Logo + Kapat */}
+                <div className="mb-6 flex shrink-0 items-center justify-between">
                   <span className="bg-gradient-to-r from-primary to-brand-2 bg-clip-text text-xl font-bold text-transparent">
                     HeroKidStory
                   </span>
@@ -366,64 +367,109 @@ export function Header() {
                   </Button>
                 </div>
 
-                <nav className="flex flex-col gap-2">
-                  {navLinks.map((link, index) => {
+                {/* 2. Kullanıcı bölümü (giriş yaptıysa) */}
+                {!isLoading && user && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 rounded-lg bg-slate-100 p-3 dark:bg-slate-800">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-brand-2 text-white">
+                        {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-semibold text-gray-900 dark:text-slate-100">
+                          {user.name || "User"}
+                        </p>
+                        <p className="truncate text-sm text-gray-600 dark:text-slate-400">{user.email}</p>
+                      </div>
+                    </div>
+                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        <span className="font-medium">{t("myLibrary")}</span>
+                      </Button>
+                    </Link>
+                    <Link href="/settings" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span className="font-medium">{t("settings")}</span>
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+
+                {/* 3. Ana CTA */}
+                <div className="mt-4">
+                  <Link href="/create/step1" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl">
+                      {t("createBook")}
+                    </Button>
+                  </Link>
+                  {!isLoading && !user && (
+                    <div className="mt-2 flex gap-2">
+                      <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                        <Button variant="outline" className="w-full bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700">
+                          <span className="font-medium">{t("signIn")}</span>
+                        </Button>
+                      </Link>
+                      <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                        <Button variant="outline" className="w-full bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700">
+                          <span className="font-medium">{t("signUp")}</span>
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Ayırıcı */}
+                <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
+
+                {/* 5. Navigasyon */}
+                <nav className="flex flex-col gap-1">
+                  {navLinks.map((link) => {
                     const Icon = link.icon
                     return (
-                      <motion.div
+                      <Link
                         key={link.href}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 + 0.2 }}
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-all hover:bg-primary/10 dark:hover:bg-slate-800"
                       >
-                        <Link
-                          href={link.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-all hover:bg-white/60 dark:hover:bg-slate-800/60"
-                        >
-                          <Icon className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
-                          <span className="text-base font-medium text-gray-800 dark:text-slate-100">
-                            {t(link.labelKey)}
-                          </span>
-                        </Link>
-                      </motion.div>
+                        <Icon className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
+                        <span className="text-base font-medium text-gray-800 dark:text-slate-100">
+                          {t(link.labelKey)}
+                        </span>
+                      </Link>
                     )
                   })}
                 </nav>
 
-                <div className="mt-auto space-y-4 border-t border-gray-200 pt-6 dark:border-slate-700">
-                  {/* Shopping Cart Display */}
+                {/* 6. Ayırıcı */}
+                <div className="my-4 border-t border-gray-200 dark:border-slate-700" />
+
+                {/* 7. Araçlar: Sepet, Dil, Tema */}
+                <div className="space-y-2">
                   <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="flex items-center justify-between rounded-xl bg-white/60 px-4 py-3 transition-colors hover:bg-white/80 dark:bg-slate-800/60 dark:hover:bg-slate-800/80"
-                    >
-                      <span className="text-sm font-medium text-gray-800 dark:text-slate-100">
+                    <div className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700">
+                      <span className="flex items-center gap-2 text-sm font-medium text-gray-800 dark:text-slate-100">
+                        <ShoppingCart className="h-4 w-4 text-primary" />
                         {t("shoppingCart")}
                       </span>
-                      <div className="flex items-center gap-2">
-                        <ShoppingCart className="h-5 w-5 text-primary" />
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white dark:bg-orange-300">
-                          {cartCount}
-                        </span>
-                      </div>
-                    </motion.div>
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-400 text-xs font-bold text-white dark:bg-orange-300">
+                        {cartCount}
+                      </span>
+                    </div>
                   </Link>
-
-                  {/* Currency Selector — Mobile (hidden until payment systems are in place) */}
                   {SHOW_CURRENCY_SELECTOR && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          variant="outline"
-                          className="w-full justify-between bg-white/60 backdrop-blur-sm dark:bg-slate-800/60"
+                          variant="ghost"
+                          className="w-full justify-between bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700"
                         >
                           <span className="flex items-center gap-2">
                             <span>{selectedCountry.flag}</span>
@@ -445,146 +491,75 @@ export function Header() {
                         ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </motion.div>
                   )}
-
-                  {/* Language Selector — Mobile */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.62 }}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-between bg-white/60 backdrop-blur-sm dark:bg-slate-800/60"
-                        >
-                          <span className="flex items-center gap-2">
-                            <Globe className="h-4 w-4" />
-                            <span className="font-medium">
-                              {currentLocaleMeta.flag} {currentLocaleMeta.label}
-                            </span>
-                          </span>
-                          <ChevronDown className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[272px]">
-                        {otherLocales.map(([code, meta]) => (
-                          <DropdownMenuItem
-                            key={code}
-                            onClick={() => {
-                              handleLocaleSwitch(code)
-                              setIsMobileMenuOpen(false)
-                            }}
-                            className="cursor-pointer gap-2"
-                          >
-                            <span>{meta.flag}</span>
-                            <span className="font-medium">{meta.label}</span>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </motion.div>
-
-                  {/* Theme Toggle — Mobile */}
-                  {mounted && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.65 }}
-                    >
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
-                        className="w-full justify-between bg-white/60 backdrop-blur-sm dark:bg-slate-800/60"
-                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        variant="ghost"
+                        className="w-full justify-between bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700"
                       >
                         <span className="flex items-center gap-2">
-                          {theme === "dark" ? (
-                            <Sun className="h-4 w-4" />
-                          ) : (
-                            <Moon className="h-4 w-4" />
-                          )}
+                          <Globe className="h-4 w-4" />
                           <span className="font-medium">
-                            {theme === "dark" ? t("lightMode") : t("darkMode")}
+                            {currentLocaleMeta.flag} {currentLocaleMeta.label}
                           </span>
                         </span>
+                        <ChevronDown className="h-4 w-4" />
                       </Button>
-                    </motion.div>
-                  )}
-
-                  {/* Auth Buttons / User Menu — Mobile */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                    className="space-y-3"
-                  >
-                    {isLoading ? (
-                      <div className="h-10 w-full animate-pulse rounded-md bg-gray-200 dark:bg-slate-700" />
-                    ) : user ? (
-                      <>
-                        <div className="mb-4 flex items-center gap-3 rounded-lg bg-white/60 p-3 backdrop-blur-sm dark:bg-slate-800/60">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-brand-2 text-white">
-                            {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-900 dark:text-slate-100">
-                              {user.name || "User"}
-                            </p>
-                            <p className="text-sm text-gray-600 dark:text-slate-400">{user.email}</p>
-                          </div>
-                        </div>
-                        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button variant="outline" className="w-full justify-start bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
-                            <User className="mr-2 h-4 w-4" />
-                            <span className="font-medium">{t("myLibrary")}</span>
-                          </Button>
-                        </Link>
-                        <Link href="/settings" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button variant="outline" className="w-full justify-start bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span className="font-medium">{t("settings")}</span>
-                          </Button>
-                        </Link>
-                        <Link href="/create/step1" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button className="w-full bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl">
-                            {t("createBook")}
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start border-red-200 bg-white/60 text-red-600 backdrop-blur-sm hover:bg-red-50 dark:border-red-800 dark:bg-slate-800/60 dark:text-red-400 dark:hover:bg-red-950"
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[272px]">
+                      {otherLocales.map(([code, meta]) => (
+                        <DropdownMenuItem
+                          key={code}
                           onClick={() => {
-                            handleLogout()
+                            handleLocaleSwitch(code)
                             setIsMobileMenuOpen(false)
                           }}
+                          className="cursor-pointer gap-2"
                         >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          <span className="font-medium">{t("logout")}</span>
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button variant="outline" className="w-full justify-start bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
-                            <span className="font-medium">{t("signIn")}</span>
-                          </Button>
-                        </Link>
-                        <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button variant="outline" className="w-full justify-start bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
-                            <span className="font-medium">{t("signUp")}</span>
-                          </Button>
-                        </Link>
-                        <Link href="/create/step1" onClick={() => setIsMobileMenuOpen(false)}>
-                          <Button className="w-full bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl">
-                            {t("createBook")}
-                          </Button>
-                        </Link>
-                      </>
-                    )}
-                  </motion.div>
+                          <span>{meta.flag}</span>
+                          <span className="font-medium">{meta.label}</span>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {mounted && (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between bg-muted/50 hover:bg-muted dark:bg-slate-800 dark:hover:bg-slate-700"
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    >
+                      <span className="flex items-center gap-2">
+                        {theme === "dark" ? (
+                          <Sun className="h-4 w-4" />
+                        ) : (
+                          <Moon className="h-4 w-4" />
+                        )}
+                        <span className="font-medium">
+                          {theme === "dark" ? t("lightMode") : t("darkMode")}
+                        </span>
+                      </span>
+                    </Button>
+                  )}
                 </div>
+
+                {/* 8. Çıkış (sadece giriş yaptıysa) */}
+                {!isLoading && user && (
+                  <>
+                    <div className="mt-auto pt-4 border-t border-gray-200 dark:border-slate-700" />
+                    <Button
+                      variant="outline"
+                      className="mt-4 w-full justify-start border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+                      onClick={() => {
+                        handleLogout()
+                        setIsMobileMenuOpen(false)
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span className="font-medium">{t("logout")}</span>
+                    </Button>
+                  </>
+                )}
               </motion.div>
             </SheetContent>
           </Sheet>
