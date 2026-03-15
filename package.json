@@ -23,7 +23,9 @@
     "clean:all": "npx rimraf node_modules .next",
     "build:local": "npx next build",
     "deploy:build": "npm run clean:all && npm install && npm run build",
-    "deploy:build:fast": "npm install && npm run build"
+    "deploy:build:fast": "npm install && npm run build",
+    "deploy:restart": "pm2 restart herokidstory",
+    "deploy": "npm run deploy:build && npm run deploy:restart"
   },
   "repository": {
     "type": "git",
