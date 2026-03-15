@@ -64,7 +64,7 @@ export function BookPage({ page, isLandscape, mobileLayoutMode = "stacked", show
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="relative flex-1 w-full overflow-hidden cursor-pointer"
+              className="relative flex-1 w-full overflow-hidden cursor-pointer bg-white dark:bg-slate-800"
               onClick={(e) => { e.stopPropagation(); onToggleFlip?.(); }}
             >
               <Image
@@ -76,8 +76,6 @@ export function BookPage({ page, isLandscape, mobileLayoutMode = "stacked", show
                 priority
                 unoptimized
               />
-              {/* Tap to read overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-none">
                 <span className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-brand-2 px-4 py-2 text-sm font-medium text-white shadow-lg">
                   <BookOpen className="h-4 w-4" />
