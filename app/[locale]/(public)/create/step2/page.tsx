@@ -1328,6 +1328,7 @@ export default function Step2Page() {
                               src={character.previewUrl || ""}
                               alt={`${character.characterType.displayName} preview`}
                               fill
+                              sizes="(max-width: 640px) 100vw, 384px"
                               className="object-cover"
                               unoptimized
                             />

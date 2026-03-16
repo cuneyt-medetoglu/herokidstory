@@ -134,6 +134,7 @@ export function DebugModal({
                       src={imageUrl}
                       alt="Preview"
                       fill
+                      sizes="192px"
                       className="object-contain"
                       unoptimized
                     />

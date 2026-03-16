@@ -332,6 +332,7 @@ export default function Step4Page() {
                           src={`/illustration-styles/${style.id}.jpg`}
                           alt={`${style.title} style example`}
                           fill
+                          sizes="(max-width: 768px) 50vw, 200px"
                           className="object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement

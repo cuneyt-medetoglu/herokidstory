@@ -516,6 +516,7 @@ function FromExampleContent() {
                               src={char.photoPreview}
                               alt={`Preview ${index + 1}`}
                               fill
+                              sizes="(max-width: 640px) 100vw, 384px"
                               className="object-cover"
                               unoptimized
                             />

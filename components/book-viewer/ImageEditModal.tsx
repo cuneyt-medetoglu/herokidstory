@@ -193,6 +193,7 @@ export function ImageEditModal({
                   src={currentImageUrl}
                   alt={`Page ${pageNumber} - Original`}
                   fill
+                  sizes="(max-width: 640px) 100vw, 600px"
                   className="object-contain"
                   unoptimized
                 />
