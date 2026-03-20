@@ -117,7 +117,7 @@ export function PricingSection() {
                 </ul>
 
                 {/* CTA Button */}
-                <Link href="/create/step1">
+                <Link href="/create/step1?new=1">
                   <Button
                     size="lg"
                     className="w-full rounded-xl bg-gradient-to-r from-primary to-brand-2 py-4 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl md:py-6 md:text-lg"

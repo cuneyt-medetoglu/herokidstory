@@ -238,7 +238,7 @@ export default function GeneratingPage({ params }: PageProps) {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => router.push('/create/step1')}
+                onClick={() => router.push('/create/step1?new=1')}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {isLang('Tekrar Dene', 'Try Again')}

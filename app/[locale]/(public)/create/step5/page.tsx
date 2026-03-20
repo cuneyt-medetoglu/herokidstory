@@ -10,6 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useState, useMemo, useEffect } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import {
+  persistWizardData,
+  readWizardFormMirror,
+  readWizardLocal,
+} from "@/lib/herokid-wizard-storage"
 
 // Default page count when debug field is left empty
 const DEFAULT_PAGE_COUNT = 12
@@ -42,9 +47,8 @@ export default function Step5Page() {
   const [isCustomTheme, setIsCustomTheme] = useState<boolean>(() => {
     if (typeof window === "undefined") return false
     try {
-      const saved = localStorage.getItem("herokidstory_wizard")
-      const wizardData = saved ? JSON.parse(saved) : {}
-      return wizardData?.step3?.theme?.id === "custom"
+      const wizardData = readWizardFormMirror() ?? readWizardLocal()
+      return (wizardData?.step3 as { theme?: { id?: string } } | undefined)?.theme?.id === "custom"
     } catch {
       return false
     }
@@ -62,6 +66,7 @@ export default function Step5Page() {
   const {
     register,
     watch,
+    reset,
     formState: { errors },
     trigger,
   } = useForm<FormData>({
@@ -77,6 +82,26 @@ export default function Step5Page() {
   const remainingChars = STORY_IDEA_MAX_LENGTH - customRequests.length
 
   useEffect(() => {
+    try {
+      const wizardData = readWizardFormMirror() as {
+        step5?: { customRequests?: string; pageCount?: number }
+      } | null
+      if (!wizardData) return
+      const s5 = wizardData.step5
+      if (!s5) return
+      reset({
+        customRequests: s5.customRequests ?? "",
+        pageCount:
+          typeof s5.pageCount === "number" && Number.isFinite(s5.pageCount) && s5.pageCount > 0
+            ? s5.pageCount
+            : undefined,
+      })
+    } catch {
+      /* ignore */
+    }
+  }, [reset])
+
+  useEffect(() => {
     router.prefetch("/create/step6")
   }, [router])
 
@@ -90,15 +115,14 @@ export default function Step5Page() {
 
     navigate("/create/step6", () => {
       try {
-        const saved = localStorage.getItem("herokidstory_wizard")
-        const wizardData = saved ? JSON.parse(saved) : {}
+        const wizardData = readWizardLocal()
 
         wizardData.step5 = {
           customRequests: customRequests || undefined,
           pageCount: resolvedPageCount,
         }
 
-        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+        persistWizardData(wizardData)
       } catch (error) {
         console.error("Error saving step 5 data:", error)
         return false

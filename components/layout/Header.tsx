@@ -268,7 +268,7 @@ export function Header() {
                   whileTap={{ scale: 0.95 }}
                   className="shrink-0"
                 >
-                  <Link href="/create/step1">
+                  <Link href="/create/step1?new=1">
                     <Button className="bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl text-xs sm:text-sm px-2 sm:px-3 lg:px-4">
                       <span className="hidden lg:inline">{t("createBook")}</span>
                       <span className="lg:hidden">{t("create")}</span>
@@ -331,7 +331,7 @@ export function Header() {
                   whileTap={{ scale: 0.95 }}
                   className="shrink-0"
                 >
-                  <Link href="/create/step1">
+                  <Link href="/create/step1?new=1">
                     <Button className="bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl text-xs sm:text-sm px-2 sm:px-3 lg:px-4">
                       <span className="hidden lg:inline">{t("createBook")}</span>
                       <span className="lg:hidden">{t("create")}</span>
@@ -424,7 +424,7 @@ export function Header() {
 
                 {/* 3. Ana CTA */}
                 <div className="mt-4">
-                  <Link href="/create/step1" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/create/step1?new=1" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button className="w-full bg-gradient-to-r from-primary to-brand-2 font-semibold text-white shadow-lg transition-all hover:shadow-xl">
                       {t("createBook")}
                     </Button>

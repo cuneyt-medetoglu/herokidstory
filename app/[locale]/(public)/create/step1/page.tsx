@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { User, Heart, Eye, Scissors, ArrowRight, Sparkles, Star, BookOpen } from "lucide-react"
-import { Link, useRouter } from "@/i18n/navigation"
+import { Link, useRouter, usePathname } from "@/i18n/navigation"
+import { useSearchParams } from "next/navigation"
 import { useEffect } from "react"
+import {
+  clearWizardDraft,
+  persistWizardData,
+  readWizardFormMirror,
+  readWizardLocal,
+} from "@/lib/herokid-wizard-storage"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useForm, type Resolver, type SubmitHandler } from "react-hook-form"
 import { useTranslations } from "next-intl"
@@ -28,7 +35,16 @@ export default function Step1Page() {
   const t = useTranslations("create.step1")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { isPending, navigate } = useWizardNavigate()
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      clearWizardDraft()
+      router.replace(pathname)
+    }
+  }, [searchParams, pathname, router])
 
   useEffect(() => {
     router.prefetch("/create/step2")
@@ -55,11 +71,32 @@ export default function Step1Page() {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<CharacterFormData>({
     resolver: zodResolver(characterSchema) as Resolver<CharacterFormData>,
     mode: "onChange",
   })
+
+  useEffect(() => {
+    try {
+      const wizardData = readWizardFormMirror() as { step1?: Partial<CharacterFormData> } | null
+      if (!wizardData) return
+      const s1 = wizardData.step1
+      if (!s1?.name || s1.age === undefined || s1.age === null) return
+      if (s1.gender !== "boy" && s1.gender !== "girl") return
+      if (!s1.hairColor || !s1.eyeColor) return
+      reset({
+        name: s1.name,
+        age: Number(s1.age),
+        gender: s1.gender,
+        hairColor: s1.hairColor,
+        eyeColor: s1.eyeColor,
+      })
+    } catch {
+      /* ignore */
+    }
+  }, [reset])
 
   const selectedGender = watch("gender")
   const selectedHairColor = watch("hairColor")
@@ -68,16 +105,15 @@ export default function Step1Page() {
   const onSubmit = (data: CharacterFormData) => {
     navigate("/create/step2", () => {
       try {
-        const wizardData = {
-          step1: {
-            name: data.name,
-            age: data.age,
-            gender: data.gender,
-            hairColor: data.hairColor,
-            eyeColor: data.eyeColor,
-          },
+        const wizardData = readWizardLocal()
+        wizardData.step1 = {
+          name: data.name,
+          age: data.age,
+          gender: data.gender,
+          hairColor: data.hairColor,
+          eyeColor: data.eyeColor,
         }
-        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+        persistWizardData(wizardData)
       } catch (error) {
         console.error("Error saving step 1 data:", error)
         return false

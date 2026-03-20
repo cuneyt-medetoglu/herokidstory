@@ -26,6 +26,11 @@ import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import {
+  persistWizardData,
+  readWizardFormMirror,
+  readWizardLocal,
+} from "@/lib/herokid-wizard-storage"
 
 // Validation schema
 const formSchema = z.object({
@@ -194,6 +199,46 @@ export default function Step3Page() {
   }
 
   useEffect(() => {
+    try {
+      const wizardData = readWizardFormMirror() as { step3?: Record<string, unknown> } | null
+      if (!wizardData) return
+      const s3 = wizardData.step3
+      if (!s3) return
+
+      const themeId =
+        (typeof s3.theme === "object" && s3.theme && s3.theme !== null && "id" in s3.theme
+          ? (s3.theme as { id: string }).id
+          : null) ||
+        (typeof s3.theme === "string" ? s3.theme : null)
+      const ageGroupId =
+        (typeof s3.ageGroup === "object" && s3.ageGroup && s3.ageGroup !== null && "id" in s3.ageGroup
+          ? (s3.ageGroup as { id: string }).id
+          : null) ||
+        (typeof s3.ageGroup === "string" ? s3.ageGroup : null)
+      const languageId =
+        (typeof s3.language === "object" && s3.language && s3.language !== null && "id" in s3.language
+          ? (s3.language as { id: string }).id
+          : null) ||
+        (typeof s3.language === "string" ? s3.language : null)
+
+      if (themeId && themes.some((th) => th.id === themeId)) {
+        setSelectedTheme(themeId)
+        setValue("theme", themeId as FormData["theme"], { shouldValidate: true })
+      }
+      if (ageGroupId && ageGroups.some((ag) => ag.id === ageGroupId)) {
+        setSelectedAgeGroup(ageGroupId)
+        setValue("ageGroup", ageGroupId as FormData["ageGroup"], { shouldValidate: true })
+      }
+      if (languageId && languages.some((l) => l.id === languageId)) {
+        setSelectedLanguage(languageId)
+        setValue("language", languageId as FormData["language"], { shouldValidate: true })
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [setValue])
+
+  useEffect(() => {
     router.prefetch("/create/step4")
   }, [router])
 
@@ -202,8 +247,7 @@ export default function Step3Page() {
 
     navigate("/create/step4", () => {
       try {
-        const saved = localStorage.getItem("herokidstory_wizard")
-        const wizardData = saved ? JSON.parse(saved) : {}
+        const wizardData = readWizardLocal()
 
         const selectedThemeObj = themes.find((th) => th.id === theme)
         const selectedAgeGroupObj = ageGroups.find((ag) => ag.id === ageGroup)
@@ -215,7 +259,7 @@ export default function Step3Page() {
           language: selectedLanguageObj,
         }
 
-        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+        persistWizardData(wizardData)
       } catch (error) {
         console.error("Error saving step 3 data:", error)
         return false

@@ -26,6 +26,11 @@ import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import {
+  persistWizardData,
+  readWizardFormMirror,
+  readWizardLocal,
+} from "@/lib/herokid-wizard-storage"
 
 // Validation schema
 const formSchema = z.object({
@@ -174,6 +179,24 @@ export default function Step4Page() {
   }
 
   useEffect(() => {
+    try {
+      const wizardData = readWizardFormMirror() as { step4?: { illustrationStyle?: unknown } } | null
+      if (!wizardData) return
+      const s4 = wizardData.step4
+      const raw = s4?.illustrationStyle
+      const styleId =
+        (typeof raw === "object" && raw !== null && "id" in raw ? (raw as { id: string }).id : null) ||
+        (typeof raw === "string" ? raw : null)
+      if (styleId && illustrationStyles.some((s) => s.id === styleId)) {
+        setSelectedStyle(styleId)
+        setValue("illustrationStyle", styleId as FormData["illustrationStyle"], { shouldValidate: true })
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [setValue])
+
+  useEffect(() => {
     router.prefetch("/create/step5")
   }, [router])
 
@@ -182,8 +205,7 @@ export default function Step4Page() {
 
     navigate("/create/step5", () => {
       try {
-        const saved = localStorage.getItem("herokidstory_wizard")
-        const wizardData = saved ? JSON.parse(saved) : {}
+        const wizardData = readWizardLocal()
 
         const selectedStyleObj = illustrationStyles.find((s) => s.id === illustrationStyle)
 
@@ -191,7 +213,7 @@ export default function Step4Page() {
           illustrationStyle: selectedStyleObj,
         }
 
-        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+        persistWizardData(wizardData)
       } catch (error) {
         console.error("Error saving step 4 data:", error)
         return false

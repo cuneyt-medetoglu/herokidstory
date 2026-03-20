@@ -102,7 +102,7 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
   const hasFilteredResults = filteredBooks.length > 0
 
   const handleCreateBook = () => {
-    router.push("/create/step1")
+    router.push("/create/step1?new=1")
   }
 
   const handleReadBook = (bookId: string) => {

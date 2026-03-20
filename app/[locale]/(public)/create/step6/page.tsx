@@ -42,6 +42,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { readWizardLocal } from "@/lib/herokid-wizard-storage"
 
 const DEFAULT_PAGE_COUNT = 12
 
@@ -247,14 +248,13 @@ export default function Step6Page() {
 
   // Load wizard data from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("herokidstory_wizard")
-    if (saved) {
-      try {
-        const data = JSON.parse(saved)
+    try {
+      const data = readWizardLocal()
+      if (Object.keys(data).length > 0) {
         setWizardData(data)
-      } catch (error) {
-        console.error("Error parsing wizard data:", error)
       }
+    } catch (error) {
+      console.error("Error parsing wizard data:", error)
     }
   }, [])
 
@@ -811,7 +811,7 @@ export default function Step6Page() {
                       </h2>
                     </div>
                     <Link
-                      href="/create/step1"
+                      href="/create/step1?new=1"
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />

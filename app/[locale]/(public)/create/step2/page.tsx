@@ -21,6 +21,11 @@ import {
 import { Link, useRouter } from "@/i18n/navigation"
 import { useState, useCallback, useEffect, useMemo } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import {
+  persistWizardData,
+  readWizardFormMirror,
+  readWizardLocal,
+} from "@/lib/herokid-wizard-storage"
 import { useTranslations } from "next-intl"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
@@ -207,10 +212,21 @@ export default function Step2Page() {
 
   // Load Step 1 data from localStorage + Migration logic
   useEffect(() => {
-    const saved = localStorage.getItem("herokidstory_wizard")
-    if (saved) {
+    try {
+      const mirror = readWizardFormMirror()
+      if (!mirror || Object.keys(mirror).length === 0) {
+        const full = readWizardLocal()
+        if (Object.keys(full).length > 0) {
+          persistWizardData(full)
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
+    const data = readWizardLocal() as Record<string, any>
+    if (data && (data.step1 || data.step2)) {
       try {
-        const data = JSON.parse(saved)
         setStep1Data(data.step1)
 
         // Migration: Old format (characterPhoto) → New format (characters array)
@@ -235,7 +251,7 @@ export default function Step2Page() {
           delete data.step2.characterPhoto
 
           // Save migrated data
-          localStorage.setItem("herokidstory_wizard", JSON.stringify(data))
+          persistWizardData(data as Record<string, unknown>)
           console.log("[Step 2] Migration completed")
         }
 
@@ -326,8 +342,7 @@ export default function Step2Page() {
         }
 
         // Save to localStorage (NEW: characters array)
-        const saved = localStorage.getItem("herokidstory_wizard")
-        const wizardData = saved ? JSON.parse(saved) : {}
+        const wizardData = readWizardLocal() as Record<string, any>
         
         // Initialize step2.characters if not exists
         if (!wizardData.step2) wizardData.step2 = {}
@@ -383,7 +398,7 @@ export default function Step2Page() {
           wizardData.step2.characters.push(characterData)
         }
 
-        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+        persistWizardData(wizardData)
         console.log("[Step 2] Saved photo to localStorage (character array):", characterData)
 
         // Create character in database (each character gets its own API call)
@@ -483,12 +498,11 @@ export default function Step2Page() {
             const createdCharacterId = createCharResult.character?.id
             if (createdCharacterId) {
               // Update characterId in the array
-              const savedAgain = localStorage.getItem("herokidstory_wizard")
-              const wizardDataAgain = savedAgain ? JSON.parse(savedAgain) : {}
+              const wizardDataAgain = readWizardLocal() as Record<string, any>
               const charIndexAgain = wizardDataAgain.step2.characters.findIndex((c: any) => c.id === characterId)
               if (charIndexAgain >= 0) {
                 wizardDataAgain.step2.characters[charIndexAgain].characterId = createdCharacterId
-                localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardDataAgain))
+                persistWizardData(wizardDataAgain)
               }
 
               // Keep old localStorage key for backward compatibility (first character only)
@@ -579,32 +593,29 @@ export default function Step2Page() {
     })
 
     // Remove from localStorage (NEW: characters array)
-    const saved = localStorage.getItem("herokidstory_wizard")
-    if (saved) {
-      try {
-        const wizardData = JSON.parse(saved)
-        
-        if (wizardData.step2?.characters && Array.isArray(wizardData.step2.characters)) {
-          // Find and remove photo data for this character
-          const charIndex = wizardData.step2.characters.findIndex((c: any) => c.id === characterId)
-          if (charIndex >= 0) {
-            // Remove photo and characterId, but keep the entry
-            delete wizardData.step2.characters[charIndex].photo
-            delete wizardData.step2.characters[charIndex].characterId
-            
-            localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-            console.log("[Step 2] Removed photo from character:", characterId)
-          }
-        }
+    try {
+      const wizardData = readWizardLocal() as Record<string, any>
 
-        // Backward compatibility: Remove old characterPhoto if exists
-        if (wizardData.step2?.characterPhoto) {
-          delete wizardData.step2.characterPhoto
-          localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+      if (wizardData.step2?.characters && Array.isArray(wizardData.step2.characters)) {
+        // Find and remove photo data for this character
+        const charIndex = wizardData.step2.characters.findIndex((c: any) => c.id === characterId)
+        if (charIndex >= 0) {
+          // Remove photo and characterId, but keep the entry
+          delete wizardData.step2.characters[charIndex].photo
+          delete wizardData.step2.characters[charIndex].characterId
+
+          persistWizardData(wizardData)
+          console.log("[Step 2] Removed photo from character:", characterId)
         }
-      } catch (error) {
-        console.error("Error updating localStorage:", error)
       }
+
+      // Backward compatibility: Remove old characterPhoto if exists
+      if (wizardData.step2?.characterPhoto) {
+        delete wizardData.step2.characterPhoto
+        persistWizardData(wizardData)
+      }
+    } catch (error) {
+      console.error("Error updating localStorage:", error)
     }
   }
 
@@ -669,25 +680,22 @@ export default function Step2Page() {
           }
 
           // NEW: Also update localStorage immediately for character details
-          const saved = localStorage.getItem("herokidstory_wizard")
-          if (saved) {
-            try {
-              const wizardData = JSON.parse(saved)
-              if (wizardData.step2?.characters && Array.isArray(wizardData.step2.characters)) {
-                const charIndex = wizardData.step2.characters.findIndex((c: any) => c.id === characterId)
-                if (charIndex >= 0) {
-                  wizardData.step2.characters[charIndex] = {
-                    ...wizardData.step2.characters[charIndex],
-                    [field]: value,
-                    characterType: updated.characterType, // Include updated characterType if name changed
-                  }
-                  localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-                  console.log("[Step 2] Updated character details in localStorage:", field, value)
+          try {
+            const wizardData = readWizardLocal() as Record<string, any>
+            if (wizardData.step2?.characters && Array.isArray(wizardData.step2.characters)) {
+              const charIndex = wizardData.step2.characters.findIndex((c: any) => c.id === characterId)
+              if (charIndex >= 0) {
+                wizardData.step2.characters[charIndex] = {
+                  ...wizardData.step2.characters[charIndex],
+                  [field]: value,
+                  characterType: updated.characterType, // Include updated characterType if name changed
                 }
+                persistWizardData(wizardData)
+                console.log("[Step 2] Updated character details in localStorage:", field, value)
               }
-            } catch (error) {
-              console.error("[Step 2] Error updating localStorage:", error)
             }
+          } catch (error) {
+            console.error("[Step 2] Error updating localStorage:", error)
           }
 
           return updated
@@ -855,7 +863,12 @@ export default function Step2Page() {
     { Icon: BookOpen, top: "75%", right: "8%", delay: 1.5, size: "h-7 w-7", color: "text-blue-400" },
   ]
 
-  const hasUploadedPhotos = characters.some((char) => char.uploadedFile !== null)
+  /** uploadedFile sadece bu oturumda seçilen File için dolu; LS'den dönünce previewUrl dolu olur, File null kalır. */
+  const hasUploadedPhotos = characters.some(
+    (char) =>
+      char.uploadedFile != null ||
+      (typeof char.previewUrl === "string" && char.previewUrl.length > 0),
+  )
 
   const formatGenderDisplay = useCallback(
     (raw?: string | null) => {

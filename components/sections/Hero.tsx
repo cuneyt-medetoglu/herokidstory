@@ -129,7 +129,7 @@ export function Hero() {
               className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4 md:justify-start md:gap-3 lg:gap-4"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/create/step1">
+                <Link href="/create/step1?new=1">
                   <Button
                     size="lg"
                     className="w-full bg-gradient-to-r from-primary to-brand-2 px-6 py-5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl sm:w-auto sm:px-7 sm:py-5 sm:text-base md:px-5 md:py-4 md:text-sm lg:px-8 lg:py-6 lg:text-base"
