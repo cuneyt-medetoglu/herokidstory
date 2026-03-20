@@ -44,6 +44,7 @@ docs/
 │
 ├── checklists/                 # Kontrol listeleri (aktif)
 │   ├── PRODUCTION_ENV_5_5_6.md # Production env kontrol listesi (5.5.6)
+│   ├── WIZARD_LOADING_QA.md    # Wizard/site loading geri bildirim QA checklist (20 Mart 2026)
 │   └── ...
 │
 ├── archive/                    # Arşivlenmiş dosyalar (referans için)

@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { User, Heart, Eye, Scissors, ArrowRight, Sparkles, Star, BookOpen } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { useRouter } from "@/i18n/navigation"
-import { useState } from "react"
+import { Link, useRouter } from "@/i18n/navigation"
+import { useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useForm, type Resolver, type SubmitHandler } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -28,7 +28,11 @@ export default function Step1Page() {
   const t = useTranslations("create.step1")
   const tc = useTranslations("create.common")
   const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { isPending, navigate } = useWizardNavigate()
+
+  useEffect(() => {
+    router.prefetch("/create/step2")
+  }, [router])
 
   const hairColorOptions = [
     { value: "light-blonde", label: t("hairColors.lightBlonde") },
@@ -61,29 +65,24 @@ export default function Step1Page() {
   const selectedHairColor = watch("hairColor")
   const selectedEyeColor = watch("eyeColor")
 
-  const onSubmit = async (data: CharacterFormData) => {
-    setIsSubmitting(true)
-    try {
-      console.log("[v0] Step 1 form submitted:", data)
-      
-      // Save form data to localStorage for wizard flow
-      const wizardData = {
-        step1: {
-          name: data.name,
-          age: data.age,
-          gender: data.gender,
-          hairColor: data.hairColor,
-          eyeColor: data.eyeColor,
-        },
+  const onSubmit = (data: CharacterFormData) => {
+    navigate("/create/step2", () => {
+      try {
+        const wizardData = {
+          step1: {
+            name: data.name,
+            age: data.age,
+            gender: data.gender,
+            hairColor: data.hairColor,
+            eyeColor: data.eyeColor,
+          },
+        }
+        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+      } catch (error) {
+        console.error("Error saving step 1 data:", error)
+        return false
       }
-      localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-      
-      // Navigate to Step 2
-      router.push("/create/step2")
-    } catch (error) {
-      console.error("Error saving step 1 data:", error)
-      setIsSubmitting(false)
-    }
+    })
   }
 
   // Floating animations for decorative elements
@@ -400,11 +399,12 @@ export default function Step1Page() {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                   <Button
                     type="submit"
-                    disabled={!isValid || isSubmitting}
-                    className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                    loading={isPending}
+                    disabled={!isValid || isPending}
+                    className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed sm:w-auto"
                   >
-                    <span>{isSubmitting ? tc("saving") : tc("next")}</span>
-                    {!isSubmitting && <ArrowRight className="ml-2 h-5 w-5" />}
+                    <span>{isPending ? tc("saving") : tc("next")}</span>
+                    {!isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                   </Button>
                 </motion.div>
               </motion.div>

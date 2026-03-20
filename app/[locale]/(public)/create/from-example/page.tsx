@@ -3,6 +3,7 @@
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { useRouter, Link } from "@/i18n/navigation"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import Image from "next/image"
 import { useEffect, useState, useMemo, useCallback } from "react"
 import { useTranslations } from "next-intl"
@@ -98,7 +99,9 @@ function FromExampleContent() {
   const tStep1 = useTranslations("create.step1")
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { navigate, isPending: isNavPending } = useWizardNavigate()
   const { toast } = useToast()
+  const tcCreate = useTranslations("create.common")
 
   const hairKeyMap: Record<string, string> = {
     "light-blonde": "lightBlonde",
@@ -168,6 +171,11 @@ function FromExampleContent() {
       .catch(() => setCanSkipPayment(false))
   }, [])
 
+  useEffect(() => {
+    router.prefetch("/examples")
+    router.prefetch("/cart")
+    router.prefetch("/dashboard")
+  }, [router])
 
   const updateCharacter = (index: number, patch: Partial<CharacterSlot>) => {
     setCharacters((prev) => {
@@ -272,10 +280,10 @@ function FromExampleContent() {
     }
     const newBookId = bookResult.data?.id ?? bookResult.data?.bookId ?? bookResult.id
     if (newBookId) {
-      router.push(`/create/generating/${newBookId}`)
+      navigate(`/create/generating/${newBookId}`)
     } else {
       toast({ title: t("toasts.bookStartedTitle"), description: t("toasts.bookStartedDesc") })
-      router.push("/dashboard")
+      navigate("/dashboard")
     }
   }
 
@@ -582,21 +590,21 @@ function FromExampleContent() {
                   {user && (
                     <Button
                       type="button"
-                      disabled={isLoadingCurrency}
-                      onClick={() => router.push(`/cart?plan=ebook&fromExampleId=${exampleId}`)}
+                      loading={isLoadingCurrency || isNavPending}
+                      disabled={isLoadingCurrency || isNavPending}
+                      onClick={() =>
+                        navigate(`/cart?plan=ebook&fromExampleId=${exampleId}`)
+                      }
                       className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
                     >
-                      {isLoadingCurrency ? (
-                        <>
-                          <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                          Loading...
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart className="mr-2 h-6 w-6" />
-                          Pay & Create My Book • {currencyConfig.price}
-                        </>
+                      {!isLoadingCurrency && !isNavPending && (
+                        <ShoppingCart className="mr-2 h-6 w-6" />
                       )}
+                      <span>
+                        {isLoadingCurrency || isNavPending
+                          ? tcCreate("navigating")
+                          : `Pay & Create My Book • ${currencyConfig.price}`}
+                      </span>
                     </Button>
                   )}
                   {user && <p className="text-center text-xs text-gray-600 dark:text-slate-400">You&apos;ll receive {currencyConfig.price} as a discount on the hardcover!</p>}
@@ -606,18 +614,16 @@ function FromExampleContent() {
                       <Button
                         type="button"
                         variant="outline"
+                        loading={submitting}
                         disabled={submitting}
                         onClick={handleCreateWithoutPayment}
                         className="w-full border-amber-500/50 text-amber-700 dark:border-amber-400 dark:text-amber-400"
                       >
-                        {submitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          "Create without payment (Debug)"
-                        )}
+                        <span>
+                          {submitting
+                            ? tcCreate("pleaseWait")
+                            : "Create without payment (Debug)"}
+                        </span>
                       </Button>
                       <p className="text-center text-xs text-amber-600/80 dark:text-amber-400/80">Admin / debug only – no payment</p>
                     </div>

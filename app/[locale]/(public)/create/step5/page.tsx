@@ -3,13 +3,13 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Lightbulb, Sparkles, BookOpen, PenTool, ArrowRight, ArrowLeft } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { useRouter } from "@/i18n/navigation"
+import { Link, useRouter } from "@/i18n/navigation"
 import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 
 // Default page count when debug field is left empty
 const DEFAULT_PAGE_COUNT = 12
@@ -38,6 +38,7 @@ export default function Step5Page() {
   const t = useTranslations("create.step5")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const { isPending, navigate } = useWizardNavigate()
   const [isCustomTheme, setIsCustomTheme] = useState<boolean>(() => {
     if (typeof window === "undefined") return false
     try {
@@ -75,29 +76,34 @@ export default function Step5Page() {
   const pageCount = watch("pageCount")
   const remainingChars = STORY_IDEA_MAX_LENGTH - customRequests.length
 
+  useEffect(() => {
+    router.prefetch("/create/step6")
+  }, [router])
+
   const handleNext = async () => {
     const valid = await trigger()
     if (!valid) return
-    // Boş/NaN/undefined → 12 (valueAsNumber boş inputta NaN döner)
     const resolvedPageCount =
       typeof pageCount === "number" && Number.isFinite(pageCount) && pageCount > 0
         ? pageCount
         : DEFAULT_PAGE_COUNT
-    try {
-      const saved = localStorage.getItem("herokidstory_wizard")
-      const wizardData = saved ? JSON.parse(saved) : {}
-      
-      wizardData.step5 = {
-        customRequests: customRequests || undefined,
-        pageCount: resolvedPageCount,
+
+    navigate("/create/step6", () => {
+      try {
+        const saved = localStorage.getItem("herokidstory_wizard")
+        const wizardData = saved ? JSON.parse(saved) : {}
+
+        wizardData.step5 = {
+          customRequests: customRequests || undefined,
+          pageCount: resolvedPageCount,
+        }
+
+        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+      } catch (error) {
+        console.error("Error saving step 5 data:", error)
+        return false
       }
-      
-      localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-    } catch (error) {
-      console.error("Error saving step 5 data:", error)
-    }
-    
-    router.push("/create/step6")
+    })
   }
 
   // Floating animations for decorative elements
@@ -345,11 +351,13 @@ export default function Step5Page() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                 <Button
                   type="button"
+                  loading={isPending}
+                  disabled={isPending}
                   onClick={handleNext}
                   className="w-full bg-gradient-to-r from-primary to-brand-2 px-6 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl sm:w-auto"
                 >
-                  <span>{tc("next")}</span>
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <span>{isPending ? tc("navigating") : tc("next")}</span>
+                  {!isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                 </Button>
               </motion.div>
             </motion.div>

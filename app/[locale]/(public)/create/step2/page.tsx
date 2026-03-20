@@ -18,9 +18,9 @@ import {
   Sparkles,
   Info,
 } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { useRouter } from "@/i18n/navigation"
+import { Link, useRouter } from "@/i18n/navigation"
 import { useState, useCallback, useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useTranslations } from "next-intl"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
@@ -101,7 +101,12 @@ export default function Step2Page() {
   const t = useTranslations("create.step2")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const { isPending, navigate } = useWizardNavigate()
   const { toast } = useToast()
+
+  useEffect(() => {
+    router.prefetch("/create/step3")
+  }, [router])
   const [step1Data, setStep1Data] = useState<any>(null)
   const [characters, setCharacters] = useState<Character[]>([
     {
@@ -1409,13 +1414,14 @@ export default function Step2Page() {
                     })
                     return
                   }
-                  router.push("/create/step3")
+                  navigate("/create/step3")
                 }}
-                disabled={!hasUploadedPhotos}
+                loading={isPending}
+                disabled={!hasUploadedPhotos || isPending}
                 className="w-full bg-gradient-to-r from-primary to-brand-2 text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50 sm:w-auto"
               >
-                <span>{tc("next")}</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span>{isPending ? tc("navigating") : tc("next")}</span>
+                {!isPending && <ArrowRight className="ml-2 h-4 w-4" />}
               </Button>
             </motion.div>
           </div>

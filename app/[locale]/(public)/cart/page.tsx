@@ -8,12 +8,21 @@ import { useCart } from "@/contexts/CartContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
+import { useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 
 export default function CartPage() {
   const router = useRouter()
+  const { navigate, isPending } = useWizardNavigate()
   const { items, removeFromCart, getCartTotal, isLoading } = useCart()
   const total = getCartTotal()
   const t = useTranslations("cart")
+  const tcCreate = useTranslations("create.common")
+
+  useEffect(() => {
+    router.prefetch("/checkout")
+    router.prefetch("/dashboard")
+  }, [router])
 
   if (isLoading) {
     return (
@@ -64,9 +73,11 @@ export default function CartPage() {
             </p>
             <Button
               className="bg-gradient-to-r from-primary to-brand-2 text-white"
-              onClick={() => router.push("/dashboard")}
+              loading={isPending}
+              disabled={isPending}
+              onClick={() => navigate("/dashboard")}
             >
-              {t("empty.goToLibrary")}
+              {isPending ? tcCreate("navigating") : t("empty.goToLibrary")}
             </Button>
           </motion.div>
         ) : (
@@ -169,14 +180,13 @@ export default function CartPage() {
 
                 <Button
                   size="lg"
-                  disabled={items.length === 0}
+                  loading={isPending}
+                  disabled={items.length === 0 || isPending}
                   className="w-full bg-gradient-to-r from-primary to-brand-2 py-6 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-                  onClick={() => {
-                    router.push("/checkout")
-                  }}
+                  onClick={() => navigate("/checkout")}
                 >
-                  {t("proceedToCheckout")}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  {isPending ? tcCreate("navigating") : t("proceedToCheckout")}
+                  {!isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                 </Button>
               </div>
             </div>

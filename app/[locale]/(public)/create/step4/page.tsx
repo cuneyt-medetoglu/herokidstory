@@ -19,9 +19,9 @@ import {
   ArrowLeft,
   Brush,
 } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { useState } from "react"
-import { useRouter } from "@/i18n/navigation"
+import { Link, useRouter } from "@/i18n/navigation"
+import { useState, useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -155,6 +155,7 @@ export default function Step4Page() {
   const t = useTranslations("create.step4")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const { isPending, navigate } = useWizardNavigate()
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
 
   const {
@@ -172,27 +173,30 @@ export default function Step4Page() {
     setValue("illustrationStyle", styleId as FormData["illustrationStyle"], { shouldValidate: true })
   }
 
+  useEffect(() => {
+    router.prefetch("/create/step5")
+  }, [router])
+
   const handleNext = () => {
     if (!illustrationStyle) return
-    
-    // Save illustration style to localStorage
-    try {
-      const saved = localStorage.getItem("herokidstory_wizard")
-      const wizardData = saved ? JSON.parse(saved) : {}
-      
-      // Find full illustration style object
-      const selectedStyleObj = illustrationStyles.find((s) => s.id === illustrationStyle)
-      
-      wizardData.step4 = {
-        illustrationStyle: selectedStyleObj,
+
+    navigate("/create/step5", () => {
+      try {
+        const saved = localStorage.getItem("herokidstory_wizard")
+        const wizardData = saved ? JSON.parse(saved) : {}
+
+        const selectedStyleObj = illustrationStyles.find((s) => s.id === illustrationStyle)
+
+        wizardData.step4 = {
+          illustrationStyle: selectedStyleObj,
+        }
+
+        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+      } catch (error) {
+        console.error("Error saving step 4 data:", error)
+        return false
       }
-      
-      localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-    } catch (error) {
-      console.error("Error saving step 4 data:", error)
-    }
-    
-    router.push("/create/step5")
+    })
   }
 
   const isFormValid = !!illustrationStyle
@@ -413,12 +417,13 @@ export default function Step4Page() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                 <Button
                   type="button"
-                  disabled={!isFormValid}
+                  loading={isPending}
+                  disabled={!isFormValid || isPending}
                   onClick={handleNext}
                   className="w-full bg-gradient-to-r from-primary to-brand-2 px-6 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  <span>{tc("next")}</span>
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <span>{isPending ? tc("navigating") : tc("next")}</span>
+                  {!isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                 </Button>
               </motion.div>
             </motion.div>

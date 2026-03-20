@@ -19,9 +19,9 @@ import {
   Globe,
   Wand2,
 } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { useState } from "react"
-import { useRouter } from "@/i18n/navigation"
+import { Link, useRouter } from "@/i18n/navigation"
+import { useState, useEffect } from "react"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -161,6 +161,7 @@ export default function Step3Page() {
   const t = useTranslations("create.step3")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const { isPending, navigate } = useWizardNavigate()
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string | null>(null)
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
@@ -192,31 +193,34 @@ export default function Step3Page() {
     setValue("language", languageId as FormData["language"], { shouldValidate: true })
   }
 
+  useEffect(() => {
+    router.prefetch("/create/step4")
+  }, [router])
+
   const handleNext = () => {
     if (!theme || !ageGroup || !language) return
-    
-    // Save theme, age group, and language to localStorage
-    try {
-      const saved = localStorage.getItem("herokidstory_wizard")
-      const wizardData = saved ? JSON.parse(saved) : {}
-      
-      // Find full theme, age group, and language objects
-      const selectedThemeObj = themes.find((t) => t.id === theme)
-      const selectedAgeGroupObj = ageGroups.find((ag) => ag.id === ageGroup)
-      const selectedLanguageObj = languages.find((l) => l.id === language)
-      
-      wizardData.step3 = {
-        theme: selectedThemeObj,
-        ageGroup: selectedAgeGroupObj,
-        language: selectedLanguageObj,
+
+    navigate("/create/step4", () => {
+      try {
+        const saved = localStorage.getItem("herokidstory_wizard")
+        const wizardData = saved ? JSON.parse(saved) : {}
+
+        const selectedThemeObj = themes.find((th) => th.id === theme)
+        const selectedAgeGroupObj = ageGroups.find((ag) => ag.id === ageGroup)
+        const selectedLanguageObj = languages.find((l) => l.id === language)
+
+        wizardData.step3 = {
+          theme: selectedThemeObj,
+          ageGroup: selectedAgeGroupObj,
+          language: selectedLanguageObj,
+        }
+
+        localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
+      } catch (error) {
+        console.error("Error saving step 3 data:", error)
+        return false
       }
-      
-      localStorage.setItem("herokidstory_wizard", JSON.stringify(wizardData))
-    } catch (error) {
-      console.error("Error saving step 3 data:", error)
-    }
-    
-    router.push("/create/step4")
+    })
   }
 
   const isFormValid = theme && ageGroup && language
@@ -593,12 +597,13 @@ export default function Step3Page() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                 <Button
                   type="button"
-                  disabled={!isFormValid}
+                  loading={isPending}
+                  disabled={!isFormValid || isPending}
                   onClick={handleNext}
                   className="w-full bg-gradient-to-r from-primary to-brand-2 px-6 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  <span>{tc("next")}</span>
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <span>{isPending ? tc("navigating") : tc("next")}</span>
+                  {!isPending && <ArrowRight className="ml-2 h-5 w-5" />}
                 </Button>
               </motion.div>
             </motion.div>

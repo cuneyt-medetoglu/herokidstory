@@ -459,7 +459,9 @@
       "contactSupport": "Destek ile İletişim",
       "back": "Geri",
       "next": "İleri",
-      "saving": "Kaydediliyor..."
+      "saving": "Kaydediliyor...",
+      "navigating": "Yükleniyor…",
+      "pleaseWait": "Lütfen bekleyin…"
     },
     "step1": {
       "stepProgress": "Adım 1 / 6",

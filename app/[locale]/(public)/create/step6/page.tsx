@@ -23,6 +23,7 @@ import { Link } from "@/i18n/navigation"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "@/i18n/navigation"
+import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useTranslations, useLocale } from "next-intl"
 import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
@@ -79,6 +80,7 @@ export default function Step6Page() {
   const t = useTranslations("create.step6")
   const tc = useTranslations("create.common")
   const router = useRouter()
+  const { navigate, isPending: isNavPending } = useWizardNavigate()
   const locale = useLocale()
   const { toast } = useToast()
   const [isCreating, setIsCreating] = useState(false)
@@ -181,6 +183,12 @@ export default function Step6Page() {
     }
     check()
   }, [user])
+
+  useEffect(() => {
+    router.prefetch("/create/step5")
+    router.prefetch("/cart")
+    router.prefetch("/dashboard")
+  }, [router])
 
   // Detect mobile
   useEffect(() => {
@@ -388,7 +396,7 @@ export default function Step6Page() {
         description: t("toasts.freeCoverCreatedDesc"),
       })
 
-      router.push(`/draft-preview?draftId=${result.draftId}`)
+      navigate(`/draft-preview?draftId=${result.draftId}`)
     } catch (error) {
       console.error("Error creating free cover:", error)
       toast({
@@ -418,7 +426,7 @@ export default function Step6Page() {
         description: t("toasts.storyRequiredDesc"),
         variant: "destructive",
       })
-      router.push("/create/step5")
+      navigate("/create/step5")
       return
     }
     const chars = getCharactersData()
@@ -478,14 +486,14 @@ export default function Step6Page() {
         })
       } else if (bookId) {
         willNavigate = true
-        router.push(`/create/generating/${bookId}`)
+        navigate(`/create/generating/${bookId}`)
       } else {
         willNavigate = true
         toast({
           title: t("toasts.bookStarted"),
           description: t("toasts.bookStartedDesc"),
         })
-        router.push("/dashboard")
+        navigate("/dashboard")
       }
     } catch (error) {
       console.error("Create without payment error:", error)
@@ -510,7 +518,7 @@ export default function Step6Page() {
         description: t("toasts.storyRequiredDesc"),
         variant: "destructive",
       })
-      router.push("/create/step5")
+      navigate("/create/step5")
       return
     }
 
@@ -578,9 +586,9 @@ export default function Step6Page() {
 
       willNavigate = true
       if (bookId) {
-        router.push(`/create/generating/${bookId}`)
+        navigate(`/create/generating/${bookId}`)
       } else {
-        router.push(`/dashboard`)
+        navigate(`/dashboard`)
       }
     } catch (error) {
       console.error("Error creating example book:", error)
@@ -1236,20 +1244,12 @@ export default function Step6Page() {
                   <Button
                     type="button"
                     onClick={handleCreateFreeCover}
+                    loading={isCreating}
                     disabled={isCreating || (!user && (!email || !validateEmail(email)))}
                     className="w-full bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-6 text-base font-bold text-white shadow-lg transition-all hover:shadow-2xl dark:from-green-400 dark:to-emerald-400"
                   >
-                    {isCreating ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Gift className="mr-2 h-5 w-5" />
-                        <span>{t("createButton")}</span>
-                      </>
-                    )}
+                    {!isCreating && <Gift className="mr-2 h-5 w-5" />}
+                    <span>{isCreating ? tc("pleaseWait") : t("createButton")}</span>
                   </Button>
                   <p className="mt-2 text-center text-xs text-gray-500 dark:text-slate-400">
                     Use your free cover credit to create just the cover (Page 1)
@@ -1267,21 +1267,19 @@ export default function Step6Page() {
                 >
                   <Button
                     type="button"
-                    disabled={isCreating || isLoadingCurrency}
-                    onClick={() => router.push(`/cart?plan=ebook`)}
+                    loading={isLoadingCurrency || isNavPending}
+                    disabled={isCreating || isLoadingCurrency || isNavPending}
+                    onClick={() => navigate(`/cart?plan=ebook`)}
                     className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isLoadingCurrency ? (
-                      <>
-                        <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                        <span>Loading...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="mr-2 h-6 w-6" />
-                        <span>Pay & Create My Book • {currencyConfig.price}</span>
-                      </>
+                    {!isLoadingCurrency && !isNavPending && (
+                      <ShoppingCart className="mr-2 h-6 w-6" />
                     )}
+                    <span>
+                      {isLoadingCurrency || isNavPending
+                        ? tc("navigating")
+                        : `Pay & Create My Book • ${currencyConfig.price}`}
+                    </span>
                   </Button>
                   <p className="mt-2 text-center text-xs text-gray-600 dark:text-slate-400">
                     {"You'll"} receive {currencyConfig.price} as a discount on the hardcover!
@@ -1325,18 +1323,16 @@ export default function Step6Page() {
                   <Button
                     type="button"
                     variant="outline"
+                    loading={isCreating}
                     disabled={isCreating || !wizardData}
                     onClick={handleCreateWithoutPayment}
                     className="w-full border-amber-500/50 text-amber-700 dark:text-amber-400 dark:border-amber-400/50"
                   >
-                    {isCreating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        <span>Creating...</span>
-                      </>
-                    ) : (
-                      <span>Create without payment ({debugStoryModel})</span>
-                    )}
+                    <span>
+                      {isCreating
+                        ? tc("pleaseWait")
+                        : `Create without payment (${debugStoryModel})`}
+                    </span>
                   </Button>
                   <p className="mt-1 text-center text-xs text-amber-600/80 dark:text-amber-400/80">
                     Admin / debug only – no payment
@@ -1369,21 +1365,17 @@ export default function Step6Page() {
                   <Button
                     type="button"
                     variant="outline"
+                    loading={isCreating}
                     disabled={isCreating || !wizardData}
                     onClick={handleCreateExampleBook}
                     className="w-full border-green-500/50 text-green-700 dark:text-green-400 dark:border-green-400/50"
                   >
-                    {isCreating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        <span>Creating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        <span>Create example book ({debugStoryModel})</span>
-                      </>
-                    )}
+                    {!isCreating && <BookOpen className="mr-2 h-4 w-4" />}
+                    <span>
+                      {isCreating
+                        ? tc("pleaseWait")
+                        : `Create example book (${debugStoryModel})`}
+                    </span>
                   </Button>
                   <p className="mt-1 text-center text-xs text-green-600/80 dark:text-green-400/80">
                     Admin only – public example. Uses selected story model above.
@@ -1448,7 +1440,7 @@ export default function Step6Page() {
           open={traceModalOpen}
           onOpenChange={(open) => {
             setTraceModalOpen(open)
-            if (!open) router.push("/dashboard")
+            if (!open) navigate("/dashboard")
           }}
           trace={traceData}
         />

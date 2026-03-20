@@ -189,13 +189,13 @@
 - [x] **2.4.8** Form validasyonu (Zod + React Hook Form) - ✅ Tüm step'lerde mevcut (Step 1,3,4,5: Zod + RHF, Step 2: Custom file validation, Step 6: Preview sayfası)
 - [x] **2.4.9** Ücretsiz kapak hakkı kontrolü ve gösterimi - ✅ UI tamamlandı (mock data ile, Faz 3'te gerçek kontrol)
 - [x] **2.4.10** "Ücretsiz Kapak Oluştur" butonu (hakkı varsa) - ✅ UI tamamlandı (Step 6'da, Faz 3'te API entegrasyonu)
-- [ ] **2.4.12** Kitap oluşturma sonrası animasyon ve loading (23 Ocak 2026) | 🔴 DO
-  - Kapak, admin (debug) ve Pay&Create butonları için "Creating..." durumunda güzel loading animasyonu
-  - Kitap oluştur adımından sonra tatlı bir animasyon ve loading gösterilmeli
+- [x] **2.4.12** Kitap oluşturma sonrası animasyon ve loading (23 Ocak 2026) | 🔴 DO ✅ (20 Mart 2026)
+  - ✅ Kapak, admin (debug) ve Pay&Create butonlarında `loading` + spinner + metin (`pleaseWait`/`navigating`)
+  - ✅ Global route geri bildirimi: locale layout'ta top loader (`nextjs-toploader`)
   - İleride tahmini süre (ETA) eklenebilir
   - Beklerken kapatabilir, hazır olunca bilgi gelecek (notification, email, vb.)
-  - Progress indicator (story generation, cover generation, page images generation)
-  - Kullanıcı deneyimi iyileştirmesi
+  - ✅ Segment loading fallback: `create`, `dashboard`, `books/[id]` için `loading.tsx`
+  - ✅ Kullanıcı deneyimi iyileştirmesi: wizard + from-example + cart CTA'larında tutarlı pending
 - [x] **2.4.14** Next.js Image ve layout konsol uyarıları (Şubat 2026) | ✅ Çözüldü (4 Şubat 2026)
   - İlk açılışta/sayfa yüklenirken konsolda: next/image `fill` kullanılan yerde `sizes` eksik; LCP resminde `priority` eksik; container'da `position` (relative/fixed/absolute) uyarısı
   - Neden: next/image performans ve doğru boyut için `sizes` istiyor; LCP için `priority` öneriliyor; scroll offset için container position gerekli

@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { SessionProvider } from '@/components/providers/SessionProvider'
 import { CartProvider } from '@/contexts/CartContext'
 import { CurrencyProvider } from '@/contexts/CurrencyContext'
+import { NavigationProgress } from '@/components/providers/NavigationProgress'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <NavigationProgress />
             <SessionProvider>
               <CurrencyProvider>
                 <CartProvider>

@@ -459,7 +459,9 @@
       "contactSupport": "Contact Support",
       "back": "Back",
       "next": "Next",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "navigating": "Loading…",
+      "pleaseWait": "Please wait…"
     },
     "step1": {
       "stepProgress": "Step 1 of 6",

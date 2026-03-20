@@ -424,6 +424,12 @@ Faz 3, backend API'lerinin ve AI entegrasyonunun implementasyonunu kapsar.
 - **Karakter doğruluğu:** Pet karakter (`Pets/Dog`) ile üretim başarılı; master prompt ayrımı aktif.
 - **Durum:** ✅ Başarılı (kritik regresyon gözlenmedi).
 
+## 🧪 Son Create Book UX Loading Testi (20 Mart 2026)
+
+- **Akış:** Step 1 → 2 → 3 → 4 → 5 → 6 ve from-example summary → cart/checkout yönlendirmeleri.
+- **Doğrulamalar:** İleri/CTA tıklamalarında buton `loading` + `aria-busy`, route geçişlerinde üst progress bar, create/dashboard/books detayında `loading.tsx` fallback, step geçişlerinde prefetch.
+- **Durum:** ✅ Başarılı (tıklama sonrası geri bildirim tutarlı; “sadece soluk disabled” davranışı azaltıldı).
+
 ---
 
 ## 📝 Önemli Notlar
