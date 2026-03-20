@@ -936,6 +936,10 @@
       "title": "No books yet",
       "subtitle": "Create your first magical storybook!"
     },
+    "noResults": {
+      "title": "No results found",
+      "subtitle": "No books match your search or filter. Try something different."
+    },
     "tooltips": {
       "audio": "Audio",
       "downloadPdf": "Download PDF",

@@ -936,6 +936,10 @@
       "title": "Henüz kitabınız yok",
       "subtitle": "İlk sihirli hikaye kitabınızı oluşturun!"
     },
+    "noResults": {
+      "title": "Sonuç bulunamadı",
+      "subtitle": "Arama veya filtre kriterlerinize uyan kitap yok. Farklı bir şey deneyin."
+    },
     "tooltips": {
       "audio": "Sesli Okuma",
       "downloadPdf": "PDF İndir",
