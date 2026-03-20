@@ -19,7 +19,7 @@ import {
   Info,
 } from "lucide-react"
 import { Link, useRouter } from "@/i18n/navigation"
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useTranslations } from "next-intl"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -30,24 +30,27 @@ import { Label } from "@/components/ui/label"
 // Character Type System (Group-based)
 type CharacterGroup = "Child" | "Pets" | "Family Members" | "Toys" | "Other"
 
-// Options for Child character details (same as Step 1)
-const hairColorOptions = [
-  { value: "light-blonde", label: "Light Blonde" },
-  { value: "blonde", label: "Blonde" },
-  { value: "dark-blonde", label: "Dark Blonde" },
-  { value: "black", label: "Black" },
-  { value: "brown", label: "Brown" },
-  { value: "red", label: "Red" },
-  { value: "white", label: "White" },
-]
+const HAIR_COLOR_VALUES = [
+  "light-blonde",
+  "blonde",
+  "dark-blonde",
+  "black",
+  "brown",
+  "red",
+  "white",
+] as const
 
-const eyeColorOptions = [
-  { value: "blue", label: "Blue" },
-  { value: "green", label: "Green" },
-  { value: "brown", label: "Brown" },
-  { value: "black", label: "Black" },
-  { value: "hazel", label: "Hazel" },
-]
+const HAIR_VALUE_TO_STEP1_KEY: Record<(typeof HAIR_COLOR_VALUES)[number], string> = {
+  "light-blonde": "lightBlonde",
+  blonde: "blonde",
+  "dark-blonde": "darkBlonde",
+  black: "black",
+  brown: "brown",
+  red: "red",
+  white: "white",
+}
+
+const EYE_COLOR_VALUES = ["blue", "green", "brown", "black", "hazel"] as const
 
 type CharacterTypeInfo = {
   group: CharacterGroup
@@ -70,36 +73,115 @@ type Character = {
   isDragging: boolean
 }
 
-// Character Options Configuration
+// Character Options Configuration (values stay English for storage/API)
 const CHARACTER_OPTIONS = {
   Child: {
-    label: "Child",
     value: "Child",
   },
   Pets: {
-    label: "Pets",
     options: ["Dog", "Cat", "Rabbit", "Bird", "Other Pet"],
   },
   FamilyMembers: {
-    label: "Family Members",
     options: ["Mom", "Dad", "Grandma", "Grandpa", "Sister", "Brother", "Uncle", "Aunt", "Other Family"],
   },
   Toys: {
-    label: "Toys",
-    options: ["Teddy Bear", "Doll", "Action Figure", "Robot", "Car", "Train", "Ball", "Blocks", "Puzzle", "Stuffed Animal", "Other Toy"],
+    options: [
+      "Teddy Bear",
+      "Doll",
+      "Action Figure",
+      "Robot",
+      "Car",
+      "Train",
+      "Ball",
+      "Blocks",
+      "Puzzle",
+      "Stuffed Animal",
+      "Other Toy",
+    ],
   },
   Other: {
-    label: "Other",
     hasInput: true,
   },
 } as const
+
+/** Maps stored English option values to create.step2.optionLabels keys */
+const OPTION_VALUE_TO_LABEL_KEY: Record<string, string> = {
+  Child: "child",
+  Dog: "dog",
+  Cat: "cat",
+  Rabbit: "rabbit",
+  Bird: "bird",
+  "Other Pet": "otherPet",
+  Mom: "mom",
+  Dad: "dad",
+  Grandma: "grandma",
+  Grandpa: "grandpa",
+  Sister: "sister",
+  Brother: "brother",
+  Uncle: "uncle",
+  Aunt: "aunt",
+  "Other Family": "otherFamily",
+  "Teddy Bear": "teddyBear",
+  Doll: "doll",
+  "Action Figure": "actionFigure",
+  Robot: "robot",
+  Car: "car",
+  Train: "train",
+  Ball: "ball",
+  Blocks: "blocks",
+  Puzzle: "puzzle",
+  "Stuffed Animal": "stuffedAnimal",
+  "Other Toy": "otherToy",
+}
 
 /** Maximum number of characters (main + additional) in book creation. */
 const MAX_CHARACTERS = 5
 
 export default function Step2Page() {
   const t = useTranslations("create.step2")
+  const t1 = useTranslations("create.step1")
   const tc = useTranslations("create.common")
+
+  const hairColorOptions = useMemo(
+    () =>
+      HAIR_COLOR_VALUES.map((value) => ({
+        value,
+        label: t1(`hairColors.${HAIR_VALUE_TO_STEP1_KEY[value]}` as "hairColors.lightBlonde"),
+      })),
+    [t1],
+  )
+
+  const eyeColorOptions = useMemo(
+    () =>
+      EYE_COLOR_VALUES.map((value) => ({
+        value,
+        label: t1(`eyeColors.${value}` as "eyeColors.blue"),
+      })),
+    [t1],
+  )
+
+  const optionLabel = useCallback(
+    (value: string) => {
+      const k = OPTION_VALUE_TO_LABEL_KEY[value]
+      if (k) return t(`optionLabels.${k}` as "optionLabels.child")
+      return value
+    },
+    [t],
+  )
+
+  const groupLabel = useCallback(
+    (group: CharacterGroup) => {
+      const map: Record<CharacterGroup, "characterTypes.child" | "characterTypes.familyMembers" | "characterTypes.pets" | "characterTypes.toys" | "characterTypes.other"> = {
+        Child: "characterTypes.child",
+        "Family Members": "characterTypes.familyMembers",
+        Pets: "characterTypes.pets",
+        Toys: "characterTypes.toys",
+        Other: "characterTypes.other",
+      }
+      return t(map[group])
+    },
+    [t],
+  )
   const router = useRouter()
   const { isPending, navigate } = useWizardNavigate()
   const { toast } = useToast()
@@ -183,31 +265,31 @@ export default function Step2Page() {
     }
   }, [])
 
-  const validateFile = (file: File): string | null => {
+  const validateFile = useCallback((file: File): "invalidFormat" | "fileTooLarge" | null => {
     const validTypes = ["image/jpeg", "image/jpg", "image/png"]
     const maxSize = 5 * 1024 * 1024 // 5MB
 
     if (!validTypes.includes(file.type)) {
-      return "Invalid file format. Please upload JPG or PNG"
+      return "invalidFormat"
     }
 
     if (file.size > maxSize) {
-      return "File size exceeds 5MB. Please choose a smaller file"
+      return "fileTooLarge"
     }
 
     return null
-  }
+  }, [])
 
   const handleFileUpload = useCallback(async (characterId: string, file: File) => {
     const error = validateFile(file)
 
     if (error) {
       setCharacters((prev) =>
-        prev.map((char) => (char.id === characterId ? { ...char, uploadError: error } : char)),
+        prev.map((char) => (char.id === characterId ? { ...char, uploadError: t(`validation.${error}`) } : char)),
       )
       toast({
-        title: "Upload Error",
-        description: error,
+        title: t("toasts.uploadError"),
+        description: t(`validation.${error}`),
         variant: "destructive",
       })
       return
@@ -420,23 +502,24 @@ export default function Step2Page() {
                 type: currentCharacter.characterType,
               })
               
+              const createdName = optionLabel(currentCharacter.characterType.displayName)
               toast({
-                title: "Character Created!",
-                description: `${currentCharacter.characterType.displayName} has been created successfully.`,
+                title: t("toasts.characterCreated"),
+                description: t("toasts.characterCreatedDesc", { name: createdName }),
               })
             }
           } catch (error) {
             console.error("[Step 2] Error creating character:", error)
             toast({
-              title: "Warning",
-              description: "Photo saved but character creation failed. You can continue and try again later.",
+              title: t("toasts.warning"),
+              description: t("toasts.photoSavedCharFailed"),
               variant: "destructive",
             })
           }
         } else {
           toast({
-            title: "Warning",
-            description: "Photo saved but Step 1 data not found. Please go back to Step 1 first.",
+            title: t("toasts.warning"),
+            description: t("toasts.step1Missing"),
             variant: "destructive",
           })
         }
@@ -445,12 +528,12 @@ export default function Step2Page() {
     } catch (error) {
       console.error("Error processing file:", error)
       toast({
-        title: "Error",
-        description: "Failed to process photo. Please try again.",
+        title: t("toasts.error"),
+        description: t("toasts.processError"),
         variant: "destructive",
       })
     }
-  }, [characters, toast, step1Data])
+  }, [characters, toast, step1Data, t, validateFile, optionLabel])
 
   const handleFileDrop = useCallback(
     (characterId: string, e: React.DragEvent<HTMLDivElement>) => {
@@ -733,21 +816,25 @@ export default function Step2Page() {
     return (bytes / (1024 * 1024)).toFixed(1) + " MB"
   }
 
-  const getUploadLabel = (characterType: CharacterTypeInfo): string => {
-    if (characterType.group === "Child") {
-      return "Upload Child Photo"
-    } else if (characterType.group === "Pets") {
-      return `Upload ${characterType.displayName} Photo`
-    } else if (characterType.group === "Family Members") {
-      return `Upload ${characterType.displayName} Photo`
-    } else if (characterType.group === "Toys") {
-      return `Upload ${characterType.displayName} Photo`
-    } else {
-      return characterType.displayName 
-        ? `Upload ${characterType.displayName} Photo` 
-        : "Upload Character Photo"
-    }
-  }
+  const getUploadLabel = useCallback(
+    (characterType: CharacterTypeInfo): string => {
+      const shown = characterType.displayName ? optionLabel(characterType.displayName) : ""
+      if (characterType.group === "Child") {
+        return t("upload.childPhoto")
+      }
+      if (
+        characterType.group === "Pets" ||
+        characterType.group === "Family Members" ||
+        characterType.group === "Toys"
+      ) {
+        return t("upload.namedPhoto", { name: shown || characterType.displayName || "" })
+      }
+      return characterType.displayName?.trim()
+        ? t("upload.namedPhoto", { name: shown })
+        : t("upload.characterPhoto")
+    },
+    [t, optionLabel],
+  )
 
   const floatingVariants = {
     animate: (i: number) => ({
@@ -769,6 +856,38 @@ export default function Step2Page() {
   ]
 
   const hasUploadedPhotos = characters.some((char) => char.uploadedFile !== null)
+
+  const formatGenderDisplay = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const lower = String(raw).toLowerCase()
+      if (lower === "boy" || lower === "girl") return t(`gender.${lower}` as "gender.boy")
+      return String(raw)
+    },
+    [t],
+  )
+
+  const formatHairColorFromRaw = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const normalized = String(raw).toLowerCase().replace(/\s+/g, "-")
+      const sk = HAIR_VALUE_TO_STEP1_KEY[normalized as keyof typeof HAIR_VALUE_TO_STEP1_KEY]
+      if (sk) return t1(`hairColors.${sk}` as "hairColors.lightBlonde")
+      return String(raw)
+    },
+    [t, t1],
+  )
+
+  const formatEyeColorFromRaw = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const normalized = String(raw).toLowerCase()
+      if ((EYE_COLOR_VALUES as readonly string[]).includes(normalized))
+        return t1(`eyeColors.${normalized}` as "eyeColors.blue")
+      return String(raw)
+    },
+    [t, t1],
+  )
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/5 via-white to-brand-2/5 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
@@ -834,10 +953,8 @@ export default function Step2Page() {
               transition={{ delay: 0.3, duration: 0.4 }}
               className="mb-8 text-center"
             >
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">Add Characters</h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
-                Upload photos for up to 3 characters (minimum 1)
-              </p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">{t("pageHeading")}</h1>
+              <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">{t("pageSubheading")}</p>
             </motion.div>
 
             {/* Master photo best practices (better character consistency in book) */}
@@ -845,13 +962,13 @@ export default function Step2Page() {
               <div className="flex gap-3">
                 <Info className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
                 <div className="text-sm text-gray-700 dark:text-slate-300">
-                  <p className="font-medium text-blue-900 dark:text-blue-100">En iyi sonuç için</p>
+                  <p className="font-medium text-blue-900 dark:text-blue-100">{t("photoTips.title")}</p>
                   <ul className="mt-2 list-inside space-y-1 text-xs">
-                    <li>Tam karşıdan fotoğraf (yüz kameraya baksın)</li>
-                    <li>Doğal ışık (güneş ışığı, yumuşak gölge)</li>
-                    <li>Sade arka plan (dikkat dağıtmayan)</li>
-                    <li>Doğal, rahat duruş</li>
-                    <li>Yan veya profil açı tüm sayfalarda aynı açıya yol açar</li>
+                    <li>{t("photoTips.frontFacing")}</li>
+                    <li>{t("photoTips.naturalLight")}</li>
+                    <li>{t("photoTips.plainBackground")}</li>
+                    <li>{t("photoTips.naturalPose")}</li>
+                    <li>{t("photoTips.avoidProfile")}</li>
                   </ul>
                 </div>
               </div>
@@ -873,7 +990,7 @@ export default function Step2Page() {
                       {/* Header: Character Number + Remove Button */}
                       <div className="flex items-center justify-between">
                         <span className="rounded-full bg-gradient-to-r from-primary to-brand-2 px-3 py-1 text-xs font-bold text-white">
-                          Character {index + 1}
+                          {t("characterBadge", { n: index + 1 })}
                         </span>
                         {characters.length > 1 && (
                           <motion.button
@@ -881,7 +998,7 @@ export default function Step2Page() {
                             whileTap={{ scale: 0.9 }}
                             onClick={() => handleRemoveCharacter(character.id)}
                             className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white transition-all hover:bg-red-600"
-                            aria-label="Remove character"
+                            aria-label={t("aria.removeCharacter")}
                           >
                             <X className="h-4 w-4" />
                           </motion.button>
@@ -891,7 +1008,7 @@ export default function Step2Page() {
                       {/* Main Group Selection */}
                       <div className="space-y-2">
                         <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                          Character Type
+                          {t("characterTypeLabel")}
                         </label>
                         <Select 
                           value={character.characterType.group} 
@@ -901,11 +1018,11 @@ export default function Step2Page() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Child">Child</SelectItem>
-                            <SelectItem value="Family Members">Family Members</SelectItem>
-                            <SelectItem value="Pets">Pets</SelectItem>
-                            <SelectItem value="Toys">Toys</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="Child">{groupLabel("Child")}</SelectItem>
+                            <SelectItem value="Family Members">{groupLabel("Family Members")}</SelectItem>
+                            <SelectItem value="Pets">{groupLabel("Pets")}</SelectItem>
+                            <SelectItem value="Toys">{groupLabel("Toys")}</SelectItem>
+                            <SelectItem value="Other">{groupLabel("Other")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -914,7 +1031,7 @@ export default function Step2Page() {
                       {(character.characterType.group as string) === "Pets" && (
                         <div className="space-y-2">
                           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                            Select Pet
+                            {t("selectPet")}
                           </label>
                           <Select 
                             value={character.characterType.value} 
@@ -926,7 +1043,7 @@ export default function Step2Page() {
                             <SelectContent>
                               {CHARACTER_OPTIONS.Pets.options.map((pet) => (
                                 <SelectItem key={pet} value={pet}>
-                                  {pet}
+                                  {optionLabel(pet)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -938,7 +1055,7 @@ export default function Step2Page() {
                       {character.characterType.group === "Family Members" && (
                         <div className="space-y-2">
                           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                            Select Family Member
+                            {t("selectFamilyMember")}
                           </label>
                           <Select 
                             value={character.characterType.value} 
@@ -950,7 +1067,7 @@ export default function Step2Page() {
                             <SelectContent>
                               {CHARACTER_OPTIONS.FamilyMembers.options.map((member) => (
                                 <SelectItem key={member} value={member}>
-                                  {member}
+                                  {optionLabel(member)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -962,7 +1079,7 @@ export default function Step2Page() {
                       {character.characterType.group === "Toys" && (
                         <div className="space-y-2">
                           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                            Select Toy
+                            {t("selectToy")}
                           </label>
                           <Select 
                             value={character.characterType.value} 
@@ -974,7 +1091,7 @@ export default function Step2Page() {
                             <SelectContent>
                               {CHARACTER_OPTIONS.Toys.options.map((toy) => (
                                 <SelectItem key={toy} value={toy}>
-                                  {toy}
+                                  {optionLabel(toy)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -990,23 +1107,23 @@ export default function Step2Page() {
                         <div className="space-y-2">
                           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
                             {character.characterType.value === "Other Pet" 
-                              ? "Pet Type" 
+                              ? t("dynamicTypeLabels.petType") 
                               : character.characterType.value === "Other Family" 
-                              ? "Family Member Type" 
+                              ? t("dynamicTypeLabels.familyMemberType") 
                               : character.characterType.value === "Other Toy"
-                              ? "Toy Type"
-                              : "Character Type"}
+                              ? t("dynamicTypeLabels.toyType")
+                              : t("dynamicTypeLabels.characterType")}
                           </label>
                           <Input
                             type="text"
                             placeholder={
                               character.characterType.value === "Other Pet" 
-                                ? "e.g., Hamster, Turtle" 
+                                ? t("placeholders.otherPet") 
                                 : character.characterType.value === "Other Family" 
-                                ? "e.g., Uncle, Cousin" 
+                                ? t("placeholders.otherFamily") 
                                 : character.characterType.value === "Other Toy"
-                                ? "e.g., Truck, Plane"
-                                : "e.g., Robot, Alien"
+                                ? t("placeholders.otherToy")
+                                : t("placeholders.other")
                             }
                             value={character.characterType.displayName}
                             onChange={(e) => handleCharacterDisplayNameChange(character.id, e.target.value)}
@@ -1020,42 +1137,46 @@ export default function Step2Page() {
                         <div className="space-y-4 rounded-lg border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
                           <div className="flex items-center justify-between">
                             <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-50">
-                              Child Details (from Step 1)
+                              {t("childDetailsFromStep1")}
                             </h3>
                             <Link
                               href="/create/step1"
                               className="text-xs font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                             >
-                              Edit
+                              {tc("edit")}
                             </Link>
                           </div>
                           
                           {/* Read-only information from Step 1 */}
                           <div className="grid grid-cols-2 gap-3 text-sm">
                             <div>
-                              <span className="font-medium text-gray-700 dark:text-slate-300">Name:</span>{" "}
-                              <span className="text-gray-900 dark:text-slate-50">{step1Data.name || "—"}</span>
+                              <span className="font-medium text-gray-700 dark:text-slate-300">{t("labels.name")}</span>{" "}
+                              <span className="text-gray-900 dark:text-slate-50">{step1Data.name || t("unknown")}</span>
                             </div>
                             <div>
-                              <span className="font-medium text-gray-700 dark:text-slate-300">Age:</span>{" "}
-                              <span className="text-gray-900 dark:text-slate-50">{step1Data.age || "—"} years old</span>
+                              <span className="font-medium text-gray-700 dark:text-slate-300">{t("labels.age")}</span>{" "}
+                              <span className="text-gray-900 dark:text-slate-50">
+                                {typeof step1Data.age === "number" && !Number.isNaN(step1Data.age)
+                                  ? t("yearsOld", { count: step1Data.age })
+                                  : t("unknown")}
+                              </span>
                             </div>
                             <div>
-                              <span className="font-medium text-gray-700 dark:text-slate-300">Gender:</span>{" "}
-                              <span className="text-gray-900 dark:text-slate-50 capitalize">{step1Data.gender || "—"}</span>
+                              <span className="font-medium text-gray-700 dark:text-slate-300">{t("labels.gender")}</span>{" "}
+                              <span className="text-gray-900 dark:text-slate-50">{formatGenderDisplay(step1Data.gender)}</span>
                             </div>
                             <div>
-                              <span className="font-medium text-gray-700 dark:text-slate-300">Hair:</span>{" "}
-                              <span className="text-gray-900 dark:text-slate-50 capitalize">{step1Data.hairColor || "—"}</span>
+                              <span className="font-medium text-gray-700 dark:text-slate-300">{t("labels.hair")}</span>{" "}
+                              <span className="text-gray-900 dark:text-slate-50">{formatHairColorFromRaw(step1Data.hairColor)}</span>
                             </div>
                             <div>
-                              <span className="font-medium text-gray-700 dark:text-slate-300">Eye:</span>{" "}
-                              <span className="text-gray-900 dark:text-slate-50 capitalize">{step1Data.eyeColor || "—"}</span>
+                              <span className="font-medium text-gray-700 dark:text-slate-300">{t("labels.eye")}</span>{" "}
+                              <span className="text-gray-900 dark:text-slate-50">{formatEyeColorFromRaw(step1Data.eyeColor)}</span>
                             </div>
                           </div>
                           
                           <div className="mt-2 rounded-md bg-blue-100/50 p-2 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                            💡 To edit these details, go back to Step 1
+                            {t("editHint")}
                           </div>
                         </div>
                       )}
@@ -1064,17 +1185,17 @@ export default function Step2Page() {
                       {character.characterType.group === "Child" && (index > 0 || !step1Data) && (
                         <div className="space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-4 dark:border-primary/20 dark:bg-primary/5">
                           <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-50">
-                            Child Details
+                            {t("childDetails")}
                           </h3>
                           
                           {/* Name */}
                           <div className="space-y-2">
                             <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                              Name <span className="text-red-500">*</span>
+                              {t("fieldLabels.name")} <span className="text-red-500">*</span>
                             </Label>
                             <Input
                               type="text"
-                              placeholder="e.g., Arya, Aras"
+                              placeholder={t("placeholders.childName")}
                               value={character.name || ""}
                               onChange={(e) => handleChildDetailsChange(character.id, "name", e.target.value)}
                               className="border-primary/30 dark:border-primary/30"
@@ -1086,13 +1207,13 @@ export default function Step2Page() {
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                                Age <span className="text-red-500">*</span>
+                                {t("fieldLabels.age")} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                 type="number"
                                 min="0"
                                 max="12"
-                                placeholder="e.g., 5"
+                                placeholder={t("placeholders.age")}
                                 value={character.age || ""}
                                 onChange={(e) => handleChildDetailsChange(character.id, "age", parseInt(e.target.value) || 0)}
                                 className="border-primary/30 dark:border-primary/30"
@@ -1101,18 +1222,18 @@ export default function Step2Page() {
                             </div>
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                                Gender <span className="text-red-500">*</span>
+                                {t("fieldLabels.gender")} <span className="text-red-500">*</span>
                               </Label>
                               <Select
                                 value={character.gender || ""}
                                 onValueChange={(value) => handleChildDetailsChange(character.id, "gender", value as "boy" | "girl")}
                               >
                                 <SelectTrigger className="border-primary/30 bg-white dark:border-primary/30 dark:bg-slate-700">
-                                  <SelectValue placeholder="Select..." />
+                                  <SelectValue placeholder={t("selectPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="boy">Boy</SelectItem>
-                                  <SelectItem value="girl">Girl</SelectItem>
+                                  <SelectItem value="boy">{t("gender.boy")}</SelectItem>
+                                  <SelectItem value="girl">{t("gender.girl")}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -1122,14 +1243,14 @@ export default function Step2Page() {
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                                Hair Color <span className="text-red-500">*</span>
+                                {t("labels.hairColor")} <span className="text-red-500">*</span>
                               </Label>
                               <Select
                                 value={character.hairColor || ""}
                                 onValueChange={(value) => handleChildDetailsChange(character.id, "hairColor", value)}
                               >
                                 <SelectTrigger className="border-primary/30 bg-white dark:border-primary/30 dark:bg-slate-700">
-                                  <SelectValue placeholder="Select..." />
+                                  <SelectValue placeholder={t("selectPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {hairColorOptions.map((option) => (
@@ -1142,14 +1263,14 @@ export default function Step2Page() {
                             </div>
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                                Eye Color <span className="text-red-500">*</span>
+                                {t("labels.eyeColor")} <span className="text-red-500">*</span>
                               </Label>
                               <Select
                                 value={character.eyeColor || ""}
                                 onValueChange={(value) => handleChildDetailsChange(character.id, "eyeColor", value)}
                               >
                                 <SelectTrigger className="border-primary/30 bg-white dark:border-primary/30 dark:bg-slate-700">
-                                  <SelectValue placeholder="Select..." />
+                                  <SelectValue placeholder={t("selectPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {eyeColorOptions.map((option) => (
@@ -1169,19 +1290,17 @@ export default function Step2Page() {
                         <div className="space-y-2">
                           <label className="text-xs font-medium text-gray-700 dark:text-slate-300">
                             {(character.characterType.group as string) === "Pets" 
-                              ? "Pet Name (optional)" 
-                              : character.characterType.group === "Family Members" 
-                              ? "Name (optional)" 
-                              : "Name (optional)"}
+                              ? t("nameOptional.pet") 
+                              : t("nameOptional.default")}
                           </label>
                           <Input
                             type="text"
                             placeholder={
                               (character.characterType.group as string) === "Pets" 
-                                ? "e.g., Buddy, Max, Luna" 
+                                ? t("placeholders.petName") 
                                 : character.characterType.group === "Family Members" 
-                                ? "e.g., Sarah, John" 
-                                : "e.g., Custom name"
+                                ? t("placeholders.familyName") 
+                                : t("placeholders.genericName")
                             }
                             value={character.name || ""}
                             onChange={(e) => handleCharacterNameChange(character.id, e.target.value)}
@@ -1189,12 +1308,12 @@ export default function Step2Page() {
                           />
                           <p className="text-xs text-gray-500 dark:text-slate-400">
                             {(character.characterType.group as string) === "Pets" 
-                              ? "Give your pet a name, or leave empty to use 'Dog', 'Cat', etc." 
+                              ? t("nameHints.pets") 
                               : character.characterType.group === "Family Members" 
-                              ? "Give a name, or leave empty to use 'Mom', 'Grandma', etc." 
+                              ? t("nameHints.family") 
                               : character.characterType.group === "Toys"
-                              ? "Give your toy a name, or leave empty to use 'Teddy Bear', 'Doll', etc."
-                              : "Optional custom name for this character"}
+                              ? t("nameHints.toys")
+                              : t("nameHints.other")}
                           </p>
                         </div>
                       )}
@@ -1203,10 +1322,10 @@ export default function Step2Page() {
                       {character.characterType.group !== "Child" && character.characterType.group !== "Pets" && (
                         <div className="space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-4 dark:border-primary/20 dark:bg-primary/5">
                           <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-50">
-                            Appearance Details
+                            {t("appearanceDetails")}
                           </h3>
                           <p className="text-xs text-gray-600 dark:text-slate-400">
-                            These details help create accurate illustrations of this character
+                            {t("appearanceHelp")}
                           </p>
                           
                           {/* Hair/Fur & Eye Color */}
@@ -1215,17 +1334,17 @@ export default function Step2Page() {
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
                                 {(character.characterType.group as string) === "Pets" 
-                                  ? "Fur Color" 
+                                  ? t("labels.furColor") 
                                   : character.characterType.group === "Toys"
-                                  ? "Color"
-                                  : "Hair Color"} <span className="text-red-500">*</span>
+                                  ? t("labels.color")
+                                  : t("labels.hairColor")} <span className="text-red-500">*</span>
                               </Label>
                               <Select
                                 value={character.hairColor || ""}
                                 onValueChange={(value) => handleChildDetailsChange(character.id, "hairColor", value)}
                               >
                                 <SelectTrigger className="border-primary/30 bg-white dark:border-primary/30 dark:bg-slate-700">
-                                  <SelectValue placeholder="Select..." />
+                                  <SelectValue placeholder={t("selectPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {hairColorOptions.map((option) => (
@@ -1235,9 +1354,9 @@ export default function Step2Page() {
                                   ))}
                                   {(character.characterType.group as string) === "Pets" && (
                                     <>
-                                      <SelectItem value="white">White</SelectItem>
-                                      <SelectItem value="gray">Gray</SelectItem>
-                                      <SelectItem value="spotted">Spotted</SelectItem>
+                                      <SelectItem value="white">{t("furExtra.white")}</SelectItem>
+                                      <SelectItem value="gray">{t("furExtra.gray")}</SelectItem>
+                                      <SelectItem value="spotted">{t("furExtra.spotted")}</SelectItem>
                                     </>
                                   )}
                                 </SelectContent>
@@ -1247,14 +1366,14 @@ export default function Step2Page() {
                             {/* Eye Color */}
                             <div className="space-y-2">
                               <Label className="text-xs font-medium text-gray-700 dark:text-slate-300">
-                                Eye Color <span className="text-red-500">*</span>
+                                {t("labels.eyeColor")} <span className="text-red-500">*</span>
                               </Label>
                               <Select
                                 value={character.eyeColor || ""}
                                 onValueChange={(value) => handleChildDetailsChange(character.id, "eyeColor", value)}
                               >
                                 <SelectTrigger className="border-primary/30 bg-white dark:border-primary/30 dark:bg-slate-700">
-                                  <SelectValue placeholder="Select..." />
+                                  <SelectValue placeholder={t("selectPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {eyeColorOptions.map((option) => (
@@ -1313,10 +1432,10 @@ export default function Step2Page() {
                             {getUploadLabel(character.characterType)}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-slate-400">
-                            Drag and drop or click to browse
+                            {t("upload.dragDrop")}
                           </p>
                           <p className="mt-2 text-xs text-gray-400 dark:text-slate-500">
-                            JPG or PNG, max 5MB
+                            {t("upload.fileHint")}
                           </p>
                         </label>
                       </motion.div>
@@ -1343,7 +1462,7 @@ export default function Step2Page() {
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleRemoveFile(character.id)}
                               className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-all hover:bg-red-600"
-                              aria-label="Remove photo"
+                              aria-label={t("aria.removePhoto")}
                             >
                               <X className="h-5 w-5" />
                             </motion.button>
@@ -1408,8 +1527,8 @@ export default function Step2Page() {
                 onClick={() => {
                   if (!hasUploadedPhotos) {
                     toast({
-                      title: "Photo Required",
-                      description: "Please upload at least one character photo before proceeding.",
+                      title: t("toasts.photoRequired"),
+                      description: t("toasts.photoRequiredDesc"),
                       variant: "destructive",
                     })
                     return

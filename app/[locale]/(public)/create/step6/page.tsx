@@ -21,7 +21,7 @@ import {
 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useTranslations, useLocale } from "next-intl"
@@ -45,43 +45,85 @@ import {
 
 const DEFAULT_PAGE_COUNT = 12
 
+const HAIR_VALUE_TO_STEP1_KEY: Record<string, string> = {
+  "light-blonde": "lightBlonde",
+  blonde: "blonde",
+  "dark-blonde": "darkBlonde",
+  black: "black",
+  brown: "brown",
+  red: "red",
+  white: "white",
+}
+
+const EYE_COLOR_VALUES = ["blue", "green", "brown", "black", "hazel"] as const
+
+const OPTION_VALUE_TO_LABEL_KEY: Record<string, string> = {
+  Child: "child",
+  Dog: "dog",
+  Cat: "cat",
+  Rabbit: "rabbit",
+  Bird: "bird",
+  "Other Pet": "otherPet",
+  Mom: "mom",
+  Dad: "dad",
+  Grandma: "grandma",
+  Grandpa: "grandpa",
+  Sister: "sister",
+  Brother: "brother",
+  Uncle: "uncle",
+  Aunt: "aunt",
+  "Other Family": "otherFamily",
+  "Teddy Bear": "teddyBear",
+  Doll: "doll",
+  "Action Figure": "actionFigure",
+  Robot: "robot",
+  Car: "car",
+  Train: "train",
+  Ball: "ball",
+  Blocks: "blocks",
+  Puzzle: "puzzle",
+  "Stuffed Animal": "stuffedAnimal",
+  "Other Toy": "otherToy",
+}
+
 /** /api/books ALLOWED_STORY_MODELS ile uyumlu (admin/debug seçici). */
 type DebugStoryModel = 'gpt-4.1-mini' | 'gpt-4.1' | 'gpt-4o-mini' | 'gpt-4o' | 'o1-mini'
 
-// Timeline step configuration
-const timelineSteps = [
-  {
-    id: 1,
-    title: "Book Creation",
-    description:
-      "After payment, we immediately create your digital children's book. Available within just 2 hours and you'll receive an email when it's ready!",
-    icon: BookOpen,
-    gradient: "from-primary to-primary/80",
-    shadowColor: "shadow-primary/50",
-  },
-  {
-    id: 2,
-    title: "Edit & Perfect",
-    description:
-      "After creation you can easily adjust texts and illustrations until the result is perfect.",
-    icon: Pencil,
-    gradient: "from-brand-2 to-rose-500",
-    shadowColor: "shadow-brand-2/50",
-  },
-  {
-    id: 3,
-    title: "Share & Print",
-    description:
-      "Happy with it? Share your digital book directly with family and friends or order a beautiful hardcover copy as a lasting memory.",
-    icon: Share2,
-    gradient: "from-primary to-brand-2",
-    shadowColor: "shadow-primary/50",
-  },
-]
-
 export default function Step6Page() {
   const t = useTranslations("create.step6")
+  const t1 = useTranslations("create.step1")
+  const t2 = useTranslations("create.step2")
   const tc = useTranslations("create.common")
+
+  const timelineSteps = useMemo(
+    () => [
+      {
+        id: 1,
+        title: t("timeline.step1.title"),
+        description: t("timeline.step1.description"),
+        icon: BookOpen,
+        gradient: "from-primary to-primary/80",
+        shadowColor: "shadow-primary/50",
+      },
+      {
+        id: 2,
+        title: t("timeline.step2.title"),
+        description: t("timeline.step2.description"),
+        icon: Pencil,
+        gradient: "from-brand-2 to-rose-500",
+        shadowColor: "shadow-brand-2/50",
+      },
+      {
+        id: 3,
+        title: t("timeline.step3.title"),
+        description: t("timeline.step3.description"),
+        icon: Share2,
+        gradient: "from-primary to-brand-2",
+        shadowColor: "shadow-primary/50",
+      },
+    ],
+    [t],
+  )
   const router = useRouter()
   const { navigate, isPending: isNavPending } = useWizardNavigate()
   const locale = useLocale()
@@ -231,7 +273,7 @@ export default function Step6Page() {
   const handleEmailChange = (value: string) => {
     setEmail(value)
     if (value && !validateEmail(value)) {
-      setEmailError("Please enter a valid email address")
+      setEmailError(t("invalidEmail"))
     } else {
       setEmailError("")
     }
@@ -348,6 +390,66 @@ export default function Step6Page() {
 
   const isCustomTheme = formData.theme?.id === "custom"
 
+  const optionLabel = useCallback(
+    (value: string) => {
+      const k = OPTION_VALUE_TO_LABEL_KEY[value]
+      if (k) return t2(`optionLabels.${k}` as "optionLabels.child")
+      return value
+    },
+    [t2],
+  )
+
+  const formatGenderDisplay = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const lower = String(raw).toLowerCase()
+      if (lower === "boy" || lower === "girl") return t2(`gender.${lower}` as "gender.boy")
+      return String(raw)
+    },
+    [t, t2],
+  )
+
+  const formatHairColor = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const normalized = String(raw).toLowerCase().replace(/\s+/g, "-")
+      const sk = HAIR_VALUE_TO_STEP1_KEY[normalized]
+      if (sk) return t1(`hairColors.${sk}` as "hairColors.lightBlonde")
+      return String(raw)
+    },
+    [t, t1],
+  )
+
+  const formatEyeColor = useCallback(
+    (raw?: string | null) => {
+      if (raw == null || raw === "") return t("unknown")
+      const normalized = String(raw).toLowerCase()
+      if ((EYE_COLOR_VALUES as readonly string[]).includes(normalized))
+        return t1(`eyeColors.${normalized}` as "eyeColors.blue")
+      return String(raw)
+    },
+    [t, t1],
+  )
+
+  const groupLabel = useCallback(
+    (group: string) => {
+      const map: Record<string, "characterTypes.child" | "characterTypes.familyMembers" | "characterTypes.pets" | "characterTypes.toys" | "characterTypes.other"> = {
+        Child: "characterTypes.child",
+        "Family Members": "characterTypes.familyMembers",
+        Pets: "characterTypes.pets",
+        Toys: "characterTypes.toys",
+        Other: "characterTypes.other",
+      }
+      return map[group] ? t2(map[group]) : group
+    },
+    [t2],
+  )
+
+  const displayCharacterName = useCallback(
+    (name: string) => (OPTION_VALUE_TO_LABEL_KEY[name] ? optionLabel(name) : name),
+    [optionLabel],
+  )
+
   // Floating animations for decorative elements
   const floatingVariants = {
     animate: (i: number) => ({
@@ -371,7 +473,7 @@ export default function Step6Page() {
   // Handle free cover creation
   const handleCreateFreeCover = async () => {
     if (!user && (!email || !validateEmail(email))) {
-      setEmailError("Please enter a valid email address")
+      setEmailError(t("invalidEmail"))
       return
     }
 
@@ -484,8 +586,8 @@ export default function Step6Page() {
         setTraceData(result.data.debugTrace)
         setTraceModalOpen(true)
         toast({
-          title: "Kitap oluşturuldu",
-          description: "Tüm adımların request/response'ı aşağıda. İnceleyip kapatabilirsiniz.",
+          title: t("toasts.bookCreatedDebugTitle"),
+          description: t("toasts.bookCreatedDebugDesc"),
         })
       } else if (bookId) {
         willNavigate = true
@@ -676,10 +778,8 @@ export default function Step6Page() {
               transition={{ delay: 0.3, duration: 0.4 }}
               className="mb-8 text-center"
             >
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">Review & Create</h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
-                Review your selections and create your personalized book
-              </p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-50">{t("title")}</h1>
+              <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">{t("subtitle")}</p>
               {/* Free Cover Badge */}
               {!isCheckingFreeCover && hasFreeCover && (
                 <motion.div
@@ -689,7 +789,7 @@ export default function Step6Page() {
                   className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg"
                 >
                   <Gift className="h-4 w-4" />
-                  <span>1 Free Cover Available</span>
+                  <span>{t("freeCoverBadge")}</span>
                 </motion.div>
               )}
             </motion.div>
@@ -707,7 +807,7 @@ export default function Step6Page() {
                     <div className="flex items-center gap-2">
                       <User className="h-6 w-6 text-primary" />
                       <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                        Character{formData.characters.length > 1 ? 's' : ''} Information
+                        {t("characterInfoTitle", { count: formData.characters.length })}
                       </h2>
                     </div>
                     <Link
@@ -715,7 +815,7 @@ export default function Step6Page() {
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />
-                      Edit
+                      {tc("edit")}
                     </Link>
                   </div>
 
@@ -729,9 +829,10 @@ export default function Step6Page() {
                       if (char.characterType?.group === "Child") {
                         characterName = char.name || formData.character.name || "Child"
                       } else {
-                        characterName = char.name || char.characterType?.displayName || "Character"
+                        characterName = char.name || char.characterType?.displayName || "Child"
                       }
                       const characterType = char.characterType?.group || "Child"
+                      const headingName = displayCharacterName(characterName)
 
                       return (
                         <div
@@ -766,11 +867,11 @@ export default function Step6Page() {
                               <div className="flex items-center gap-2">
                                 <span className="text-lg font-bold text-gray-900 dark:text-slate-50">
                                   {isMainCharacter ? "🔵 " : characterType === "Pets" ? "🟢 " : characterType === "Family Members" ? "🟡 " : "🟣 "}
-                                  Character {index + 1}: {characterName}
+                                  {t("characterHeading", { n: index + 1, name: headingName })}
                                 </span>
                                 {isMainCharacter && (
                                   <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">
-                                    Main
+                                    {t("mainBadge")}
                                   </span>
                                 )}
                               </div>
@@ -779,58 +880,62 @@ export default function Step6Page() {
                               {isMainCharacter && char.characterType?.group === "Child" ? (
                                 <div className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
                                   <p>
-                                    <span className="font-semibold">Age:</span>{" "}
-                                    {char.age || formData.character.age} years old
+                                    <span className="font-semibold">{t("labels.age")}</span>{" "}
+                                    {t("yearsOld", {
+                                      count: Number(char.age ?? formData.character.age) || 0,
+                                    })}
                                   </p>
                                   <p>
-                                    <span className="font-semibold">Gender:</span>{" "}
-                                    {char.gender || formData.character.gender}
+                                    <span className="font-semibold">{t("labels.gender")}</span>{" "}
+                                    {formatGenderDisplay(String(char.gender ?? formData.character.gender ?? ""))}
                                   </p>
                                   <p>
-                                    <span className="font-semibold">Hair Color:</span>{" "}
-                                    {char.hairColor || formData.character.hairColor}
+                                    <span className="font-semibold">{t("labels.hairColor")}</span>{" "}
+                                    {formatHairColor(String(char.hairColor ?? formData.character.hairColor ?? ""))}
                                   </p>
                                   <p>
-                                    <span className="font-semibold">Eye Color:</span>{" "}
-                                    {char.eyeColor || formData.character.eyeColor}
+                                    <span className="font-semibold">{t("labels.eyeColor")}</span>{" "}
+                                    {formatEyeColor(String(char.eyeColor ?? formData.character.eyeColor ?? ""))}
                                   </p>
                                 </div>
                               ) : (
                                 // Additional characters - Show type and appearance details
                                 <div className="mt-2 space-y-1 text-sm text-gray-700 dark:text-slate-300">
                                   <p>
-                                    <span className="font-semibold">Type:</span>{" "}
-                                    {char.characterType?.value || "Unknown"}
+                                    <span className="font-semibold">{t("labels.type")}</span>{" "}
+                                    {char.characterType?.value
+                                      ? optionLabel(char.characterType.value)
+                                      : t("unknown")}
                                   </p>
                                   <p className="text-xs text-gray-500 dark:text-slate-400 mb-2">
-                                    {char.characterType?.group || "Other"}
+                                    {groupLabel(char.characterType?.group || "Other")}
                                   </p>
                                   
                                   {/* Appearance Details for Non-Child Characters */}
                                   {char.hairColor && (
                                     <p>
                                       <span className="font-semibold">
-                                        {char.characterType?.group === "Pets" ? "Fur Color:" : "Hair Color:"}
+                                        {char.characterType?.group === "Pets" ? t("furColorLabel") : t("labels.hairColor")}
                                       </span>{" "}
-                                      {char.hairColor}
+                                      {formatHairColor(String(char.hairColor))}
                                     </p>
                                   )}
                                   {char.eyeColor && (
                                     <p>
-                                      <span className="font-semibold">Eye Color:</span>{" "}
-                                      {char.eyeColor}
+                                      <span className="font-semibold">{t("labels.eyeColor")}</span>{" "}
+                                      {formatEyeColor(String(char.eyeColor))}
                                     </p>
                                   )}
                                   {char.age && (
                                     <p>
-                                      <span className="font-semibold">Age:</span>{" "}
-                                      {char.age} years old
+                                      <span className="font-semibold">{t("labels.age")}</span>{" "}
+                                      {t("yearsOld", { count: Number(char.age) })}
                                     </p>
                                   )}
                                   {char.gender && (
                                     <p>
-                                      <span className="font-semibold">Gender:</span>{" "}
-                                      {char.gender}
+                                      <span className="font-semibold">{t("labels.gender")}</span>{" "}
+                                      {formatGenderDisplay(String(char.gender))}
                                     </p>
                                   )}
                                 </div>
@@ -860,7 +965,7 @@ export default function Step6Page() {
                     <div className="flex items-center gap-2">
                       <ImageIcon className="h-6 w-6 text-primary" />
                       <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                        Character Photo{formData.characters.length > 1 ? 's' : ''}
+                        {t("characterPhotosTitle", { count: formData.characters.length })}
                       </h2>
                     </div>
                     <Link
@@ -868,14 +973,15 @@ export default function Step6Page() {
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />
-                      Edit
+                      {tc("edit")}
                     </Link>
                   </div>
 
                   {formData.characters.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                       {formData.characters.map((char: any, index: number) => {
-                        const characterName = char.name || char.characterType?.displayName || "Character"
+                        const rawName = char.name || char.characterType?.displayName || "Child"
+                        const characterName = displayCharacterName(rawName)
                         const isMainCharacter = index === 0 || char.characterType?.group === "Child"
 
                         return (
@@ -899,7 +1005,7 @@ export default function Step6Page() {
                             <div className="mt-2 text-center">
                               <p className="text-sm font-semibold text-gray-900 dark:text-slate-50">
                                 {characterName}
-                                {isMainCharacter && <span className="ml-1 text-xs text-blue-500">(Main)</span>}
+                                {isMainCharacter && <span className="ml-1 text-xs text-blue-500">{t("mainTag")}</span>}
                               </p>
                               {char.photo?.filename && (
                                 <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
@@ -927,14 +1033,14 @@ export default function Step6Page() {
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-6 w-6 text-primary" />
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Theme, Age Group & Language</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">{t("themeAgeLanguageTitle")}</h2>
                     </div>
                     <Link
                       href="/create/step3"
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />
-                      Edit
+                      {tc("edit")}
                     </Link>
                   </div>
 
@@ -947,7 +1053,7 @@ export default function Step6Page() {
                           {formData.theme.name}
                           {isCustomTheme && (
                             <span className="ml-2 rounded bg-fuchsia-100 px-2 py-0.5 text-xs font-medium text-fuchsia-800 dark:bg-fuchsia-900/40 dark:text-fuchsia-200">
-                              Your story idea required
+                              {t("customThemeBadge")}
                             </span>
                           )}
                         </h3>
@@ -1000,14 +1106,14 @@ export default function Step6Page() {
                   <div className="mb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Palette className="h-6 w-6 text-primary" />
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">Illustration Style</h2>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">{t("illustrationStyleTitle")}</h2>
                     </div>
                     <Link
                       href="/create/step4"
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />
-                      Edit
+                      {tc("edit")}
                     </Link>
                   </div>
 
@@ -1017,7 +1123,7 @@ export default function Step6Page() {
                         type="button"
                         onClick={() => setShowStyleImageModal(true)}
                         className="relative h-32 w-24 flex-shrink-0 overflow-hidden rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 hover:opacity-90 transition-opacity"
-                        aria-label={`View ${formData.illustrationStyle.name} style example`}
+                        aria-label={t("viewStyleExample", { name: formData.illustrationStyle.name })}
                       >
                         <Image
                           src={`/illustration-styles/${formData.illustrationStyle.id}.jpg`}
@@ -1056,7 +1162,8 @@ export default function Step6Page() {
                     <div className="flex items-center gap-2">
                       <Lightbulb className="h-6 w-6 text-primary" />
                       <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-50">
-                        Custom Requests{isCustomTheme ? " (required for Custom theme)" : ""}
+                        {t("customRequestsTitle")}
+                        {isCustomTheme ? t("customRequestsRequiredSuffix") : ""}
                       </h2>
                     </div>
                     <Link
@@ -1064,7 +1171,7 @@ export default function Step6Page() {
                       className="text-sm font-medium text-primary underline underline-offset-2 opacity-0 transition-opacity hover:text-primary/80 group-hover:opacity-100"
                     >
                       <Pencil className="mr-1 inline h-3 w-3" />
-                      Edit
+                      {tc("edit")}
                     </Link>
                   </div>
 
@@ -1072,7 +1179,7 @@ export default function Step6Page() {
                     <>
                       {isCustomTheme && (
                         <p className="mb-2 text-sm font-medium text-fuchsia-700 dark:text-fuchsia-300">
-                          Your custom story idea (drives the entire story):
+                          {t("customStoryLead")}
                         </p>
                       )}
                       <p className="text-base leading-relaxed text-gray-700 dark:text-slate-300">
@@ -1081,7 +1188,7 @@ export default function Step6Page() {
                     </>
                   ) : (
                     <p className="italic text-sm text-gray-500 dark:text-slate-500">
-                      {isCustomTheme ? "Please go back to Step 5 and describe your story idea." : "No custom requests"}
+                      {isCustomTheme ? t("noCustomTheme") : t("noCustomEmpty")}
                     </p>
                   )}
 
@@ -1089,14 +1196,14 @@ export default function Step6Page() {
                   <div className="mt-4 flex items-center gap-2 rounded-lg bg-primary/5 p-3">
                     <BookOpen className="h-5 w-5 text-primary" />
                     <span className="text-sm font-semibold text-gray-900 dark:text-slate-100">
-                      Page Count:
+                      {t("pageCountLabel")}
                     </span>
                     <span className="text-sm font-bold text-primary">
                       {typeof formData.pageCount === 'number' && Number.isFinite(formData.pageCount) && formData.pageCount > 0
-                        ? `${formData.pageCount} pages`
+                        ? t("pagesFormatted", { count: formData.pageCount })
                         : formData.pageCount === 0
-                        ? 'Cover Only'
-                        : `${DEFAULT_PAGE_COUNT} pages (default)`}
+                        ? t("coverOnly")
+                        : t("pagesDefault", { count: DEFAULT_PAGE_COUNT })}
                     </span>
                   </div>
                 </div>
@@ -1113,7 +1220,7 @@ export default function Step6Page() {
               {/* Timeline Title */}
               <h2 className="mb-6 text-center text-lg font-bold text-gray-900 dark:text-white md:mb-8 md:text-xl">
                 <span className="bg-gradient-to-r from-primary to-brand-2 bg-clip-text text-transparent">
-                  What Happens Next
+                  {t("whatHappensNext")}
                 </span>
               </h2>
 
@@ -1209,16 +1316,16 @@ export default function Step6Page() {
                 <div className="mb-4 flex items-center gap-2">
                   <Mail className="h-5 w-5 text-primary" />
                   <Label htmlFor="email" className="text-base font-semibold text-gray-900 dark:text-slate-50">
-                    Email Address
+                    {t("emailLabel")}
                   </Label>
                 </div>
                 <p className="mb-3 text-sm text-gray-600 dark:text-slate-400">
-                  We need your email to send you the cover image and marketing updates.
+                  {t("emailHint")}
                 </p>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your.email@example.com"
+                  placeholder={t("emailPlaceholder")}
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   className={`w-full ${emailError ? "border-red-500" : ""}`}
@@ -1255,7 +1362,7 @@ export default function Step6Page() {
                     <span>{isCreating ? tc("pleaseWait") : t("createButton")}</span>
                   </Button>
                   <p className="mt-2 text-center text-xs text-gray-500 dark:text-slate-400">
-                    Use your free cover credit to create just the cover (Page 1)
+                    {t("freeCoverCreditHint")}
                   </p>
                 </motion.div>
               )}
@@ -1281,11 +1388,11 @@ export default function Step6Page() {
                     <span>
                       {isLoadingCurrency || isNavPending
                         ? tc("navigating")
-                        : `Pay & Create My Book • ${currencyConfig.price}`}
+                        : t("payCreate", { price: currencyConfig.price })}
                     </span>
                   </Button>
                   <p className="mt-2 text-center text-xs text-gray-600 dark:text-slate-400">
-                    {"You'll"} receive {currencyConfig.price} as a discount on the hardcover!
+                    {t("hardcoverDiscount", { price: currencyConfig.price })}
                   </p>
                 </motion.div>
               )}
@@ -1300,21 +1407,21 @@ export default function Step6Page() {
                 >
                   {/* Story model selector — shared for Create without payment, Example book, and Sadece Hikaye test */}
                   <div className="flex items-center gap-2 rounded-md border border-amber-300/50 bg-amber-50/60 dark:bg-amber-900/20 dark:border-amber-500/30 px-3 py-2">
-                    <span className="text-xs font-medium text-amber-800 dark:text-amber-200 shrink-0">Story model:</span>
+                    <span className="text-xs font-medium text-amber-800 dark:text-amber-200 shrink-0">{t("debug.storyModel")}</span>
                     <select
                       value={debugStoryModel}
                       onChange={(e) => setDebugStoryModel(e.target.value as DebugStoryModel)}
                       className="flex-1 rounded border border-amber-300/60 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-amber-900 dark:text-amber-100 focus:outline-none"
                     >
-                      <option value="gpt-4.1-mini">gpt-4.1-mini (önerilen, varsayılan)</option>
-                      <option value="gpt-4.1">gpt-4.1 (kalite ↑)</option>
-                      <option value="gpt-4o-mini">gpt-4o-mini (hızlı, ekonomik)</option>
-                      <option value="gpt-4o">gpt-4o</option>
-                      <option value="o1-mini">o1-mini (deneysel)</option>
+                      <option value="gpt-4.1-mini">{t("debug.modelGpt41Mini")}</option>
+                      <option value="gpt-4.1">{t("debug.modelGpt41")}</option>
+                      <option value="gpt-4o-mini">{t("debug.modelGpt4oMini")}</option>
+                      <option value="gpt-4o">{t("debug.modelGpt4o")}</option>
+                      <option value="o1-mini">{t("debug.modelO1Mini")}</option>
                     </select>
                   </div>
                   <p className="text-xs text-amber-700/80 dark:text-amber-300/80 -mt-1">
-                    Create without payment, örnek kitap ve debug panel bu seçimi kullanır. Ücretli &quot;Pay &amp; Create&quot; isteğinde model gönderilmez — sunucu varsayılanı (gpt-4.1-mini) uygulanır.
+                    {t("debug.modelHint")}
                   </p>
                   {canShowDebugQuality && (
                     <label className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-200 cursor-pointer">
@@ -1322,7 +1429,7 @@ export default function Step6Page() {
                         checked={debugTraceRequested}
                         onCheckedChange={(v) => setDebugTraceRequested(!!v)}
                       />
-                      <span>Tüm adımların request/response'ını topla (debug trace)</span>
+                      <span>{t("debug.traceCheckbox")}</span>
                     </label>
                   )}
                   <Button
@@ -1336,11 +1443,11 @@ export default function Step6Page() {
                     <span>
                       {isCreating
                         ? tc("pleaseWait")
-                        : `Create without payment (${debugStoryModel})`}
+                        : t("debug.createWithoutPayment", { model: debugStoryModel })}
                     </span>
                   </Button>
                   <p className="mt-1 text-center text-xs text-amber-600/80 dark:text-amber-400/80">
-                    Admin / debug only – no payment
+                    {t("debug.adminOnly")}
                   </p>
                 </motion.div>
               )}
@@ -1379,11 +1486,11 @@ export default function Step6Page() {
                     <span>
                       {isCreating
                         ? tc("pleaseWait")
-                        : `Create example book (${debugStoryModel})`}
+                        : t("debug.createExampleBook", { model: debugStoryModel })}
                     </span>
                   </Button>
                   <p className="mt-1 text-center text-xs text-green-600/80 dark:text-green-400/80">
-                    Admin only – public example. Uses selected story model above.
+                    {t("debug.exampleBookAdminHint")}
                   </p>
                 </motion.div>
               )}
@@ -1418,7 +1525,7 @@ export default function Step6Page() {
                     className="w-full rounded-xl text-sm md:text-base"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
+                    {tc("back")}
                   </Button>
                 </Link>
               </motion.div>
@@ -1432,7 +1539,7 @@ export default function Step6Page() {
               transition={{ duration: 0.5, delay: 1.55 }}
               className="mt-6 text-center text-xs text-gray-600 dark:text-slate-400"
             >
-              <p>🔒 Secure payment • 💯 30-day money-back guarantee</p>
+              <p>{t("trustBadges")}</p>
             </motion.div>
           </div>
 

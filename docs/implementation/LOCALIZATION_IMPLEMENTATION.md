@@ -3,7 +3,16 @@
 **İlgili faz:** Faz 5.11 (ROADMAP: `docs/roadmap/PHASE_5_LAUNCH.md`)  
 **Analiz dokümanı:** `docs/analysis/LOCALIZATION_ANALYSIS.md`  
 **Sorumlu agent:** @localization-agent (`.cursor/rules/localization-agent.mdc`)  
-**Son güncelleme:** 15 Mart 2026
+**Son güncelleme:** 20 Mart 2026
+
+---
+
+## 📝 Create wizard i18n tamamlama (Mart 2026)
+
+- [x] **`create/step2`** — Tüm UI metinleri, toast’lar, doğrulama, karakter türü seçenekleri, `step1` verisi gösterimi (`messages` `create.step2` + `create.step1` saç/göz).
+- [x] **`create/step6`** — Özet kartları, zaman çizelgesi, e-posta bloğu, ödeme/ücretsiz kapak/debug metinleri; debug trace toast’ları locale-aware.
+- [x] **`create/from-example`** — `create.fromExample` anahtarlarıyla tam bağlama; cinsiyet `create.step2.gender`.
+- [x] **`loading.tsx`** — `create`, `dashboard`, `books/[id]` için `getTranslations('common')` ile yükleme metni.
 
 ---
 

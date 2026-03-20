@@ -97,6 +97,7 @@ const decorativeElements = [
 function FromExampleContent() {
   const t = useTranslations("create.fromExample")
   const tStep1 = useTranslations("create.step1")
+  const tStep2 = useTranslations("create.step2")
   const searchParams = useSearchParams()
   const router = useRouter()
   const { navigate, isPending: isNavPending } = useWizardNavigate()
@@ -385,7 +386,7 @@ function FromExampleContent() {
                   className="rounded-xl border border-gray-200 bg-white/50 p-6 dark:border-slate-700 dark:bg-slate-800/50"
                 >
                   <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-slate-200">
-                    {characterCount === 1 ? "Character" : `Character ${index + 1}`}
+                    {characterCount === 1 ? t("characterLabel") : t("characterSlotTitle", { n: index + 1 })}
                   </h2>
                   <div className="space-y-4">
                     <div className="space-y-2">
@@ -395,7 +396,7 @@ function FromExampleContent() {
                         <Input
                           value={char.name}
                           onChange={(e) => updateCharacter(index, { name: e.target.value })}
-                          placeholder="Enter child's name"
+                          placeholder={t("namePlaceholder")}
                           required
                           className="pl-10 border-gray-300 focus-visible:ring-primary dark:border-slate-600"
                         />
@@ -403,14 +404,14 @@ function FromExampleContent() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">Age</Label>
+                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">{t("labels.age")}</Label>
                       <div className="relative">
                         <Heart className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none z-10" />
                         <Input
                           type="number"
                           min={0}
                           max={12}
-                          placeholder="Enter age (0-12)"
+                          placeholder={t("agePlaceholder")}
                           value={char.age || ""}
                           onChange={(e) => {
                             const v = e.target.value
@@ -426,7 +427,7 @@ function FromExampleContent() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">Gender</Label>
+                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">{t("labels.gender")}</Label>
                       <div className="grid grid-cols-2 gap-3">
                         <motion.button
                           type="button"
@@ -438,7 +439,7 @@ function FromExampleContent() {
                           }`}
                           aria-pressed={char.gender === "boy"}
                         >
-                          Boy
+                          {tStep2("gender.boy")}
                         </motion.button>
                         <motion.button
                           type="button"
@@ -450,7 +451,7 @@ function FromExampleContent() {
                           }`}
                           aria-pressed={char.gender === "girl"}
                         >
-                          Girl
+                          {tStep2("gender.girl")}
                         </motion.button>
                       </div>
                     </div>
@@ -465,10 +466,10 @@ function FromExampleContent() {
                             onValueChange={(v) => updateCharacter(index, { hairColor: v === "__placeholder_hair__" ? "" : v })}
                           >
                             <SelectTrigger className="pl-10 border-gray-300 focus:ring-primary dark:border-slate-600">
-                              <SelectValue placeholder="Select hair color" />
+                              <SelectValue placeholder={t("hairPlaceholder")} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="__placeholder_hair__">Select hair color</SelectItem>
+                              <SelectItem value="__placeholder_hair__">{t("hairPlaceholder")}</SelectItem>
                               {hairColorOptions.map((o) => (
                                 <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                               ))}
@@ -485,10 +486,10 @@ function FromExampleContent() {
                             onValueChange={(v) => updateCharacter(index, { eyeColor: v === "__placeholder_eye__" ? "" : v })}
                           >
                             <SelectTrigger className="pl-10 border-gray-300 focus:ring-primary dark:border-slate-600">
-                              <SelectValue placeholder="Select eye color" />
+                              <SelectValue placeholder={t("eyePlaceholder")} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="__placeholder_eye__">Select eye color</SelectItem>
+                              <SelectItem value="__placeholder_eye__">{t("eyePlaceholder")}</SelectItem>
                               {eyeColorOptions.map((o) => (
                                 <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                               ))}
@@ -499,7 +500,7 @@ function FromExampleContent() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">Photo *</Label>
+                      <Label className="text-sm font-semibold text-gray-700 dark:text-slate-300">{t("labels.photo")}</Label>
                       {!char.photoPreview ? (
                         <motion.div
                           onDragOver={(e) => { e.preventDefault(); updateCharacter(index, { isDragging: true }) }}
@@ -522,9 +523,9 @@ function FromExampleContent() {
                             <motion.div whileHover={{ scale: 1.1, rotate: 5 }} whileTap={{ scale: 0.9 }} className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-brand-2 text-white shadow-lg">
                               <Upload className="h-8 w-8" />
                             </motion.div>
-                            <p className="mb-1 text-sm font-semibold text-gray-700 dark:text-slate-300">Upload character photo</p>
-                            <p className="text-xs text-gray-500 dark:text-slate-400">Drag and drop or click to browse</p>
-                            <p className="mt-2 text-xs text-gray-400 dark:text-slate-500">JPG or PNG, max 5MB</p>
+                            <p className="mb-1 text-sm font-semibold text-gray-700 dark:text-slate-300">{t("uploadText")}</p>
+                            <p className="text-xs text-gray-500 dark:text-slate-400">{t("uploadSubtext")}</p>
+                            <p className="mt-2 text-xs text-gray-400 dark:text-slate-500">{t("uploadHint")}</p>
                           </label>
                           {char.uploadError && <p className="mt-2 text-xs text-red-500">{char.uploadError}</p>}
                         </motion.div>
@@ -545,7 +546,7 @@ function FromExampleContent() {
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleRemoveFile(index)}
                               className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-all hover:bg-red-600"
-                              aria-label="Remove photo"
+                              aria-label={tStep2("aria.removePhoto")}
                             >
                               <X className="h-5 w-5" />
                             </motion.button>
@@ -555,7 +556,7 @@ function FromExampleContent() {
                             <p>{char.photoFile && formatFileSize(char.photoFile.size)}</p>
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
                               <CheckCircle className="h-4 w-4" />
-                              <span className="text-xs font-semibold">Photo Ready</span>
+                              <span className="text-xs font-semibold">{t("photoReady")}</span>
                             </motion.div>
                           </div>
                         </div>
@@ -573,7 +574,7 @@ function FromExampleContent() {
                     disabled={!isFormValid}
                     className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-6 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
                   >
-                    Continue to payment
+                    {t("continueToPayment")}
                   </Button>
                 </motion.div>
               )}
@@ -581,9 +582,13 @@ function FromExampleContent() {
               {step === "summary" && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pt-4">
                   <div className="rounded-xl border border-gray-200 bg-white/50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
-                    <p className="text-sm font-medium text-gray-700 dark:text-slate-300">Based on: {example.title}</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-slate-300">{t("basedOn", { title: example.title })}</p>
                     <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
-                      {characterCount === 1 ? "1 character" : `${characterCount} characters`} • {example.total_pages} pages
+                      {t("summaryLine", {
+                        characterPart: t("charactersCount", { count: characterCount }),
+                        pages: example.total_pages,
+                        pagesWord: t("pagesWord"),
+                      })}
                     </p>
                   </div>
 
@@ -603,11 +608,11 @@ function FromExampleContent() {
                       <span>
                         {isLoadingCurrency || isNavPending
                           ? tcCreate("navigating")
-                          : `Pay & Create My Book • ${currencyConfig.price}`}
+                          : t("payCreate", { price: currencyConfig.price })}
                       </span>
                     </Button>
                   )}
-                  {user && <p className="text-center text-xs text-gray-600 dark:text-slate-400">You&apos;ll receive {currencyConfig.price} as a discount on the hardcover!</p>}
+                  {user && <p className="text-center text-xs text-gray-600 dark:text-slate-400">{t("hardcoverDiscount", { price: currencyConfig.price })}</p>}
 
                   {showSkipPaymentButton && (
                     <div className="space-y-1">
@@ -622,16 +627,16 @@ function FromExampleContent() {
                         <span>
                           {submitting
                             ? tcCreate("pleaseWait")
-                            : "Create without payment (Debug)"}
+                            : t("createWithoutPaymentDebug")}
                         </span>
                       </Button>
-                      <p className="text-center text-xs text-amber-600/80 dark:text-amber-400/80">Admin / debug only – no payment</p>
+                      <p className="text-center text-xs text-amber-600/80 dark:text-amber-400/80">{t("adminDebugOnly")}</p>
                     </div>
                   )}
 
                   <Button type="button" variant="ghost" onClick={() => setStep("form")} className="w-full">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
+                    {tcCreate("back")}
                   </Button>
                 </motion.div>
               )}
@@ -640,9 +645,9 @@ function FromExampleContent() {
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }} className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-slate-400">
-              Need help?{" "}
+              {t("needHelp")}{" "}
               <Link href="/help" className="font-semibold text-primary underline underline-offset-2 hover:text-brand-2">
-                Contact Support
+                {t("contactSupport")}
               </Link>
             </p>
           </motion.div>

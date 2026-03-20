@@ -501,6 +501,8 @@
       "stepTitle": "Add Characters & Photos",
       "title": "Add Characters & Photos",
       "subtitle": "Upload photos for your characters",
+      "pageHeading": "Add Characters",
+      "pageSubheading": "Upload photos for up to 3 characters (minimum 1)",
       "photoTips": {
         "title": "Tips for best results",
         "frontFacing": "Front-facing photo (face looking at camera)",
@@ -520,6 +522,34 @@
         "mom": "Mom",
         "dad": "Dad"
       },
+      "optionLabels": {
+        "child": "Child",
+        "dog": "Dog",
+        "cat": "Cat",
+        "rabbit": "Rabbit",
+        "bird": "Bird",
+        "otherPet": "Other Pet",
+        "mom": "Mom",
+        "dad": "Dad",
+        "grandma": "Grandma",
+        "grandpa": "Grandpa",
+        "sister": "Sister",
+        "brother": "Brother",
+        "uncle": "Uncle",
+        "aunt": "Aunt",
+        "otherFamily": "Other Family",
+        "teddyBear": "Teddy Bear",
+        "doll": "Doll",
+        "actionFigure": "Action Figure",
+        "robot": "Robot",
+        "car": "Car",
+        "train": "Train",
+        "ball": "Ball",
+        "blocks": "Blocks",
+        "puzzle": "Puzzle",
+        "stuffedAnimal": "Stuffed Animal",
+        "otherToy": "Other Toy"
+      },
       "gender": {
         "boy": "Boy",
         "girl": "Girl"
@@ -529,7 +559,90 @@
         "age": "Age:",
         "gender": "Gender:",
         "hair": "Hair:",
-        "eye": "Eye:"
+        "eye": "Eye:",
+        "hairColor": "Hair Color",
+        "eyeColor": "Eye Color",
+        "furColor": "Fur Color",
+        "color": "Color",
+        "type": "Type"
+      },
+      "characterBadge": "Character {n}",
+      "characterTypeLabel": "Character Type",
+      "selectPet": "Select Pet",
+      "selectFamilyMember": "Select Family Member",
+      "selectToy": "Select Toy",
+      "dynamicTypeLabels": {
+        "petType": "Pet Type",
+        "familyMemberType": "Family Member Type",
+        "toyType": "Toy Type",
+        "characterType": "Character Type"
+      },
+      "placeholders": {
+        "otherPet": "e.g., Hamster, Turtle",
+        "otherFamily": "e.g., Uncle, Cousin",
+        "otherToy": "e.g., Truck, Plane",
+        "other": "e.g., Robot, Alien",
+        "childName": "e.g., Arya, Aras",
+        "age": "e.g., 5",
+        "petName": "e.g., Buddy, Max, Luna",
+        "familyName": "e.g., Sarah, John",
+        "genericName": "e.g., Custom name"
+      },
+      "childDetailsFromStep1": "Child Details (from Step 1)",
+      "childDetails": "Child Details",
+      "editHint": "💡 To edit these details, go back to Step 1",
+      "appearanceDetails": "Appearance Details",
+      "appearanceHelp": "These details help create accurate illustrations of this character",
+      "fieldLabels": {
+        "name": "Name",
+        "age": "Age",
+        "gender": "Gender"
+      },
+      "nameOptional": {
+        "pet": "Pet Name (optional)",
+        "default": "Name (optional)"
+      },
+      "nameHints": {
+        "pets": "Give your pet a name, or leave empty to use 'Dog', 'Cat', etc.",
+        "family": "Give a name, or leave empty to use 'Mom', 'Grandma', etc.",
+        "toys": "Give your toy a name, or leave empty to use 'Teddy Bear', 'Doll', etc.",
+        "other": "Optional custom name for this character"
+      },
+      "yearsOld": "{count, plural, one {# year old} other {# years old}}",
+      "unknown": "—",
+      "upload": {
+        "childPhoto": "Upload Child Photo",
+        "namedPhoto": "Upload {name} Photo",
+        "characterPhoto": "Upload Character Photo",
+        "dragDrop": "Drag and drop or click to browse",
+        "fileHint": "JPG or PNG, max 5MB"
+      },
+      "selectPlaceholder": "Select...",
+      "furExtra": {
+        "white": "White",
+        "gray": "Gray",
+        "spotted": "Spotted"
+      },
+      "validation": {
+        "invalidFormat": "Invalid file format. Please upload JPG or PNG",
+        "fileTooLarge": "File size exceeds 5MB. Please choose a smaller file"
+      },
+      "toasts": {
+        "uploadError": "Upload Error",
+        "photoRequired": "Photo Required",
+        "photoRequiredDesc": "Please upload at least one character photo before proceeding.",
+        "characterCreated": "Character Created!",
+        "characterCreatedDesc": "{name} has been created successfully.",
+        "warning": "Warning",
+        "photoSavedCharFailed": "Photo saved but character creation failed. You can continue and try again later.",
+        "step1Missing": "Photo saved but Step 1 data not found. Please go back to Step 1 first.",
+        "processError": "Failed to process photo. Please try again.",
+        "error": "Error",
+        "createCharFailed": "Failed to create character"
+      },
+      "aria": {
+        "removeCharacter": "Remove character",
+        "removePhoto": "Remove photo"
       },
       "addCharacter": "Add Another Character",
       "photoReady": "Photo Ready"
@@ -638,8 +751,26 @@
       "stepProgress": "Step 6 of 6",
       "stepTitle": "Review & Create",
       "title": "Review & Create",
+      "subtitle": "Review your selections and create your personalized book",
+      "freeCoverBadge": "1 Free Cover Available",
       "noCharacters": "No characters added",
       "noPhotos": "No photos uploaded",
+      "characterHeading": "Character {n}: {name}",
+      "characterInfoTitle": "{count, plural, one {Character Information} other {Characters Information}}",
+      "characterPhotosTitle": "{count, plural, one {Character Photo} other {Character Photos}}",
+      "themeAgeLanguageTitle": "Theme, Age Group & Language",
+      "illustrationStyleTitle": "Illustration Style",
+      "customRequestsTitle": "Custom Requests",
+      "customRequestsRequiredSuffix": " (required for Custom theme)",
+      "mainBadge": "Main",
+      "mainTag": "(Main)",
+      "unknown": "Unknown",
+      "customThemeBadge": "Your story idea required",
+      "customStoryLead": "Your custom story idea (drives the entire story):",
+      "noCustomEmpty": "No custom requests",
+      "noCustomTheme": "Please go back to Step 5 and describe your story idea.",
+      "yearsOld": "{count, plural, one {# year old} other {# years old}}",
+      "furColorLabel": "Fur Color:",
       "labels": {
         "age": "Age:",
         "gender": "Gender:",
@@ -647,11 +778,55 @@
         "eyeColor": "Eye Color:",
         "type": "Type:"
       },
+      "pageCountLabel": "Page Count:",
+      "pagesFormatted": "{count} pages",
+      "coverOnly": "Cover Only",
+      "pagesDefault": "{count} pages (default)",
+      "viewStyleExample": "View {name} style example",
+      "emailLabel": "Email Address",
+      "emailHint": "We need your email to send you the cover image and marketing updates.",
+      "emailPlaceholder": "your.email@example.com",
+      "invalidEmail": "Please enter a valid email address",
+      "freeCoverCreditHint": "Use your free cover credit to create just the cover (Page 1)",
+      "payCreate": "Pay & Create My Book • {price}",
+      "hardcoverDiscount": "You'll receive {price} as a discount on the hardcover!",
+      "whatHappensNext": "What Happens Next",
+      "timeline": {
+        "step1": {
+          "title": "Book Creation",
+          "description": "After payment, we immediately create your digital children's book. Available within just 2 hours and you'll receive an email when it's ready!"
+        },
+        "step2": {
+          "title": "Edit & Perfect",
+          "description": "After creation you can easily adjust texts and illustrations until the result is perfect."
+        },
+        "step3": {
+          "title": "Share & Print",
+          "description": "Happy with it? Share your digital book directly with family and friends or order a beautiful hardcover copy as a lasting memory."
+        }
+      },
+      "debug": {
+        "storyModel": "Story model:",
+        "modelGpt41Mini": "gpt-4.1-mini (recommended, default)",
+        "modelGpt41": "gpt-4.1 (higher quality)",
+        "modelGpt4oMini": "gpt-4o-mini (fast, economical)",
+        "modelGpt4o": "gpt-4o",
+        "modelO1Mini": "o1-mini (experimental)",
+        "modelHint": "Create without payment, example book, and debug panel use this selection. Paid \"Pay & Create\" does not send a model — server default (gpt-4.1-mini) applies.",
+        "traceCheckbox": "Collect request/response for all steps (debug trace)",
+        "createWithoutPayment": "Create without payment ({model})",
+        "adminOnly": "Admin / debug only – no payment",
+        "createExampleBook": "Create example book ({model})",
+        "exampleBookAdminHint": "Admin only – public example. Uses selected story model above."
+      },
+      "trustBadges": "🔒 Secure payment • 💯 30-day money-back guarantee",
       "createButton": "Create Free Cover",
       "exampleBookLanguage": "Example book language",
       "localeLabel": { "en": "English", "tr": "Turkish" },
       "toasts": {
         "bookCreated": "Book created",
+        "bookCreatedDebugTitle": "Book created",
+        "bookCreatedDebugDesc": "Request/response for all steps is shown below. Review and close when done.",
         "freeCoverCreated": "Free Cover Created!",
         "freeCoverCreatedDesc": "Your free book cover is ready to preview.",
         "freeCoverError": "Failed to create free cover",
@@ -695,6 +870,20 @@
       "uploadText": "Upload character photo",
       "uploadSubtext": "Drag and drop or click to browse",
       "uploadHint": "JPG or PNG, max 5MB",
+      "photoReady": "Photo Ready",
+      "characterLabel": "Character",
+      "characterSlotTitle": "Character {n}",
+      "continueToPayment": "Continue to payment",
+      "basedOn": "Based on: {title}",
+      "summaryLine": "{characterPart} • {pages} {pagesWord}",
+      "pagesWord": "pages",
+      "charactersCount": "{count, plural, one {# character} other {# characters}}",
+      "needHelp": "Need help?",
+      "contactSupport": "Contact Support",
+      "createWithoutPaymentDebug": "Create without payment (Debug)",
+      "adminDebugOnly": "Admin / debug only – no payment",
+      "payCreate": "Pay & Create My Book • {price}",
+      "hardcoverDiscount": "You'll receive {price} as a discount on the hardcover!",
       "toasts": {
         "errorTitle": "Error",
         "exampleNotFound": "Example not found",

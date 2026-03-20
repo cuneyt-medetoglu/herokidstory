@@ -501,6 +501,8 @@
       "stepTitle": "Karakter ve Fotoğraf Ekle",
       "title": "Karakter ve Fotoğraf Ekle",
       "subtitle": "Karakterleriniz için fotoğraf yükleyin",
+      "pageHeading": "Karakter Ekle",
+      "pageSubheading": "En fazla 3 karakter için fotoğraf yükleyin (en az 1)",
       "photoTips": {
         "title": "En iyi sonuç için",
         "frontFacing": "Tam karşıdan fotoğraf (yüz kameraya baksın)",
@@ -520,6 +522,34 @@
         "mom": "Anne",
         "dad": "Baba"
       },
+      "optionLabels": {
+        "child": "Çocuk",
+        "dog": "Köpek",
+        "cat": "Kedi",
+        "rabbit": "Tavşan",
+        "bird": "Kuş",
+        "otherPet": "Diğer evcil",
+        "mom": "Anne",
+        "dad": "Baba",
+        "grandma": "Büyükanne",
+        "grandpa": "Büyükbaba",
+        "sister": "Kız kardeş",
+        "brother": "Erkek kardeş",
+        "uncle": "Amca/Dayı",
+        "aunt": "Hala/Teyze",
+        "otherFamily": "Diğer aile üyesi",
+        "teddyBear": "Oyuncak ayı",
+        "doll": "Bebek",
+        "actionFigure": "Aksiyon figürü",
+        "robot": "Robot",
+        "car": "Araba",
+        "train": "Tren",
+        "ball": "Top",
+        "blocks": "Bloklar",
+        "puzzle": "Yapboz",
+        "stuffedAnimal": "Pelüş oyuncak",
+        "otherToy": "Diğer oyuncak"
+      },
       "gender": {
         "boy": "Erkek",
         "girl": "Kız"
@@ -529,7 +559,90 @@
         "age": "Yaş:",
         "gender": "Cinsiyet:",
         "hair": "Saç:",
-        "eye": "Göz:"
+        "eye": "Göz:",
+        "hairColor": "Saç rengi",
+        "eyeColor": "Göz rengi",
+        "furColor": "Tüy rengi",
+        "color": "Renk",
+        "type": "Tür"
+      },
+      "characterBadge": "Karakter {n}",
+      "characterTypeLabel": "Karakter türü",
+      "selectPet": "Evcil hayvan seçin",
+      "selectFamilyMember": "Aile üyesi seçin",
+      "selectToy": "Oyuncak seçin",
+      "dynamicTypeLabels": {
+        "petType": "Evcil türü",
+        "familyMemberType": "Aile üyesi türü",
+        "toyType": "Oyuncak türü",
+        "characterType": "Karakter türü"
+      },
+      "placeholders": {
+        "otherPet": "Örn. hamster, kaplumbağa",
+        "otherFamily": "Örn. amca, kuzen",
+        "otherToy": "Örn. kamyon, uçak",
+        "other": "Örn. robot, uzaylı",
+        "childName": "Örn. Arya, Aras",
+        "age": "Örn. 5",
+        "petName": "Örn. Buddy, Max, Luna",
+        "familyName": "Örn. Ayşe, Mehmet",
+        "genericName": "Örn. özel isim"
+      },
+      "childDetailsFromStep1": "Çocuk bilgileri (Adım 1’den)",
+      "childDetails": "Çocuk bilgileri",
+      "editHint": "💡 Bu bilgileri düzenlemek için Adım 1’e dönün",
+      "appearanceDetails": "Görünüm detayları",
+      "appearanceHelp": "Bu bilgiler bu karakterin illüstrasyonlarının doğru olmasına yardımcı olur",
+      "fieldLabels": {
+        "name": "İsim",
+        "age": "Yaş",
+        "gender": "Cinsiyet"
+      },
+      "nameOptional": {
+        "pet": "Evcil adı (isteğe bağlı)",
+        "default": "İsim (isteğe bağlı)"
+      },
+      "nameHints": {
+        "pets": "Evcilinize bir isim verin veya boş bırakın; varsayılan olarak Köpek, Kedi vb. kullanılır.",
+        "family": "İsim verin veya boş bırakın; varsayılan olarak Anne, Büyükanne vb. kullanılır.",
+        "toys": "Oyuncağa bir isim verin veya boş bırakın; varsayılan olarak Oyuncak ayı, Bebek vb. kullanılır.",
+        "other": "Bu karakter için isteğe bağlı özel isim"
+      },
+      "yearsOld": "{count, plural, one {# yaşında} other {# yaşında}}",
+      "unknown": "—",
+      "upload": {
+        "childPhoto": "Çocuk fotoğrafı yükle",
+        "namedPhoto": "{name} fotoğrafı yükle",
+        "characterPhoto": "Karakter fotoğrafı yükle",
+        "dragDrop": "Sürükleyip bırakın veya göz atmak için tıklayın",
+        "fileHint": "JPG veya PNG, en fazla 5MB"
+      },
+      "selectPlaceholder": "Seçin...",
+      "furExtra": {
+        "white": "Beyaz",
+        "gray": "Gri",
+        "spotted": "Benekli"
+      },
+      "validation": {
+        "invalidFormat": "Geçersiz dosya biçimi. Lütfen JPG veya PNG yükleyin",
+        "fileTooLarge": "Dosya boyutu 5MB’ı aşıyor. Lütfen daha küçük bir dosya seçin"
+      },
+      "toasts": {
+        "uploadError": "Yükleme hatası",
+        "photoRequired": "Fotoğraf gerekli",
+        "photoRequiredDesc": "Devam etmeden önce en az bir karakter fotoğrafı yükleyin.",
+        "characterCreated": "Karakter oluşturuldu!",
+        "characterCreatedDesc": "{name} başarıyla oluşturuldu.",
+        "warning": "Uyarı",
+        "photoSavedCharFailed": "Fotoğraf kaydedildi ancak karakter oluşturulamadı. Devam edebilir veya sonra tekrar deneyebilirsiniz.",
+        "step1Missing": "Fotoğraf kaydedildi ancak Adım 1 verisi bulunamadı. Önce Adım 1’e dönün.",
+        "processError": "Fotoğraf işlenemedi. Lütfen tekrar deneyin.",
+        "error": "Hata",
+        "createCharFailed": "Karakter oluşturulamadı"
+      },
+      "aria": {
+        "removeCharacter": "Karakteri kaldır",
+        "removePhoto": "Fotoğrafı kaldır"
       },
       "addCharacter": "Başka Karakter Ekle",
       "photoReady": "Fotoğraf Hazır"
@@ -638,8 +751,26 @@
       "stepProgress": "Adım 6 / 6",
       "stepTitle": "İncele ve Oluştur",
       "title": "İncele ve Oluştur",
+      "subtitle": "Seçimlerinizi gözden geçirin ve kişiselleştirilmiş kitabınızı oluşturun",
+      "freeCoverBadge": "1 ücretsiz kapak hakkı",
       "noCharacters": "Karakter eklenmedi",
       "noPhotos": "Fotoğraf yüklenmedi",
+      "characterHeading": "Karakter {n}: {name}",
+      "characterInfoTitle": "{count, plural, one {Karakter Bilgisi} other {Karakter Bilgileri}}",
+      "characterPhotosTitle": "{count, plural, one {Karakter Fotoğrafı} other {Karakter Fotoğrafları}}",
+      "themeAgeLanguageTitle": "Tema, yaş grubu ve dil",
+      "illustrationStyleTitle": "İllüstrasyon stili",
+      "customRequestsTitle": "Özel istekler",
+      "customRequestsRequiredSuffix": " (Özel tema için zorunlu)",
+      "mainBadge": "Ana",
+      "mainTag": "(Ana)",
+      "unknown": "Bilinmiyor",
+      "customThemeBadge": "Hikaye fikriniz gerekli",
+      "customStoryLead": "Özel hikaye fikriniz (tüm hikayeyi yönlendirir):",
+      "noCustomEmpty": "Özel istek yok",
+      "noCustomTheme": "Lütfen 5. adıma dönüp hikaye fikrinizi yazın.",
+      "yearsOld": "{count, plural, one {# yaşında} other {# yaşında}}",
+      "furColorLabel": "Tüy rengi:",
       "labels": {
         "age": "Yaş:",
         "gender": "Cinsiyet:",
@@ -647,11 +778,55 @@
         "eyeColor": "Göz Rengi:",
         "type": "Tür:"
       },
+      "pageCountLabel": "Sayfa sayısı:",
+      "pagesFormatted": "{count} sayfa",
+      "coverOnly": "Yalnızca kapak",
+      "pagesDefault": "{count} sayfa (varsayılan)",
+      "viewStyleExample": "{name} stili örnek görüntüle",
+      "emailLabel": "E-posta adresi",
+      "emailHint": "Kapak görselini ve pazarlama güncellemelerini göndermemiz için e-postanıza ihtiyacımız var.",
+      "emailPlaceholder": "ornek@email.com",
+      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin",
+      "freeCoverCreditHint": "Ücretsiz kapak hakkınızla yalnızca kapağı (1. sayfa) oluşturun",
+      "payCreate": "Öde ve kitabımı oluştur • {price}",
+      "hardcoverDiscount": "Ciltli baskıda {price} indirim kazanırsınız!",
+      "whatHappensNext": "Sırada ne var",
+      "timeline": {
+        "step1": {
+          "title": "Kitap oluşturma",
+          "description": "Ödeme sonrası dijital çocuk kitabınızı hemen oluşturuyoruz. En geç iki saat içinde hazır olur; hazır olduğunda e-posta alırsınız."
+        },
+        "step2": {
+          "title": "Düzenle ve mükemmelleştir",
+          "description": "Oluşturma sonrası metinleri ve görselleri kolayca düzenleyebilirsiniz."
+        },
+        "step3": {
+          "title": "Paylaş ve bastır",
+          "description": "Beğendiniz mi? Dijital kitabınızı doğrudan paylaşın veya kalıcı bir anı için ciltli sipariş verin."
+        }
+      },
+      "debug": {
+        "storyModel": "Hikaye modeli:",
+        "modelGpt41Mini": "gpt-4.1-mini (önerilen, varsayılan)",
+        "modelGpt41": "gpt-4.1 (daha yüksek kalite)",
+        "modelGpt4oMini": "gpt-4o-mini (hızlı, ekonomik)",
+        "modelGpt4o": "gpt-4o",
+        "modelO1Mini": "o1-mini (deneysel)",
+        "modelHint": "Ödeme olmadan oluşturma, örnek kitap ve debug paneli bu seçimi kullanır. Ücretli \"Öde ve oluştur\" isteğinde model gönderilmez — sunucu varsayılanı (gpt-4.1-mini) uygulanır.",
+        "traceCheckbox": "Tüm adımların istek/yanıtını topla (debug trace)",
+        "createWithoutPayment": "Ödeme olmadan oluştur ({model})",
+        "adminOnly": "Yalnızca admin / debug — ödeme yok",
+        "createExampleBook": "Örnek kitap oluştur ({model})",
+        "exampleBookAdminHint": "Yalnızca admin — herkese açık örnek. Yukarıdaki hikaye modelini kullanır."
+      },
+      "trustBadges": "🔒 Güvenli ödeme • 💯 30 gün para iadesi",
       "createButton": "Ücretsiz Kapak Oluştur",
       "exampleBookLanguage": "Örnek kitap dili",
       "localeLabel": { "en": "İngilizce", "tr": "Türkçe" },
       "toasts": {
         "bookCreated": "Kitap oluşturuldu",
+        "bookCreatedDebugTitle": "Kitap oluşturuldu",
+        "bookCreatedDebugDesc": "Tüm adımların istek/yanıtı aşağıda. İnceleyip kapatabilirsiniz.",
         "freeCoverCreated": "Ücretsiz Kapak Oluşturuldu!",
         "freeCoverCreatedDesc": "Ücretsiz kitap kapağınız önizlemeye hazır.",
         "freeCoverError": "Ücretsiz kapak oluşturulamadı",
@@ -695,6 +870,20 @@
       "uploadText": "Karakter fotoğrafı yükle",
       "uploadSubtext": "Sürükle bırak veya göz at",
       "uploadHint": "JPG veya PNG, max 5MB",
+      "photoReady": "Fotoğraf Hazır",
+      "characterLabel": "Karakter",
+      "characterSlotTitle": "Karakter {n}",
+      "continueToPayment": "Ödemeye devam et",
+      "basedOn": "Dayanak: {title}",
+      "summaryLine": "{characterPart} • {pages} {pagesWord}",
+      "pagesWord": "sayfa",
+      "charactersCount": "{count, plural, one {# karakter} other {# karakter}}",
+      "needHelp": "Yardıma mı ihtiyacınız var?",
+      "contactSupport": "Destek ile iletişim",
+      "createWithoutPaymentDebug": "Ödeme olmadan oluştur (Debug)",
+      "adminDebugOnly": "Yalnızca admin / debug — ödeme yok",
+      "payCreate": "Öde ve kitabımı oluştur • {price}",
+      "hardcoverDiscount": "Ciltli baskıda {price} indirim kazanırsınız!",
       "toasts": {
         "errorTitle": "Hata",
         "exampleNotFound": "Örnek bulunamadı",
