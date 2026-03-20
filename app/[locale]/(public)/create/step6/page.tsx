@@ -45,6 +45,9 @@ import {
 
 const DEFAULT_PAGE_COUNT = 12
 
+/** /api/books ALLOWED_STORY_MODELS ile uyumlu (admin/debug seçici). */
+type DebugStoryModel = 'gpt-4.1-mini' | 'gpt-4.1' | 'gpt-4o-mini' | 'gpt-4o' | 'o1-mini'
+
 // Timeline step configuration
 const timelineSteps = [
   {
@@ -113,8 +116,8 @@ export default function Step6Page() {
   const [traceModalOpen, setTraceModalOpen] = useState(false)
   const [traceData, setTraceData] = useState<DebugTraceEntry[] | null>(null)
 
-  // Debug story model: admin/debug only; example book always uses gpt-4o on backend
-  const [debugStoryModel, setDebugStoryModel] = useState<'gpt-4o-mini' | 'gpt-4o' | 'o1-mini'>('gpt-4o-mini')
+  /** Create without payment / örnek kitap / debug panel — body'de storyModel olarak gider. Ücretli satın alma bu alanı göndermez → API varsayılanı. */
+  const [debugStoryModel, setDebugStoryModel] = useState<DebugStoryModel>('gpt-4.1-mini')
 
   // Currency from context (tek seferlik fetch)
   const { currencyConfig, isLoading: isLoadingCurrency } = useCurrency()
@@ -1300,16 +1303,18 @@ export default function Step6Page() {
                     <span className="text-xs font-medium text-amber-800 dark:text-amber-200 shrink-0">Story model:</span>
                     <select
                       value={debugStoryModel}
-                      onChange={(e) => setDebugStoryModel(e.target.value as typeof debugStoryModel)}
+                      onChange={(e) => setDebugStoryModel(e.target.value as DebugStoryModel)}
                       className="flex-1 rounded border border-amber-300/60 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-amber-900 dark:text-amber-100 focus:outline-none"
                     >
-                      <option value="gpt-4o-mini">gpt-4o-mini (default, fast)</option>
-                      <option value="gpt-4o">gpt-4o (quality ↑, slower)</option>
-                      <option value="o1-mini">o1-mini (reasoning, experimental)</option>
+                      <option value="gpt-4.1-mini">gpt-4.1-mini (önerilen, varsayılan)</option>
+                      <option value="gpt-4.1">gpt-4.1 (kalite ↑)</option>
+                      <option value="gpt-4o-mini">gpt-4o-mini (hızlı, ekonomik)</option>
+                      <option value="gpt-4o">gpt-4o</option>
+                      <option value="o1-mini">o1-mini (deneysel)</option>
                     </select>
                   </div>
                   <p className="text-xs text-amber-700/80 dark:text-amber-300/80 -mt-1">
-                    Create without payment, Example book ve Sadece Hikaye testi bu modeli kullanır. Varsayılan: gpt-4o-mini.
+                    Create without payment, örnek kitap ve debug panel bu seçimi kullanır. Ücretli &quot;Pay &amp; Create&quot; isteğinde model gönderilmez — sunucu varsayılanı (gpt-4.1-mini) uygulanır.
                   </p>
                   {canShowDebugQuality && (
                     <label className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-200 cursor-pointer">

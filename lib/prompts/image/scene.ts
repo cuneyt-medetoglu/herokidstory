@@ -96,8 +96,15 @@ export interface SceneInput {
   characterExpressions?: Record<string, string>
   /** A5: Optional shot plan from LLM; when set, SHOT PLAN block uses these (with code fallbacks for missing fields). */
   shotPlan?: ShotPlan
-  /** Sıra 14: Kapak için hikayeden türetilmiş ortam (glacier, forest, space vb.). Varsa BACKGROUND bu olur; yoksa tema şablonu. COVER_PATH_FLOWERS_ANALYSIS.md */
+  /** Sıra 14: Kapak için hikayeden türetilmiş sahne metni. Öncelik (story): coverImagePrompt → coverDescription → coverSetting → derive. */
   coverEnvironment?: string
+  /**
+   * Story-specific environment/background for interior pages. When present, replaces
+   * hardcoded atmospheric templates. Comes from page.environmentDescription in story output.
+   */
+  environmentDescription?: string
+  /** Camera distance hint from story LLM: "close" | "medium" | "wide" | "establishing" */
+  cameraDistance?: 'close' | 'medium' | 'wide' | 'establishing'
 }
 
 // NEW: Scene Diversity Analysis (16 Ocak 2026)
@@ -141,7 +148,13 @@ export function generateScenePrompt(
 
   // 5. ENVIRONMENT - Detailed (cinematic level). Cover: use short env to avoid repeating long scene (A2).
   const useFullSceneDesc = !isCover
-  const environment = getEnvironmentDescription(scene.theme, scene.sceneDescription, useFullSceneDesc)
+  const environment = getEnvironmentDescription(
+    scene.theme,
+    scene.sceneDescription,
+    useFullSceneDesc,
+    isCover ? scene.coverEnvironment : undefined,
+    !isCover ? scene.environmentDescription : undefined
+  )
   parts.push(`in ${environment}`)
 
   // 6. LIGHTING - Based on time of day
@@ -208,35 +221,35 @@ const ENVIRONMENT_TEMPLATES: Record<string, string[]> = {
 
 /**
  * @param useFullSceneDesc When false (e.g. cover), do not embed full sceneDesc to avoid repetition; use theme template or coverEnvironment. A2 PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md
- * @param coverEnvironment Sıra 14: Kapak için hikayeden türetilmiş ortam (glacier, forest, space vb.). Varsa tema şablonu atlanır; BACKGROUND hikayeye uyar. COVER_PATH_FLOWERS_ANALYSIS.md
+ * @param coverEnvironment Kapak için hikayeden türetilmiş sahne (coverImagePrompt veya coverDescription / coverSetting). Varsa tema şablonu atlanır.
+ * @param environmentDescription Sayfa için hikayeden gelen ortam (page.environmentDescription). Varsa tema şablonu ve hardcoded atmosfer atlanır.
  */
-function getEnvironmentDescription(theme: string, sceneDesc: string, useFullSceneDesc: boolean = true, coverEnvironment?: string): string {
-  const envParts: string[] = []
-
-  // Sıra 14: Kapak için hikayeden gelen ortam varsa onu kullan (tema şablonu yok)
-  if (coverEnvironment && coverEnvironment.trim().length > 0) {
-    envParts.push(coverEnvironment.trim())
-  } else if (useFullSceneDesc && sceneDesc && sceneDesc.length > 50) {
-    // If scene description provided and allowed, use it as base
-    envParts.push(sceneDesc)
-  } else if (!useFullSceneDesc || !sceneDesc || sceneDesc.length <= 50) {
-    // Otherwise use simplified template (fallback)
-    const normalizedTheme = theme.toLowerCase().replace(/[-&_\s]/g, '-')
-    const templates = ENVIRONMENT_TEMPLATES[normalizedTheme] || ENVIRONMENT_TEMPLATES['adventure']
-    envParts.push(templates[0])
+function getEnvironmentDescription(
+  theme: string,
+  sceneDesc: string,
+  useFullSceneDesc: boolean = true,
+  coverEnvironment?: string,
+  environmentDescription?: string
+): string {
+  // Interior page: story-specific environmentDescription takes priority
+  if (useFullSceneDesc && environmentDescription && environmentDescription.trim().length > 0) {
+    return environmentDescription.trim()
   }
 
-  // Enhanced background details
-  envParts.push('expansive sky visible')
-  envParts.push('dramatic clouds or clear sky')
-  envParts.push('distant mountains or horizon line')
-  envParts.push('atmospheric perspective in background')
+  // Cover: use coverEnvironment (from story resolve: coverImagePrompt, etc.)
+  if (coverEnvironment && coverEnvironment.trim().length > 0) {
+    return coverEnvironment.trim()
+  }
 
-  // Atmospheric elements
-  envParts.push('atmospheric haze in distance')
-  envParts.push('background elements fade into soft mist')
+  // Interior page: use full sceneDescription if available
+  if (useFullSceneDesc && sceneDesc && sceneDesc.length > 50) {
+    return sceneDesc
+  }
 
-  return envParts.join(', ')
+  // Fallback: theme template (only when nothing story-specific is available)
+  const normalizedTheme = theme.toLowerCase().replace(/[-&_\s]/g, '-')
+  const templates = ENVIRONMENT_TEMPLATES[normalizedTheme] || ENVIRONMENT_TEMPLATES['adventure']
+  return templates[0]
 }
 
 // ============================================================================
@@ -1113,14 +1126,21 @@ function buildStyleSection(illustrationStyle: string): string[] {
 
 /**
  * Build scene establishment section (Faz 2.1: Scene-First)
- * Puts environment and atmosphere first so model establishes scene before character
+ * @param hasStoryEnvironment - When true (story-provided environmentDescription present),
+ *   the outdoor atmospheric depth block (sky, horizon, aerial perspective) is skipped.
+ *   This prevents the model from adding outdoor vegetation/nature to indoor scenes.
  */
-function buildSceneEstablishmentSection(environment: string): string[] {
+function buildSceneEstablishmentSection(environment: string, hasStoryEnvironment: boolean = false): string[] {
   const parts: string[] = []
   parts.push('[SCENE_ESTABLISHMENT]')
   parts.push(environment)
-  parts.push('expansive background, rich details, layered depth')
-  parts.push(getEnhancedAtmosphericDepth())
+  parts.push('rich details, layered depth')
+  if (!hasStoryEnvironment) {
+    // Only add outdoor atmospheric depth when story hasn't defined the environment.
+    // When environmentDescription is set by story (e.g. "indoor arena"), this block
+    // would inject sky/horizon/aerial perspective and break the scene.
+    parts.push(getEnhancedAtmosphericDepth())
+  }
   parts.push('[/SCENE_ESTABLISHMENT]')
   parts.push('')
   return parts
@@ -1345,6 +1365,16 @@ function buildAvoidShort(): string {
   return 'AVOID: character filling the frame, close-up portrait framing, extra limbs, messy anatomy, blurry background, neon saturation, text or watermark.'
 }
 
+/** Kısa, sabit kitap kapağı kompozisyonu — çiçek/çerçeve sızıntısı tetiklemeden poster hissi. Story metni ayrı gelir (coverEnvironment). */
+function getCoverBookLayoutDirectives(): string {
+  return [
+    'BOOK COVER (not an interior page spread): poster-like children\'s book cover illustration.',
+    'Reserve the upper third of the frame for future title text: quiet or simple area (ceiling, soft gradient, blurred background, or open wall) matching THIS scene — no decorative floral borders, no leaf frames.',
+    'One strong focal story moment; character clearly readable at thumbnail size.',
+    'No physical book mockup, no spine, no printed typography or letters in the image.',
+  ].join(' ')
+}
+
 // ============================================================================
 // Full Page Image Prompt (ENHANCED: 15 Ocak 2026)
 // ============================================================================
@@ -1361,15 +1391,19 @@ export function generateFullPagePrompt(
   totalPages: number = 12, // v1.8.0: For pose variation distribution (Faz 2.3)
   characterListForExpressions?: Array<{ id: string; name: string }> // v1.11.0: For [CHARACTER_EXPRESSIONS] labels (char ID → name)
 ): string {
-  // Build scene prompt (hybrid: cinematic + descriptive)
-  const scenePrompt = generateScenePrompt(sceneInput, characterPrompt, illustrationStyle, isCover)
+  // Interior: full hybrid scene prompt. Cover: built only inside the cover branch (no wonder/adventure chain).
+  const scenePrompt = isCover
+    ? ''
+    : generateScenePrompt(sceneInput, characterPrompt, illustrationStyle, false)
 
-  // Get environment for layered composition (Sıra 14: kapakta coverEnvironment varsa hikayeden gelen ortam kullanılır)
+  // Get environment for layered composition.
+  // Priority: environmentDescription (interior) > coverEnvironment (cover) > sceneDescription > theme template
   const environment = getEnvironmentDescription(
     sceneInput.theme,
     sceneInput.sceneDescription,
     !isCover,
-    isCover ? sceneInput.coverEnvironment : undefined
+    isCover ? sceneInput.coverEnvironment : undefined,
+    !isCover ? sceneInput.environmentDescription : undefined
   )
 
   // Build layered composition (FOREGROUND/MIDGROUND/BACKGROUND)
@@ -1379,24 +1413,77 @@ export function generateFullPagePrompt(
   // Add age-appropriate rules
   const ageRules = getAgeAppropriateSceneRules(ageGroup)
 
-  // Start building prompt parts - v1.7.0: Section builders; v1.8.0: Scene-First (Faz 2.1)
   const promptParts: string[] = []
 
-  // 0. [A4] Priority ladder – conflict resolution (PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md, 8 Şubat 2026)
-  promptParts.push('PRIORITY: If any conflict, follow this order: 1) Scene composition & character scale, 2) Environment richness & depth, 3) Character action & expression, 4) Reference identity match.')
+  // ─── COVER PATH ────────────────────────────────────────────────────────────
+  // Story-driven scene (coverEnvironment = resolveCoverEnvironment: coverImagePrompt first).
+  // Fixed layout line + identity; no GLOBAL_ART_DIRECTION / PRIORITY / old cinematic bloat.
+  if (isCover) {
+    // 1. Style identifier (short)
+    promptParts.push(`Illustration style: ${illustrationStyle}. Children's picture book, digital art.`)
 
-  // 0.4. [A7] GLOBAL_ART_DIRECTION – kitap geneli tek blok (kısa tekrar + uzun sahne şablonu)
-  promptParts.push(getGlobalArtDirection(illustrationStyle))
+    // 2. Character identity reference (short, no pose copying)
+    const useMatchRefCover = sceneInput.clothing === 'match_reference'
+    if (useMatchRefCover) {
+      promptParts.push('CRITICAL: Use reference image ONLY for character identity (same face, body proportions, and outfit). Do NOT copy pose or expression from the reference. Pose comes from THIS scene description.')
+    } else if (sceneInput.clothing?.trim()) {
+      promptParts.push(`CRITICAL: Character MUST wear EXACTLY: ${sceneInput.clothing.trim()}.`)
+    }
 
-  // 0.45. [A8] SHOT PLAN – sayfa başına kısa sinematik blok (shotType, lens, camera, placement, time, mood)
-  promptParts.push(buildShotPlanBlock(sceneInput, isCover, previousScenes))
+    // 3. Anatomy — skip "hands at sides / not holding objects" for cover since
+    //    the scene may explicitly have the character holding something (trophy, ball, etc.)
+    promptParts.push(getAnatomicalCorrectnessDirectives())
+    promptParts.push('') // separator
 
-  // 0.5. [NEW v1.8.0] Scene Establishment (Scene-First: sahne önce kurulur)
-  if (!isCover) {
-    promptParts.push(...buildSceneEstablishmentSection(environment))
+    // 3b. Identity (same facts as master image prompt) — reference alone drifts on iris/hair without text
+    const identityTrim = characterPrompt?.trim()
+    if (identityTrim) {
+      promptParts.push(`Character identity (match reference image): ${identityTrim}.`)
+    }
+
+    // 3c. Book-cover composition (code-owned; keeps poster/title-safe feel without re-adding PRIORITY blocks)
+    promptParts.push(getCoverBookLayoutDirectives())
+
+    // 4. SCENE — story cover brief + style only (avoid generateScenePrompt chain)
+    const styleLead = buildStyleDirectives(illustrationStyle)[0] || ''
+    const styleExtra = getStyleSpecificDirectives(illustrationStyle) || ''
+    const envPrimary = sceneInput.coverEnvironment?.trim() || sceneInput.sceneDescription?.trim() || ''
+    const coverSceneText = [styleLead, styleExtra, envPrimary].filter(Boolean).join(', ')
+    promptParts.push(`SCENE: ${coverSceneText}`)
+
+    // 5. Character expressions from story
+    if (sceneInput.characterExpressions && Object.keys(sceneInput.characterExpressions).length > 0) {
+      const charList = characterListForExpressions && characterListForExpressions.length > 0
+        ? characterListForExpressions.filter(c => sceneInput.characterExpressions![c.id])
+        : Object.keys(sceneInput.characterExpressions).map((id, i) => ({ id, name: `Character ${i + 1}` }))
+      promptParts.push(...buildCharacterExpressionsSection(sceneInput.characterExpressions, charList))
+    }
+
+    // 6. Clothing lock
+    promptParts.push(...buildClothingSection(sceneInput.clothing, sceneInput.theme, isCover, useCoverReference))
+
+    // 7. AVOID (short)
+    promptParts.push(buildAvoidShort())
+
+    return promptParts.join(', ')
   }
 
-  // 0.5. [Faz 1] Reference = identity only; pose & expression from story (v1.11.0)
+  // ─── INTERIOR PAGE PATH ─────────────────────────────────────────────────────
+
+  // 0. [A4] Priority ladder
+  promptParts.push('PRIORITY: If any conflict, follow this order: 1) Scene composition & character scale, 2) Environment richness & depth, 3) Character action & expression, 4) Reference identity match.')
+
+  // 0.4. [A7] GLOBAL_ART_DIRECTION
+  promptParts.push(getGlobalArtDirection(illustrationStyle))
+
+  // 0.45. [A8] SHOT PLAN
+  promptParts.push(buildShotPlanBlock(sceneInput, isCover, previousScenes))
+
+  // 0.5. Scene Establishment — skip outdoor atmospheric depth when story defined the environment
+  const hasStoryEnvironment = !!(sceneInput.environmentDescription?.trim())
+  promptParts.push(...buildSceneEstablishmentSection(environment, hasStoryEnvironment))
+
+  // 0.5. Reference = identity only
   const useMatchReference = sceneInput.clothing === 'match_reference'
   if (useMatchReference) {
     promptParts.push('CRITICAL: Use reference image ONLY for character identity (same face, body proportions, and outfit). Do NOT copy pose, expression, or gaze from the reference. Pose, expression, and composition must come from THIS scene description. Same outfit every page; do not change clothing. Identity match does NOT imply close-up. Keep the wide framing.')
@@ -1404,35 +1491,29 @@ export function generateFullPagePrompt(
     promptParts.push(`CRITICAL: Character MUST wear EXACTLY: ${sceneInput.clothing.trim()}. This outfit is LOCKED for the entire book.`)
   }
 
-  // 0.55. [Sıra 19] Allow relighting – sayfa için referans sadece yüz/saç/kıyafet; ışık/arka plan sahneye özel (PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md)
-  if (!isCover) {
-    promptParts.push('Use reference for face, hair, and outfit only; do NOT copy lighting or background from reference. Allow relighting to match this scene.')
-  }
+  // 0.55. Allow relighting
+  promptParts.push('Use reference for face, hair, and outfit only; do NOT copy lighting or background from reference. Allow relighting to match this scene.')
 
   // 1. Anatomical & Safety Section
   promptParts.push(...buildAnatomicalAndSafetySection(ageGroup))
 
-  // 2–4. [A1] Composition & Depth, Camera & Perspective, Character-Environment Ratio kaldırıldı (SHOT PLAN + COMPOSITION RULES short)
-
-  // 5. Lighting & Atmosphere (LIGHTING & COLOR)
+  // 5. Lighting & Atmosphere
   promptParts.push(...buildLightingAndAtmosphereSection(sceneInput.timeOfDay, sceneInput.mood))
 
-  // 5.5. [A1] COMPOSITION RULES – tek kısa satır (şablon 9.3)
+  // 5.5. COMPOSITION RULES
   promptParts.push(buildCompositionRulesShort())
 
-  // 6. Style Section (kısa)
+  // 6. Style Section
   promptParts.push(...buildStyleSection(illustrationStyle))
 
   // 6.5. CINEMATIC_PACK
   promptParts.push(getCinematicPack())
 
-  // 7. Character Integration (interior only)
-  if (!isCover) {
-    promptParts.push(...buildCharacterIntegrationSection())
-    promptParts.push(getCinematicNaturalDirectives())
-  }
+  // 7. Character Integration
+  promptParts.push(...buildCharacterIntegrationSection())
+  promptParts.push(getCinematicNaturalDirectives())
 
-  // 8. [A1] SCENE: Scene Content (layeredComp, scenePrompt, pose, ageRules)
+  // 8. Scene Content
   promptParts.push(...buildSceneContentSection(
     scenePrompt,
     layeredComp,
@@ -1443,7 +1524,7 @@ export function generateFullPagePrompt(
     isCover
   ))
 
-  // 8.5. Per-character expressions from story (v1.9.0 – Feb 2026)
+  // 8.5. Per-character expressions
   if (sceneInput.characterExpressions && Object.keys(sceneInput.characterExpressions).length > 0) {
     const charList = characterListForExpressions && characterListForExpressions.length > 0
       ? characterListForExpressions.filter(c => sceneInput.characterExpressions![c.id])
@@ -1451,7 +1532,7 @@ export function generateFullPagePrompt(
     promptParts.push(...buildCharacterExpressionsSection(sceneInput.characterExpressions, charList))
   }
 
-  // 9. Special Page Directives Section
+  // 9. Special Page Directives
   promptParts.push(...buildSpecialPageDirectives(
     sceneInput.pageNumber,
     isCover,
@@ -1460,21 +1541,21 @@ export function generateFullPagePrompt(
     sceneInput
   ))
 
-  // 10. Character Consistency Section
+  // 10. Character Consistency
   promptParts.push(...buildCharacterConsistencySection(illustrationStyle))
 
-  // 11. Scene Diversity Section
+  // 11. Scene Diversity
   promptParts.push(...buildSceneDiversitySection(isCover, previousScenes))
 
-  // 12. Clothing Section
+  // 12. Clothing
   promptParts.push(...buildClothingSection(sceneInput.clothing, sceneInput.theme, isCover, useCoverReference))
 
-  // 13. [A1] AVOID – tek satır (final directives + ana negatifler)
+  // 13. AVOID
   promptParts.push(buildAvoidShort())
-  
+
   // Combine everything
   const fullPrompt = promptParts.join(', ')
-  
+
   return fullPrompt
 }
 

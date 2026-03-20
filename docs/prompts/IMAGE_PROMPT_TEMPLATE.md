@@ -1,8 +1,9 @@
 # Image Generation Prompt Template
 
-**Kod referansları:** `lib/prompts/image/scene.ts`, `character.ts`, `negative.ts`, `style-descriptions.ts`, `master.ts` (tek kaynak; doküman bu kodla eşleşir)  
-**Versiyon (scene):** 1.20.0 | **Versiyon (negative):** 1.3.0 (8 Şubat 2026 – el/parmak stratejisi, anatomik direktifler)  
-**v1.18.0:** Kapak ortamı hikayeden (coverEnvironment). **v1.19.0:** Çelişkili stil ifadeleri – tek profil (filmic, controlled saturation). **v1.20.0:** Allow relighting – interior sayfa prompt'una "Use reference for face, hair, and outfit only; do NOT copy lighting or background from reference. Allow relighting to match this scene."
+**Kod referansları:** `lib/prompts/image/scene.ts`, `character.ts`, `negative.ts`, `style-descriptions.ts`, `master.ts`  
+**scene.ts changelog:** son girişler `v1.18.0`–`v1.20.0` (8 Şubat 2026); **Mart 2026 kapak dalı** ayrıca: `isCover === true` → kısa kapak yolu; `getCoverBookLayoutDirectives()`; `Character identity (match reference image)`; iç sayfa için `buildSceneEstablishmentSection(..., hasStoryEnvironment)` (story `environmentDescription` varken outdoor sky paketi kapalı).  
+**Versiyon (negative):** 1.3.0 (el/parmak stratejisi, anatomik direktifler)  
+**Kapak sahne metni:** `lib/book-generation/image-pipeline.ts` → `resolveCoverEnvironment(storyData)` — sıra: `coverImagePrompt` → `coverDescription` → `coverSetting` → türetme.
 
 ---
 
@@ -59,11 +60,12 @@ Bu template, **gpt-image-1.5** (default) / **1024x1536** (portrait) / **quality:
 - **Çözüm:** Cover oluşturulduktan sonra Pages 2–10’da hem fotoğraflar hem cover referans olarak kullanılıyor.
 - **Cover kalitesi kritik:** Tüm sayfalarda referans; cover’daki hata tüm kitaba yansır. TÜM karakterler cover’da görünmeli.
 - **Cover vs Page 1 (first interior):** Kapak ile ilk iç sayfa açıkça farklı olmalı (kamera, kompozisyon).
-- **Cover:** Epic wide, poster-like; karakter max 30–35% frame; environment-dominant.
+- **Kapak (`isCover=true`):** PRIORITY / GLOBAL_ART_DIRECTION / sinematik “environment 65%” zinciri **yok**. Sıra: stil etiketi → referans/kıyafet kritiği → anatomi → **Character identity** (master ile aynı göz/saç/ten) → **BOOK COVER layout** (`getCoverBookLayoutDirectives`: üstte başlık alanı, tek odak, mockup/typography yok) → **SCENE:** stil + `getStyleSpecificDirectives` + `coverEnvironment` (story’den).  
+- **İç sayfa (`isCover=false`):** Aşağıdaki uzun şablon (PRIORITY, SHOT PLAN, SCENE_ESTABLISHMENT, …) geçerli; kapakla aynı değildir.
 
 ---
 
-## Template Structure (generateFullPagePrompt sırası)
+## Template Structure — iç sayfa (`generateFullPagePrompt`, `isCover=false`)
 
 Sayfa görseli prompt'u `lib/prompts/image/scene.ts` → `generateFullPagePrompt()` ile üretilir. Bölüm sırası (kodla aynı):
 
@@ -147,6 +149,8 @@ Detaylar `lib/prompts/image/scene.ts`, `negative.ts` içinde.
 
 ## İlgili dokümanlar
 
-- `STORY_PROMPT_TEMPLATE.md` – Hikaye üretimi prompt şablonu
+- `STORY_PROMPT_TEMPLATE.md` – Hikaye üretimi özeti (sürüm = `base.ts` VERSION)
+- `docs/analysis/GORSEL_PROMPT_VE_TEST_REHBERI.md` – Tek giriş: test checklist, doküman haritası
+- `docs/analysis/PROMPT_ANALIZ_VE_IYILESTIRME.md` – Pipeline önerileri ve log notları
 - `docs/guides/PROMPT_OPTIMIZATION_GUIDE.md` – shotPlan, fallback, GLOBAL_ART_DIRECTION, relighting
 - `docs/analysis/PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md` – A1–A12 aksiyon planı ve uygulama durumu

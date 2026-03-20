@@ -1,16 +1,18 @@
 # Story Generation Prompt Template
 
 **Tek kaynak:** `lib/prompts/story/base.ts`  
-**Versiyon (kod):** 2.6.0  
-Bu doküman, koddaki prompt yapısının okunabilir şablonudur. Kod değişirse doküman da güncellenmelidir; **base.ts = gerçek kaynak**.
+**Versiyon (kod):** **2.8.0**  
+Bu doküman, koddaki prompt yapısının okunabilir özetidir. **Tam şema ve metin:** `base.ts` içindeki `generateStoryPrompt` + builder fonksiyonlar (`buildOutputFormatSection`, `buildVerificationChecklistSection`, …).
 
-**v2.2.0 (8 Şubat 2026):** Tüm doğrulama maddeleri tek blokta: `# VERIFICATION CHECKLIST`. LANGUAGE'dan "Before returning..." kaldırıldı; OUTPUT FORMAT kuyruğu "see # VERIFICATION CHECKLIST below" ile kısaltıldı.  
-**v2.3.0 (8 Şubat 2026):** shotPlan sayfa başına **zorunlu**; OUTPUT FORMAT ve VERIFICATION CHECKLIST güncellendi.  
-**v2.4.0 (8 Şubat 2026):** **coverSetting** üst seviye alan eklendi (REQUIRED): kapak görseli için tek cümle İngilizce ortam tarifi (karakter yok). Plan A – COVER_PATH_FLOWERS_ANALYSIS.md §7.  
-**v2.5.0 (8 Şubat 2026):** **Story JSON validation (Sıra 17):** route.ts story cevabında suggestedOutfits ve characterExpressions REQUIRED; eksikse retry. Kelime sayısı kontrolü ve kısa sayfa repair pass.  
-**v2.6.0 (1 Mart 2026):** **ONE STORY, STEP BY STEP** — Hikaye tek bir konudan (örn. bir kamp günü) başlayıp doğal adımlarla sonuna gelir; her sayfa = sıradaki adım. STORY STRUCTURE'a kamp örneği eklendi (uyanma → hazırlık → yola çıkma → çadır kurma → keşif → aktivite → uyku). STORY SEED: yazar fikri hikayenin başlangıcı; aynı hikaye adım adım sonuna kadar devam eder. journeyMap / sabit lokasyon kuralları kaldırıldı. VERIFICATION: each page = one step; imagePrompt describes that step.
-**v2.6.1 (1 Mart 2026):** **Custom tema:** `theme === "custom"` seçildiğinde `getThemeConfig("custom")` kullanılır; hikaye yönü tamamen STORY SEED (customRequests) ile belirlenir. Step 5’te Custom tema seçiliyse customRequests zorunludur (min 10 karakter). Educational + Space birleşik tema “Learning & Discovery” olarak güncellendi.
-(v2.5.0: Story JSON validation, suggestedOutfits/characterExpressions REQUIRED, kısa sayfa repair. v2.4.0: coverSetting. v2.3.0: shotPlan. v2.2.0: VERIFICATION CHECKLIST tek blok. v2.1.0: Görsel çeşitlilik, kelime hedefi, kısa sayfa repair.)
+**v2.8.0 (20 Mart 2026):** **`coverImagePrompt`** — Kapak görsel API’si için ayrı İngilizce brief (kitap kapağı kompozisyonu, üstte başlık için alan, tek odak, ışık). **`coverDescription`** — kısa okur/UI özeti (2–4 cümle). Pipeline önceliği: `lib/book-generation/image-pipeline.ts` → `resolveCoverEnvironment`: `coverImagePrompt` → `coverDescription` → `coverSetting` → `deriveCoverEnvironmentFromStory`.
+
+**v2.7.1 (20 Mart 2026):** Tohumda belirtilen mekân türü (ör. kapalı salon) ile `coverDescription` / sayfa `environmentDescription` tutarlılığı.
+
+**v2.7.0 (20 Mart 2026):** Few-shot somut örnekler nötrleştirildi; `environmentDescription` / şema örnekleri mekân-agnostic.
+
+**v2.6.0 (1 Mart 2026):** **ONE STORY, STEP BY STEP** — her sayfa = hikâyenin sıradaki adımı; STORY SEED = başlangıç.
+
+**Önceki sürümler (özet):** v2.4 `coverSetting`; v2.3 `shotPlan`; v2.2 tek `VERIFICATION CHECKLIST` bloğu — detay için `base.ts` changelog.
 
 ---
 
@@ -267,58 +269,28 @@ For each page, describe EACH character's facial expression separately in the cha
 
 ### 12. OUTPUT FORMAT (JSON)
 
-**Kod:** `buildOutputFormatSection(ageGroup, pageCount, illustrationStyle, theme, themeConfig, characters, characterName)`
+**Kod:** `buildOutputFormatSection(...)` — **birebir metin `base.ts` içindedir;** aşağıdaki liste sadece hatırlatma.
 
-```
-# OUTPUT FORMAT (JSON)
-Return a valid JSON object:
-{
-  "title": "Story title",
-  "coverSetting": "English, one sentence: setting/background only for the book cover image (no characters). Cinematic. Examples: 'glacier and ice cave, frozen landscape' or 'birthday party room with balloons and cake' or 'lush forest clearing with wildflowers'",
-  "pages": [
-    {
-      "pageNumber": 1,
-      "text": "Page text (~[getWordCount(ageGroup)] words, dialogue + descriptions)",
-      "imagePrompt": "Detailed [illustrationStyle] prompt (200+ chars): location, time of day, composition, character action. No appearance/clothing (master). Each page = distinct scene.",
-      "sceneDescription": "Detailed scene (150+ chars): location, time, action, mood. No appearance/clothing.",
-      "characterIds": ["id-from-CHARACTER-MAPPING"],
-      "sceneContext": "Short location/time/action only, e.g. 'forest clearing, morning, character approaching ball'",
-      "characterExpressions": {
-        "character-id-1": "Visual description of THIS character's facial expression (eyes, eyebrows, mouth). Example: eyes wide with surprise, eyebrows raised, mouth slightly open",
-        "character-id-2": "… (one entry per character ID in characterIds for this page)"
-      },
-      "shotPlan": { "shotType": "wide establishing", "lens": "24-28mm", "cameraAngle": "eye-level", "placement": "left third", "timeOfDay": "golden hour", "mood": "wonder" }
-    }
-  ],
-  "supportingEntities": [ { "id": "entity-id", "type": "animal"|"object", "name": "Name", "description": "Visual for master", "appearsOnPages": [2,3] } ],
-  "suggestedOutfits": { "[characterId1]": "one line English outfit", "[characterId2]": "one line English outfit" },
-  "metadata": { "ageGroup": "[ageGroup]", "theme": "[theme]", "educationalThemes": [], "safetyChecked": true }
-}
-coverSetting REQUIRED: one sentence in English describing only the setting/background for the book cover (e.g. glacier and ice cave, birthday party room with balloons, lush forest). No character description. Used for cover image generation.
-shotPlan REQUIRED per page (shotType, lens, cameraAngle, placement, timeOfDay, mood) — English only; used for image composition. Vary per page for visual diversity.
-Required fields and checks: see # VERIFICATION CHECKLIST below.
-```
+**Üst seviye (özet):**
+| Alan | Açıklama |
+|------|----------|
+| `title` | Kitap başlığı |
+| `coverDescription` | İngilizce, 2–4 cümle — kapak özeti (okur/UI) |
+| `coverImagePrompt` | İngilizce, 4–8 cümle — **kapak görsel API** için kompozisyon brief’i (birincil kaynak; tam görünüm master + pipeline) |
+| `coverSetting` | (Legacy / kısa ortam) İngilizce tek cümle — yalnızca `coverImagePrompt` ve `coverDescription` yoksa `resolveCoverEnvironment` zincirinde kullanılır |
+| `pages[]` | İç sayfalar (kapak dahil değil); `text`, `imagePrompt`, `sceneDescription`, `environmentDescription`, `cameraDistance`, `characterIds`, `characterExpressions`, `shotPlan`, … |
+| `supportingEntities`, `suggestedOutfits`, `metadata` | Master ve meta |
 
-**Not:** Sayfa çıktısında **clothing** alanı yok. **coverSetting** (v2.4.0, Plan A): üst seviye, **zorunlu**; kapak görseli için tek cümle İngilizce ortam tarifi (sadece mekân, karakter yok). Örn. glacier and ice cave, birthday party room with balloons. Kapak BACKGROUND'unda kullanılır; yoksa route'ta keyword fallback. **shotPlan** (shotType, lens, cameraAngle, placement, timeOfDay, mood) sayfa başına **zorunlu**; görsel pipeline'da SHOT PLAN bloğunda kullanılır (yoksa kod fallback üretir; bkz. PROMPT_OPTIMIZATION_GUIDE.md "shotPlan yoksa fallback"). **characterExpressions** (sayfa bazlı, karakter bazlı görsel ifade tarifi) story’den gelir; image pipeline’da [CHARACTER_EXPRESSIONS] bloğunda kullanılır. Master sadece kimlik referansıdır; poz, ifade ve sahne story çıktısından gelir. **suggestedOutfits** (object: karakter ID → tek satır İngilizce kıyafet) story’den gelir; her karakterin master’ında "Character wearing exactly" olarak kullanılır. 
+**Kapak görseli birleştirme (kod):** `resolveCoverEnvironment` sırası: `coverImagePrompt` → `coverDescription` → `coverSetting` → sayfalardan türetilmiş anahtar kelime. Tip: `lib/prompts/types.ts` → `StoryGenerationOutput`.
+
+Tam JSON örnek cümleleri ve zorunlu alan listesi yalnızca **`base.ts` → `buildOutputFormatSection`** içinde tutulur; dokümana kopyalamıyoruz (tek kaynak kuralı).
 ---
 
 ### 13. VERIFICATION CHECKLIST
 
-**Kod:** `buildVerificationChecklistSection(ageGroup, characterName, themeConfig, pageCount, language)`
+**Kod:** `buildVerificationChecklistSection(...)` — tam metin **`base.ts`**.
 
-Tüm doğrulama maddeleri tek blokta (A3); LANGUAGE veya OUTPUT FORMAT içinde tekrarlanmaz.
-
-```
-# VERIFICATION CHECKLIST (before returning JSON)
-- Return EXACTLY [n] pages. characterIds REQUIRED per page (use IDs from CHARACTER MAPPING).
-- coverSetting REQUIRED: one sentence, English, setting/background only for the book cover image (e.g. glacier and ice cave, birthday party room with balloons). No character description.
-- suggestedOutfits REQUIRED: one key per character ID from CHARACTER MAPPING, value = one line English outfit (used for master illustration).
-- characterExpressions REQUIRED per page: one key per character ID in that page's characterIds; value = short English visual description (eyes, eyebrows, mouth)—not just an emotion word.
-- Verify every page "text" is in [langName]; verify imagePrompt, sceneDescription, sceneContext are in English.
-- shotPlan REQUIRED per page: include shotType, lens, cameraAngle, placement, timeOfDay, mood (English only; vary per page for visual diversity).
-- Each page = one step in the story. imagePrompt should describe that step clearly (what is happening, where) so each illustration is different.
-- [characterName] = main character in every scene. Positive, age-appropriate, no scary/violent content.
-```
+Özet: sayfa sayısı, `coverImagePrompt` + `coverDescription`, `characterIds`, `suggestedOutfits`, `characterExpressions`, `environmentDescription`, `cameraDistance`, `shotPlan`, dil kuralları, kelime minimumu — **doğrulama listesi kopyalamak yerine koda bakın.**
 
 ---
 

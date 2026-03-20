@@ -12,8 +12,8 @@ import type { StoryGenerationInput, StoryGenerationOutput, PromptVersion } from 
  */
 
 export const VERSION: PromptVersion = {
-  version: '2.6.0',
-  releaseDate: new Date('2026-03-01'),
+  version: '2.8.0',
+  releaseDate: new Date('2026-03-20'),
   status: 'active',
   changelog: [
     'Initial release',
@@ -52,6 +52,9 @@ export const VERSION: PromptVersion = {
     'v2.4.0: [Plan A] coverSetting REQUIRED – Story JSON top-level field: one sentence English, setting/background only for book cover (no characters). LLM generates it from story; used for cover image BACKGROUND. COVER_PATH_FLOWERS_ANALYSIS.md §7 (8 Şubat 2026)',
     'v2.5.0: [Seçenek A] STORY SEED section – customRequests promoted from "Special Requests" bullet to dedicated # STORY SEED section with backbone directive. Placed after STORY REQUIREMENTS for prominence. Removed "Special Requests: None" noise when absent. Improves story quality for example book creation. (14 Şubat 2026)',
     'v2.6.0: SCENE DIVERSITY → ONE STORY STEP BY STEP. User goal: "güzel bir hikaye" — one clear story (e.g. camping day) that flows naturally from start to end; each page = next step, no rigid rules. (1) buildStoryStructureSection: "ONE STORY, STEP BY STEP" with camping example (wake up → pack → go → set tent → explore → activity → sleep); no SCENE DIVERSITY / location-count language. (2) buildStorySeedSection: seed = how the story starts; then "continue the same story step by step" to ending. (3) VERIFICATION: "each page = one step; imagePrompt describes that step". (1 Mart 2026)',
+    'v2.7.0: Few-shot anchoring kaldırıldı — OUTPUT FORMAT içindeki somut kapak/sahne örnekleri (isim + mekân), environmentDescription ve shotPlan şema örnekleri nötrleştirildi. buildStoryStructureSection kamp örneği soyut akışa indirildi. getExampleText doğa/orman bias\'ı kaldırıldı (mekân-agnostic örnek cümleler). HARDCODED_ORNEKLER_VE_AMAC_ANALIZI.md (20 Mart 2026)',
+    'v2.7.1: STORY STRUCTURE — mekân tutarlılığı: tohum kapalı salon/turnuva gibi bir mekân söylüyorsa coverDescription ve tüm sayfa ortamları aynı tür mekânda kalsın; hikâye ortasında dış mekân/park/çimene kayma. PROMPT_ANALIZ Ö10 (20 Mart 2026)',
+    'v2.8.0: coverImagePrompt — kapak için ayrı İngilizce görsel brief (kitap kapağı kompozisyonu, üstte başlık alanı, odak); pipeline önceliği coverImagePrompt → coverDescription → coverSetting. scene.ts sabit BOOK COVER layout satırı. (20 Mart 2026)',
   ],
   author: '@prompt-manager',
 }
@@ -339,16 +342,17 @@ function getExampleText(
     ? (characters[1].name || characters[1].type.displayName)
     : 'companion'
   
+  // Setting-agnostic samples: show rhythm, dialogue, sensory detail — do not imply a default location (forest/meadow/etc.).
   const examples: Record<string, string> = {
-    toddler: `"Look!" ${characterName} said, pointing at the colorful flowers. The sun felt warm on ${characterName}'s face. ${characterName} smiled and touched the soft petals. "Pretty!" ${characterName} giggled. The flowers smelled sweet like honey.`,
+    toddler: `"Look!" ${characterName} said, clapping small hands. Something new made ${characterName} curious. ${characterName} hummed a happy little tune. "Again!" ${characterName} giggled. Warm air felt cozy. "Pretty!" ${characterName} whispered.`,
     
-    preschool: `"Wow!" ${characterName} said, looking at the big tree. The leaves rustled in the gentle breeze. ${characterName} could hear birds singing high above. "I want to climb it!" ${characterName} said excitedly. The bark felt rough under ${characterName}'s small hands.`,
+    preschool: `"Wow!" ${characterName} said, looking around carefully. ${characterName} listened and waited. A sound felt close and clear. "What happens next?" ${characterName} wondered. ${characterName} took a slow breath and smiled.`,
     
-    'early-elementary': `As ${characterName} walked through the forest, the morning sun filtered through the tall trees. "This is amazing!" ${characterName} whispered to ${companionName}. The air smelled fresh and earthy, like rain and pine needles. ${characterName} could hear the crunch of leaves underfoot and the distant call of a bird. "I feel so happy here," ${characterName} said, feeling the warm sunlight on ${characterName}'s face.`,
+    'early-elementary': `As ${characterName} stepped forward, feelings bubbled up inside. "This matters!" ${characterName} said to ${companionName}, voice steady. ${characterName} listened for small sounds nearby. "I think I can do this," ${characterName} thought, feeling calmer with each step.`,
     
-    elementary: `The golden afternoon light painted everything in warm colors as ${characterName} and ${companionName} explored the meadow. "Do you hear that?" ${characterName} asked, stopping to listen. The gentle hum of bees mixed with the rustle of tall grass in the breeze. ${characterName} took a deep breath, smelling wildflowers and fresh earth. "This is the best day ever!" ${characterName} said, feeling the soft grass tickle ${characterName}'s bare feet. The sky above was a brilliant blue with fluffy white clouds.`,
+    elementary: `Light and shadows shifted as ${characterName} moved. "Do you hear that?" ${characterName} asked ${companionName}, pausing. ${characterName} noticed details others might miss. "I think I understand now," ${characterName} said, feeling more sure. The moment felt full and real.`,
     
-    'pre-teen': `As the sun began to set, casting long shadows across the path, ${characterName} felt a sense of wonder. "Look at those colors," ${characterName} said to ${companionName}, pointing at the sky painted in orange, pink, and purple. The evening air was cool against ${characterName}'s skin, and ${characterName} could hear the distant sound of crickets beginning their nightly song. "I'll never forget this moment," ${characterName} thought, feeling grateful and peaceful. The world seemed to slow down, and everything felt perfect.`,
+    'pre-teen': `As the situation unfolded, ${characterName} looked at it with fresh eyes. "What if we try it this way?" ${characterName} suggested to ${companionName}. The air felt heavier with meaning. ${characterName} chose each word carefully and waited. "I will remember this," ${characterName} thought.`,
   }
   
   return examples[ageGroup] || examples['early-elementary']
@@ -720,7 +724,7 @@ function buildLanguageSection(language: string): string {
   const langName = getLanguageName(language)
   return `# LANGUAGE
 - **Page "text" only:** Write the story narrative (the "text" field for each page) in ${langName} only. This is what appears in the book. Do not use words from other languages in "text".
-- **imagePrompt, sceneDescription, sceneContext:** Always in English only. These fields are used for image generation APIs and must be in English.`
+- **All other fields** (imagePrompt, sceneDescription, environmentDescription, coverDescription, coverImagePrompt, shotPlan, characterExpressions, suggestedOutfits): Always in English only. These fields are used for image generation APIs and must be in English.`
 }
 
 function buildAgeAppropriateSection(ageGroup: string): string {
@@ -745,10 +749,11 @@ function buildStoryStructureSection(
 - **Narrative arc:** One clear story from beginning to end. First 1–2 pages set the situation; middle pages are the main events (things that happen, step by step); last 1–2 pages bring a clear resolution. The last page should feel like an ending.
 
 # ONE STORY, STEP BY STEP
-- Tell ONE story (e.g. a camping day, a birthday, a discovery in the garden). Each page = the next natural step in that story.
-- Example for a camping story: waking up at home → preparing / packing → going to the campsite → setting up the tent → exploring → something small happens (e.g. finding a trail, seeing an animal) → an activity (e.g. picking up litter, playing) → evening in the tent → falling asleep. Each page is one step; no repeating the same step.
+- Tell ONE coherent story; each page = the next natural step in the plot. Do not anchor to a single genre (e.g. only camping or only outdoor): the setting and events must follow the user's theme and STORY SEED.
+- Abstract arc: opening → events unfold → resolution. No fixed checklist of locations; each step must follow from the previous page.
 - If the story seed describes how the story starts, use it for the opening (pages 1–2). Then continue with the natural next steps of that same story — do not stretch one moment across many pages.
-- Each page's imagePrompt and sceneDescription should spell out that step clearly (where we are, what is happening), so each illustration is different.`
+- Each page's imagePrompt and sceneDescription should spell out that step clearly (where we are, what is happening), so each illustration is different.
+- **Setting consistency:** If the STORY SEED names a venue type (e.g. indoor arena, gym, tournament final inside a hall), keep \`coverDescription\`, \`coverImagePrompt\`, every page's \`environmentDescription\`, and scene text aligned with that venue for the whole book. Do not jump mid-story to an outdoor park, open field, grass, or "open sky" stadium unless the user seed clearly asks for outdoor.`
 }
 
 function buildThemeSpecificSection(
@@ -761,7 +766,7 @@ Use a setting, mood, and educational focus that fit the theme "${themeConfig.nam
 
 # DO NOT DESCRIBE VISUAL DETAILS (two rules)
 (a) **pages[].text (story narrative):** No visual details (no appearance, clothing, object colors). Focus on actions, emotions, location, time of day, plot. Narrative only.
-(b) **imagePrompt / sceneDescription:** Do NOT describe character appearance or clothing (master provides that). DO include: lighting, color, composition, atmosphere, camera angle, environment detail. sceneContext = short location/time/action only, in English (e.g. "forest clearing, morning, character approaching").`
+(b) **imagePrompt / sceneDescription:** Do NOT describe character appearance or clothing (master provides that). DO include: lighting, color, composition, atmosphere, camera angle, environment detail. sceneContext = short location/time/action only, in English (derive from THIS story; no fixed sample scene).`
 }
 
 function buildVisualDiversitySection(): string {
@@ -835,28 +840,33 @@ function buildOutputFormatSection(
 Return a valid JSON object:
 {
   "title": "Story title",
-  "coverSetting": "English, one sentence: setting/background only for the book cover image (no characters). Cinematic. Examples: 'glacier and ice cave, frozen landscape' or 'birthday party room with balloons and cake' or 'lush forest clearing with wildflowers'",
+  "coverDescription": "English. 2-4 sentences: vivid, reader-friendly summary of what the cover shows (setting, story hook, mood). For humans and UI; may overlap with coverImagePrompt but stay concise.",
+  "coverImagePrompt": "English REQUIRED. 4-8 sentences for the COVER IMAGE API (primary input when combined with system layout). Describe a children's BOOK COVER (not a random interior page): (1) main scene and emotional beat, (2) composition: clear quieter or simpler area in the upper third for title text (e.g. ceiling, soft sky, blurred shelves, gradient wall) matching THIS setting, (3) one strong focal moment, (4) lighting and atmosphere. Do NOT repeat full character appearance (hair, eyes, skin) — the master reference handles that. Use character names from CHARACTER MAPPING for actions only. No typography or written words in the scene.",
   "pages": [
     {
       "pageNumber": 1,
       "text": "Page text (${getWordCount(ageGroup)} words, dialogue + descriptions)",
       "imagePrompt": "English only. Detailed ${illustrationStyle} prompt (200+ chars): location, time of day, composition, character action. No appearance/clothing (master). Each page = distinct scene.",
       "sceneDescription": "English only. Detailed scene (150+ chars): location, time, action, mood. No appearance/clothing.",
+      "environmentDescription": "English only. Specific background/environment for THIS page: what fills the frame (walls, floor, ceiling, horizon, objects, light sources) matching the story — indoor, outdoor, or any setting as required. Story-specific; no generic filler.",
+      "cameraDistance": "wide",
       "characterIds": ["id-from-CHARACTER-MAPPING"],
-      "sceneContext": "English only. Short location/time/action only, e.g. 'forest clearing, morning, character approaching'",
       "characterExpressions": {
         "character-id-1": "English only. Visual description of THIS character's facial expression for this page (eyes, eyebrows, mouth). Example: 'eyes wide with surprise, eyebrows raised, mouth slightly open'",
         "character-id-2": "English only. Visual description for second character (if present). Example: 'calm gentle smile, eyes crinkled at corners, relaxed eyebrows'"
       },
-      "shotPlan": { "shotType": "wide establishing", "lens": "24-28mm", "cameraAngle": "eye-level", "placement": "left third", "timeOfDay": "golden hour", "mood": "wonder" }
+      "shotPlan": { "shotType": "<string — your choice for this page>", "lens": "<string — focal length for this scene>", "cameraAngle": "<string>", "placement": "<string>", "timeOfDay": "<string — must match this page>", "mood": "<string — must match this page>" }
     }
   ],
   "supportingEntities": [ { "id": "entity-id", "type": "animal"|"object", "name": "Name", "description": "Visual for master", "appearsOnPages": [2,3] } ],
-  "suggestedOutfits": { ${characters.length > 0 ? characters.map(c => `"${c.id}": "one line English outfit"`).join(', ') : '"<uuid-from-CHARACTER_ID_MAP>": "one line English outfit"'},
+  "suggestedOutfits": { ${characters.length > 0 ? characters.map(c => `"${c.id}": "one line English outfit"`).join(', ') : '"<uuid-from-CHARACTER_ID_MAP>": "one line English outfit"'} },
   "metadata": { "ageGroup": "${ageGroup}", "theme": "${theme}", "educationalThemes": [], "safetyChecked": true }
 }
-coverSetting REQUIRED: one sentence in English describing only the setting/background for the book cover (e.g. glacier and ice cave, birthday party room with balloons, lush forest). No character description. Used for cover image generation.
-shotPlan REQUIRED per page (shotType, lens, cameraAngle, placement, timeOfDay, mood) — English only; used for image composition. Vary per page for visual diversity.
+coverImagePrompt REQUIRED: 4-8 sentences, English, book-cover composition brief (see schema above). Primary scene text for cover image generation before system adds identity/style.
+coverDescription REQUIRED: 2-4 sentences, English, vivid cover summary for readers.
+environmentDescription REQUIRED per page: specific background/environment for that page (not generic templates). Be story-specific.
+cameraDistance REQUIRED per page: "close" | "medium" | "wide" | "establishing". Use "wide" or "establishing" to keep character small in frame (30-40%); use "close" only for emotional close-ups. Vary per page.
+shotPlan REQUIRED per page: six English strings (shotType, lens, cameraAngle, placement, timeOfDay, mood). Replace the angle-bracket hints in the schema with real values for each page; vary timeOfDay and mood across pages when the story allows.
 Required fields and checks: see # VERIFICATION CHECKLIST below.`
 }
 
@@ -872,13 +882,16 @@ function buildVerificationChecklistSection(
   const langName = getLanguageName(language)
   return `# VERIFICATION CHECKLIST (before returning JSON)
 - Return EXACTLY ${n} pages. characterIds REQUIRED per page (use IDs from CHARACTER MAPPING).
-- coverSetting REQUIRED: one sentence, English, setting/background only for the book cover image (e.g. glacier and ice cave, birthday party room with balloons). No character description.
+- coverImagePrompt REQUIRED: 4-8 sentences, English, book-cover composition (layout + focal moment + lighting + setting). Drives cover image together with pipeline layout.
+- coverDescription REQUIRED: 2-4 sentences, English, reader-facing cover summary.
 - suggestedOutfits REQUIRED: one key per character ID from CHARACTER MAPPING, value = one line English outfit (used for master illustration).
-- characterExpressions REQUIRED per page: one key per character ID in that page's characterIds; value = short English visual description (eyes, eyebrows, mouth)—not just an emotion word.
-- Verify every page "text" is in ${langName}; verify imagePrompt, sceneDescription, sceneContext are in English.
-- shotPlan REQUIRED per page: include shotType, lens, cameraAngle, placement, timeOfDay, mood (English only; vary per page for visual diversity).
-- Each page = one step in the story. imagePrompt should describe that step clearly (what is happening, where) so each illustration is different.
-- Word count check: count the words in each page's "text". Any page with fewer than ${getWordCountMin(ageGroup)} words must be expanded before returning (add sensory detail, dialogue, or emotion—do not just repeat).
+- characterExpressions REQUIRED per page: one key per character ID in that page's characterIds; value = short English visual description (eyes, eyebrows, mouth).
+- environmentDescription REQUIRED per page: specific background/environment (not generic). Story-specific.
+- cameraDistance REQUIRED per page: "close" | "medium" | "wide" | "establishing". Vary per page; prefer "wide"/"establishing" for most pages.
+- shotPlan REQUIRED per page: shotType, lens, cameraAngle, placement, timeOfDay, mood (English; vary per page).
+- Verify every page "text" is in ${langName}; all other fields in English.
+- Each page = one step in the story; imagePrompt describes that step clearly so each illustration is different.
+- Word count: any page with fewer than ${getWordCountMin(ageGroup)} words must be expanded.
 - ${characterName} = main character in every scene. Positive, age-appropriate, no scary/violent content.`
 }
 

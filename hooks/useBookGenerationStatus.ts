@@ -4,7 +4,7 @@
  * Kullanım:
  *   const { status, progress, step, isDone, isError } = useBookGenerationStatus(bookId)
  *
- * Poll aralığı: `pollIntervalMs` (varsayılan 1500ms)
+ * Poll aralığı: `pollIntervalMs` (varsayılan 4000ms — dev konsolda `GET .../generation-status` gürültüsünü azaltır)
  * Durum 'completed' veya 'failed' olunca polling durur.
  */
 
@@ -59,7 +59,7 @@ async function fetchStatus(bookId: string) {
 
 export function useBookGenerationStatus(
   bookId: string | null | undefined,
-  pollIntervalMs: number = 1500
+  pollIntervalMs: number = 4000
 ): BookGenerationState {
   const [state, setState] = useState<Omit<BookGenerationState, 'refetch'>>({
     bookId: bookId ?? '',

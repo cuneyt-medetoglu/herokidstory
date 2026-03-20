@@ -9,15 +9,17 @@ import { DebugModal } from "./DebugModal"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
+type DebugStoryModel = 'gpt-4.1-mini' | 'gpt-4.1' | 'gpt-4o-mini' | 'gpt-4o' | 'o1-mini'
+
 interface DebugQualityPanelProps {
   wizardData: any
   characterIds: string[]
   canShow: boolean
-  /** Admin/debug: story model to use. Defaults to gpt-4o-mini. */
-  storyModel?: 'gpt-4o-mini' | 'gpt-4o' | 'o1-mini'
+  /** Admin/debug: story model (step6 seçici ile aynı). */
+  storyModel?: DebugStoryModel
 }
 
-export function DebugQualityPanel({ wizardData, characterIds, canShow, storyModel = 'gpt-4o-mini' }: DebugQualityPanelProps) {
+export function DebugQualityPanel({ wizardData, characterIds, canShow, storyModel = 'gpt-4.1-mini' }: DebugQualityPanelProps) {
   const { toast } = useToast()
   const [expanded, setExpanded] = useState(false)
   

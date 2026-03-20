@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Debug Log Viewer</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --muted: #9aa4b2;
+      --text: #e7edf5;
+      --line: #2a3240;
+      --accent: #5cc8ff;
+      --ok: #22c55e;
+      --err: #ef4444;
+      --req: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 8px; font-size: 20px; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+    input[type="text"], select, button {
+      background: #0f141b;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    button { cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    .chip {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .chip.request { color: var(--req); border-color: #7c5a18; }
+    .chip.response { color: var(--ok); border-color: #19532e; }
+    .chip.error { color: var(--err); border-color: #6b1f1f; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 8px;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .payload {
+      max-height: 140px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #0b0f14;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 6px;
+    }
+    .view-btn {
+      margin-top: 6px;
+      font-size: 12px;
+      padding: 6px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #101722;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .view-btn:hover { border-color: var(--accent); }
+    .tiny { font-size: 11px; color: var(--muted); }
+    .count { color: var(--accent); font-weight: 600; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.62);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 18px;
+    }
+    .modal.show { display: flex; }
+    .modal-card {
+      width: min(1200px, 98vw);
+      height: min(88vh, 900px);
+      background: #0d121a;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-head {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .modal-title { font-size: 13px; color: var(--muted); }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-code {
+      flex: 1;
+      margin: 0;
+      padding: 14px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #dbe8ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <h1>AI Debug Log Viewer</h1>
+      <div class="muted">
+        `ai-api-debug.jsonl` dosyasını seç. Satır bazlı JSON logları tablo halinde gösterir.
+      </div>
+      <div class="row">
+        <input id="fileInput" type="file" accept=".jsonl,.log,.txt,application/json" />
+        <input id="searchInput" type="text" placeholder="Ara: endpoint, prompt, bookId..." />
+        <select id="stageFilter">
+          <option value="">Tüm stage</option>
+          <option value="request">request</option>
+          <option value="response">response</option>
+          <option value="error">error</option>
+        </select>
+        <select id="opFilter">
+          <option value="">Tüm operationType</option>
+        </select>
+        <button id="expandBtn" type="button">Tümünü Aç/Kapa</button>
+      </div>
+      <div class="row tiny">
+        <span>Toplam: <span id="totalCount" class="count">0</span></span>
+        <span>Filtreli: <span id="filteredCount" class="count">0</span></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Zaman</th>
+            <th>Stage</th>
+            <th>Operation</th>
+            <th>Endpoint</th>
+            <th>Durum</th>
+            <th>Detay</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="jsonModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div id="modalTitle" class="modal-title">Payload</div>
+        <div class="modal-actions">
+          <button id="copyModalBtn" type="button">Kopyala</button>
+          <button id="closeModalBtn" type="button">Kapat</button>
+        </div>
+      </div>
+      <pre id="modalCode" class="modal-code"></pre>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const searchInput = document.getElementById("searchInput");
+    const stageFilter = document.getElementById("stageFilter");
+    const opFilter = document.getElementById("opFilter");
+    const tbody = document.getElementById("tbody");
+    const totalCount = document.getElementById("totalCount");
+    const filteredCount = document.getElementById("filteredCount");
+    const expandBtn = document.getElementById("expandBtn");
+    const jsonModal = document.getElementById("jsonModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalCode = document.getElementById("modalCode");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const copyModalBtn = document.getElementById("copyModalBtn");
+
+    let allRows = [];
+    let expanded = false;
+    let modalRaw = "";
+
+    function safeParse(line) {
+      try { return JSON.parse(line); } catch { return null; }
+    }
+
+    function parseJsonl(text) {
+      return text
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter(Boolean)
+        .map(safeParse)
+        .filter(Boolean);
+    }
+
+    function opOptions(rows) {
+      const set = new Set(rows.map((r) => r.operationType).filter(Boolean));
+      opFilter.innerHTML = '<option value="">Tüm operationType</option>';
+      [...set].sort().forEach((op) => {
+        const opt = document.createElement("option");
+        opt.value = op;
+        opt.textContent = op;
+        opFilter.appendChild(opt);
+      });
+    }
+
+    function stageChip(stage) {
+      const cls = stage === "response" ? "response" : stage === "error" ? "error" : "request";
+      return `<span class="chip ${cls}">${stage || "-"}</span>`;
+    }
+
+    function matchRow(r, q, stage, op) {
+      if (stage && r.stage !== stage) return false;
+      if (op && r.operationType !== op) return false;
+      if (!q) return true;
+      const blob = JSON.stringify(r).toLowerCase();
+      return blob.includes(q);
+    }
+
+    function render() {
+      const q = searchInput.value.trim().toLowerCase();
+      const stage = stageFilter.value;
+      const op = opFilter.value;
+      const rows = allRows.filter((r) => matchRow(r, q, stage, op));
+      filteredCount.textContent = rows.length;
+
+      tbody.innerHTML = rows.map((r, idx) => {
+        const dt = r.timestamp ? new Date(r.timestamp).toLocaleString("tr-TR") : "-";
+        const status = r.status ?? "-";
+        const duration = r.durationMs ? `${r.durationMs} ms` : "-";
+        const payload = JSON.stringify(r.payload ?? {}, null, 2);
+        const payloadBlock = expanded
+          ? `<div class="payload">${escapeHtml(payload)}</div>`
+          : `<details><summary>payload</summary><div class="payload">${escapeHtml(payload)}</div></details>`;
+        const detailBlock = JSON.stringify(r, null, 2);
+        return `
+          <tr>
+            <td>${dt}<div class="tiny">${r.id || "-"}</div></td>
+            <td>${stageChip(r.stage)}</td>
+            <td>${escapeHtml(r.operationType || "-")}<div class="tiny">model: ${escapeHtml(r.model || "-")}</div></td>
+            <td>${escapeHtml(r.endpoint || "-")}<div class="tiny">bookId: ${escapeHtml(r.bookId || "-")}</div></td>
+            <td>${escapeHtml(String(status))}<div class="tiny">${duration}</div></td>
+            <td>
+              ${payloadBlock}
+              <button class="view-btn" data-i="${idx}" data-full="${encodeURIComponent(detailBlock)}">Tam Ekran Gör</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      tbody.querySelectorAll(".view-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const raw = decodeURIComponent(btn.getAttribute("data-full") || "{}");
+          openModal(raw);
+        });
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const text = await file.text();
+      allRows = parseJsonl(text);
+      totalCount.textContent = allRows.length;
+      opOptions(allRows);
+      render();
+    });
+
+    [searchInput, stageFilter, opFilter].forEach((el) => el.addEventListener("input", render));
+    expandBtn.addEventListener("click", () => { expanded = !expanded; render(); });
+
+    function openModal(text) {
+      modalRaw = text;
+      modalTitle.textContent = "Tam kayıt (request/response)";
+      modalCode.textContent = text;
+      jsonModal.classList.add("show");
+      jsonModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      jsonModal.classList.remove("show");
+      jsonModal.setAttribute("aria-hidden", "true");
+    }
+
+    closeModalBtn.addEventListener("click", closeModal);
+    jsonModal.addEventListener("click", (e) => {
+      if (e.target === jsonModal) closeModal();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+    copyModalBtn.addEventListener("click", async () => {
+      if (!modalRaw) return;
+      try {
+        await navigator.clipboard.writeText(modalRaw);
+        copyModalBtn.textContent = "Kopyalandı";
+        setTimeout(() => { copyModalBtn.textContent = "Kopyala"; }, 1200);
+      } catch {
+        copyModalBtn.textContent = "Kopyala (hata)";
+        setTimeout(() => { copyModalBtn.textContent = "Kopyala"; }, 1200);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -21,8 +21,10 @@ import { getLayoutSafeMasterDirectives } from '@/lib/prompts/image/master'
 import { generateTts } from '@/lib/tts/generate'
 import { chatWithLog } from '@/lib/ai/chat'
 import { imageEditWithLog, imageGenerateWithLog } from '@/lib/ai/images'
+import { appendAiDebugLog, sanitizeForDebugLog, summarizeFormData } from '@/lib/debug/ai-debug-log'
 import OpenAI from 'openai'
 import { enqueueBookGeneration } from '@/lib/queue/client'
+import { resolveCoverEnvironment } from '@/lib/book-generation/image-pipeline'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -37,7 +39,7 @@ function stopAfter(step: string) {
 }
 
 /** Allowed story models for debug/admin override (STORY_QUALITY_IMPROVEMENT_ANALYSIS.md §8) */
-const ALLOWED_STORY_MODELS = ['gpt-4o-mini', 'gpt-4o', 'o1-mini'] as const
+const ALLOWED_STORY_MODELS = ['gpt-4o-mini', 'gpt-4.1-mini', 'gpt-4.1', 'gpt-4o', 'o1-mini'] as const
 type AllowedStoryModel = typeof ALLOWED_STORY_MODELS[number]
 
 /** Maximum number of characters (main + additional) per book. Must match create flow (Step 2). */
@@ -53,62 +55,31 @@ function normalizeThemeKey(theme: string): string {
   return t
 }
 
-/**
- * Sıra 14 (COVER_PATH_FLOWERS_ANALYSIS.md): Kapak BACKGROUND'u hikayeden türet.
- * customRequests + sayfa sceneDescription/sceneContext/text içinden ortam anahtar kelimelerine göre
- * kısa bir environment cümlesi döner. Boş dönerse getEnvironmentDescription tema şablonuna düşer.
- */
-function deriveCoverEnvironmentFromStory(
-  customRequests: string | undefined,
-  pages: Array<{ sceneDescription?: string; sceneContext?: string; text?: string; imagePrompt?: string }>
-): string {
-  const parts: string[] = [customRequests || '']
-  for (const p of pages) {
-    parts.push(p.sceneDescription || '', p.sceneContext || '', p.text || '', p.imagePrompt || '')
-  }
-  const combined = parts.join(' ').toLowerCase()
-  // Öncelik: güçlü ortam (buz, uzay, deniz) önce; sonra orman, dağ, mağara
-  if (/\b(glacier|ice|buz|frozen|snow|kar|snowy|karlı|buzul)\b/.test(combined)) {
-    return 'glacier, ice cave, frozen landscape, soft snow and crystals'
-  }
-  if (/\b(space|uzay|stars|yıldız|planet|gezegen|cosmic|orbit)\b/.test(combined)) {
-    return 'space, stars and planets, cosmic horizon'
-  }
-  if (/\b(ocean|deniz|sea|underwater|sualtı|coral|reef|aquatic)\b/.test(combined)) {
-    return 'ocean, clear water, coral reef or underwater world'
-  }
-  if (/\b(cave|mağara|ice cave|buz mağara)\b/.test(combined)) {
-    return 'cave, rocky interior, mysterious atmosphere'
-  }
-  if (/\b(forest|orman|clearing|açıklık|wildflowers|mushroom)\b/.test(combined)) {
-    return 'lush forest, dappled sunlight, wildflowers'
-  }
-  if (/\b(mountain|dağ|path|yol|trail|patika|peak|zirve)\b/.test(combined)) {
-    return 'mountain path, distant peaks, natural landscape'
-  }
-  if (/\b(beach|sahil|plaj|sand)\b/.test(combined)) {
-    return 'sandy beach, ocean horizon, soft waves'
-  }
-  if (/\b(garden|bahçe|flower|çiçek)\b/.test(combined)) {
-    return 'colorful garden, flowers and greenery'
-  }
-  return ''
-}
-
 /** From-example: örnek kapak görselinden sahne betimi (top, tavşan, kulübe vb.) alır; kapak prompt'unu zenginleştirmek için. */
-async function describeCoverSceneForPrompt(imageUrl: string): Promise<string> {
+async function describeCoverSceneForPrompt(
+  imageUrl: string,
+  logCtx?: { userId: string; bookId: string }
+): Promise<string> {
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const visionParams = {
+      model: 'gpt-4o-mini' as const,
       messages: [{
-        role: 'user',
+        role: 'user' as const,
         content: [
-          { type: 'text', text: 'Describe this children\'s book cover in 1-2 short sentences for an image generation prompt. Include: setting (e.g. path, cottage, trees, flowers), key objects (e.g. ball, bunny, toys), and composition. English only, concise. No character description.' },
-          { type: 'image_url', image_url: { url: imageUrl } },
+          { type: 'text' as const, text: 'Describe this children\'s book cover in 1-2 short sentences for an image generation prompt. Include: setting (e.g. path, cottage, trees, flowers), key objects (e.g. ball, bunny, toys), and composition. English only, concise. No character description.' },
+          { type: 'image_url' as const, image_url: { url: imageUrl } },
         ],
       }],
       max_tokens: 150,
-    })
+    }
+    const completion = logCtx
+      ? await chatWithLog(openai, visionParams, {
+          userId: logCtx.userId,
+          bookId: logCtx.bookId,
+          operationType: 'story_generation',
+          requestMeta: { step: 'vision_example_cover_scene' },
+        })
+      : await openai.chat.completions.create(visionParams)
     const text = completion.choices[0]?.message?.content?.trim()
     return text ? ` Scene must include these key elements: ${text}` : ''
   } catch (e) {
@@ -439,10 +410,19 @@ async function retryFetch(
   url: string,
   options: RequestInit,
   maxRetries: number = 3,
-  context: string = 'API call'
+  context: string = 'API call',
+  debugContext?: {
+    operationType: 'story_generation' | 'image_cover' | 'image_page' | 'image_master' | 'image_entity' | 'image_edit' | 'image_regenerate' | 'character_analysis' | 'tts'
+    model: string
+    userId: string
+    bookId?: string | null
+    pageIndex?: number | null
+  }
 ): Promise<Response> {
   return retryWithBackoff(async () => {
-    const response = await fetch(url, options)
+    const response = debugContext
+      ? await fetchWithAiDebug(url, options, debugContext)
+      : await fetch(url, options)
     
     if (!response.ok) {
       const status = response.status
@@ -475,6 +455,63 @@ async function retryFetch(
     
     return response
   }, maxRetries, context)
+}
+
+async function fetchWithAiDebug(
+  url: string,
+  options: RequestInit,
+  context: {
+    operationType: 'story_generation' | 'image_cover' | 'image_page' | 'image_master' | 'image_entity' | 'image_edit' | 'image_regenerate' | 'character_analysis' | 'tts'
+    model: string
+    userId: string
+    bookId?: string | null
+    pageIndex?: number | null
+  }
+): Promise<Response> {
+  const startedAt = Date.now()
+  const endpoint = url.replace('https://api.openai.com', '')
+  const requestBody =
+    options.body instanceof FormData
+      ? { formData: summarizeFormData(options.body) }
+      : typeof options.body === 'string'
+      ? { body: sanitizeForDebugLog(options.body) }
+      : { bodyType: options.body ? typeof options.body : 'none' }
+
+  void appendAiDebugLog({
+    stage: 'request',
+    operationType: context.operationType,
+    provider: 'openai',
+    endpoint,
+    model: context.model,
+    userId: context.userId,
+    bookId: context.bookId ?? null,
+    pageIndex: context.pageIndex ?? null,
+    payload: sanitizeForDebugLog(requestBody),
+  })
+
+  const response = await fetch(url, options)
+  const durationMs = Date.now() - startedAt
+  const clone = response.clone()
+  const contentType = response.headers.get('content-type') || ''
+  const responsePayload = contentType.includes('application/json')
+    ? sanitizeForDebugLog(await clone.json().catch(() => null))
+    : sanitizeForDebugLog(await clone.text().catch(() => ''))
+
+  void appendAiDebugLog({
+    stage: response.ok ? 'response' : 'error',
+    operationType: context.operationType,
+    provider: 'openai',
+    endpoint,
+    model: context.model,
+    userId: context.userId,
+    bookId: context.bookId ?? null,
+    pageIndex: context.pageIndex ?? null,
+    status: response.status,
+    durationMs,
+    payload: responsePayload,
+  })
+
+  return response
 }
 
 export interface CreateBookRequest {
@@ -551,7 +588,7 @@ export async function POST(request: NextRequest) {
       customRequests,
       pageCount, // Debug: Optional page count override (0 or undefined = cover only)
       language = 'en',
-      storyModel = 'gpt-4o-mini', // Default: GPT-4o Mini (Önerilen)
+      storyModel = 'gpt-4.1-mini', // Default: GPT-4.1 Mini (daha kaliteli story output)
       skipPayment,
       fromExampleId, // Create from example: same story/scenes, only character swap via edits
       isExample, // Mark as public example (admin only; step6 "Create example book")
@@ -589,15 +626,13 @@ export async function POST(request: NextRequest) {
       debugTrace = []
     }
 
-    // Effective story model (admin/debug can override; default gpt-4o-mini for everyone including example book):
+    // Effective story model (anyone can use allowed models via request body; default gpt-4.1-mini):
     const effectiveStoryModel: AllowedStoryModel =
-      canUseDebugOptions &&
-      storyModel &&
-      (ALLOWED_STORY_MODELS as readonly string[]).includes(storyModel)
+      storyModel && (ALLOWED_STORY_MODELS as readonly string[]).includes(storyModel)
         ? (storyModel as AllowedStoryModel)
-        : 'gpt-4o-mini'
+        : 'gpt-4.1-mini'
 
-    if (effectiveStoryModel !== 'gpt-4o-mini') {
+    if (effectiveStoryModel !== 'gpt-4.1-mini') {
       console.log(`[Create Book] 🔧 Story model override: ${effectiveStoryModel} (isExample=${!!isExample}, canDebug=${canUseDebugOptions})`)
     }
 
@@ -1578,7 +1613,10 @@ export async function POST(request: NextRequest) {
 
       // From-example: örnek kapak görselinden sahne öğelerini (top, tavşan vb.) Vision ile alıp prompt'a ekle
       if (isFromExampleMode && exampleBook?.cover_image_url) {
-        const exampleSceneExtra = await describeCoverSceneForPrompt(exampleBook.cover_image_url)
+        const exampleSceneExtra = await describeCoverSceneForPrompt(exampleBook.cover_image_url, {
+          userId: user.id,
+          bookId: book.id,
+        })
         if (exampleSceneExtra) {
           coverSceneDescription += exampleSceneExtra
           console.log('[Create Book] 📍 From-example: cover prompt enriched with example scene elements')
@@ -1614,13 +1652,9 @@ export async function POST(request: NextRequest) {
       // Determine age group (default for cover only mode)
       const ageGroup = isCoverOnlyMode ? 'preschool' : (storyData?.metadata?.ageGroup || 'preschool')
       
-      // Plan A: Önce story LLM çıktısındaki coverSetting; yoksa keyword fallback (deriveCoverEnvironmentFromStory). COVER_PATH_FLOWERS_ANALYSIS.md §7
-      const coverEnvironment =
-        (typeof storyData?.coverSetting === 'string' && storyData.coverSetting.trim())
-          ? storyData.coverSetting.trim()
-          : (storyData?.pages?.length ? deriveCoverEnvironmentFromStory(customRequests, storyData.pages) : '')
+      const coverEnvironment = resolveCoverEnvironment(storyData, customRequests)
       if (coverEnvironment) {
-        console.log('[Create Book] 🌍 Cover environment from story:', coverEnvironment)
+        console.log('[Create Book] 🌍 Cover environment from story:', coverEnvironment.slice(0, 120) + (coverEnvironment.length > 120 ? '…' : ''))
       }
 
       // Kapak/sayfa: Master referans varsa kıyafeti referanstan al (mavi/kırmızı zorlaması yok)
@@ -1631,7 +1665,10 @@ export async function POST(request: NextRequest) {
         sceneDescription: coverSceneDescription,
         theme: themeKey,
         mood: themeKey === 'adventure' ? 'exciting' : themeKey === 'fantasy' ? 'mysterious' : themeKey === 'space' ? 'inspiring' : themeKey === 'sports' ? 'exciting' : 'happy',
-        characterAction: characters.length > 1 ? `characters integrated into environment as guides into the world; sense of wonder and adventure` : `character integrated into environment as guide into the world; sense of wonder and adventure`,
+        characterAction:
+          characters.length > 1
+            ? 'Poses and staging must match the cover scene description below; same story moment.'
+            : 'Pose and staging must match the cover scene description below; same story moment.',
         focusPoint: 'balanced' as const,
         ...(coverClothing && { clothing: coverClothing }),
         ...(coverEnvironment && { coverEnvironment }),
@@ -1773,7 +1810,13 @@ export async function POST(request: NextRequest) {
                   body: formData,
                 },
                 3, // max 3 retries
-                'Cover edits API'
+                'Cover edits API',
+                {
+                  operationType: 'image_cover',
+                  model: imageModel,
+                  userId: user.id,
+                  bookId: book.id,
+                }
               )
             } catch (error: any) {
               if (isModerationBlockedError(error)) {
@@ -1786,10 +1829,15 @@ export async function POST(request: NextRequest) {
                 formData2.append('quality', imageQuality)
                 formData2.append('input_fidelity', 'high')
                 imageBlobs.forEach(({ blob, filename }) => formData2.append('image[]', blob, filename))
-                const res = await fetch('https://api.openai.com/v1/images/edits', {
+                const res = await fetchWithAiDebug('https://api.openai.com/v1/images/edits', {
                   method: 'POST',
                   headers: { 'Authorization': `Bearer ${apiKey}` },
                   body: formData2,
+                }, {
+                  operationType: 'image_cover',
+                  model: imageModel,
+                  userId: user.id,
+                  bookId: book.id,
                 })
                 if (!res.ok) {
                   const errText = await res.text()
@@ -1908,7 +1956,7 @@ export async function POST(request: NextRequest) {
           console.log('[Create Book] ⏱️  API call started at:', new Date().toISOString())
           
           try {
-            const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+            const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1921,6 +1969,11 @@ export async function POST(request: NextRequest) {
                 size: imageSize,
                 // Note: GPT-image API doesn't support response_format parameter
               }),
+            }, {
+              operationType: 'image_cover',
+              model: imageModel,
+              userId: user.id,
+              bookId: book.id,
             })
 
             const generationsApiTime = Date.now() - generationsApiStartTime
@@ -1985,7 +2038,7 @@ export async function POST(request: NextRequest) {
         console.log('[Create Book] ⏱️  API call started at:', new Date().toISOString())
         
         try {
-          const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1997,6 +2050,11 @@ export async function POST(request: NextRequest) {
               n: 1,
               size: imageSize,
             }),
+          }, {
+            operationType: 'image_cover',
+            model: imageModel,
+            userId: user.id,
+            bookId: book.id,
           })
 
           const generationsApiTime = Date.now() - generationsApiStartTime
@@ -2264,6 +2322,9 @@ export async function POST(request: NextRequest) {
         const pageShotPlan = (page as { shotPlan?: { shotType?: string; lens?: string; cameraAngle?: string; placement?: string; timeOfDay?: string; mood?: string } }).shotPlan
         const hasValidShotPlan = pageShotPlan && typeof pageShotPlan === 'object' && !Array.isArray(pageShotPlan)
 
+        const pageEnvironmentDescription = (page as { environmentDescription?: string }).environmentDescription?.trim() || undefined
+        const pageCameraDistance = (page as { cameraDistance?: string }).cameraDistance || undefined
+
         const sceneInput = {
           pageNumber,
           sceneDescription: sceneDescription ?? '',
@@ -2274,6 +2335,8 @@ export async function POST(request: NextRequest) {
           ...(pageClothing && { clothing: pageClothing }),
           ...(Object.keys(characterExpressions).length > 0 && { characterExpressions }),
           ...(hasValidShotPlan && { shotPlan: pageShotPlan }),
+          ...(pageEnvironmentDescription && { environmentDescription: pageEnvironmentDescription }),
+          ...(pageCameraDistance && { cameraDistance: pageCameraDistance as 'close' | 'medium' | 'wide' | 'establishing' }),
         }
 
         // Generate full page prompt (NEW: Master illustration only, no cover reference)
@@ -2477,7 +2540,14 @@ export async function POST(request: NextRequest) {
                   body: formData,
                 },
                 3, // max 3 retries
-                `Page ${pageNumber} edits API`
+                `Page ${pageNumber} edits API`,
+                {
+                  operationType: 'image_page',
+                  model: imageModel,
+                  userId: user.id,
+                  bookId: book.id,
+                  pageIndex: pageNumber,
+                }
               )
             } catch (error: any) {
               // Retry exhausted or permanent error
@@ -2541,7 +2611,7 @@ export async function POST(request: NextRequest) {
             console.log(`[Create Book] 🚀 Page ${pageNumber} - Calling /v1/images/generations API...`)
             console.log(`[Create Book] ⏱️  Page ${pageNumber} - API call started at:`, new Date().toISOString())
             
-            const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+            const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -2555,6 +2625,12 @@ export async function POST(request: NextRequest) {
                 quality: imageQuality,
                 // Note: GPT-image API doesn't support response_format parameter
               }),
+            }, {
+              operationType: 'image_page',
+              model: imageModel,
+              userId: user.id,
+              bookId: book.id,
+              pageIndex: pageNumber,
             })
 
             const generationsApiTime = Date.now() - generationsApiStartTime
@@ -2609,7 +2685,7 @@ export async function POST(request: NextRequest) {
           console.log(`[Create Book] 🚀 Page ${pageNumber} - Calling /v1/images/generations API...`)
           console.log(`[Create Book] ⏱️  Page ${pageNumber} - API call started at:`, new Date().toISOString())
 
-          const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -2622,6 +2698,12 @@ export async function POST(request: NextRequest) {
               size: imageSize,
               quality: imageQuality,
             }),
+          }, {
+            operationType: 'image_page',
+            model: imageModel,
+            userId: user.id,
+            bookId: book.id,
+            pageIndex: pageNumber,
           })
 
           const generationsApiTime = Date.now() - generationsApiStartTime

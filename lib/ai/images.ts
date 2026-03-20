@@ -7,6 +7,11 @@ import {
   imageCostUsdFromUsage,
   type OpenAIImageUsage,
 } from '@/lib/pricing/openai-usage-cost'
+import {
+  appendAiDebugLog,
+  sanitizeForDebugLog,
+  summarizeFormData,
+} from '@/lib/debug/ai-debug-log'
 
 function throwHttpError(prefix: string, status: number, errorText: string): never {
   const err = new Error(`${prefix}: ${status} - ${errorText}`) as Error & { status: number }
@@ -55,10 +60,28 @@ export async function imageEditWithLog(
   if (!apiKey) throw new Error('OPENAI_API_KEY is not set')
 
   const startedAt = Date.now()
+  const endpoint = '/v1/images/edits'
+
+  void appendAiDebugLog({
+    stage: 'request',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint,
+    model: ctx.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    pageIndex: ctx.pageIndex,
+    promptVersion: ctx.promptVersion,
+    payload: sanitizeForDebugLog({
+      formData: summarizeFormData(formData),
+      context: buildRequestMeta(ctx),
+    }),
+  })
 
   let response: Response
   try {
-    response = await fetch('https://api.openai.com/v1/images/edits', {
+    response = await fetch(`https://api.openai.com${endpoint}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}` },
       body: formData,
@@ -72,6 +95,20 @@ export async function imageEditWithLog(
       status: 'error', errorMessage: err instanceof Error ? err.message : String(err),
       durationMs,
       requestMeta: buildRequestMeta(ctx),
+    })
+    void appendAiDebugLog({
+      stage: 'error',
+      operationType: ctx.operationType,
+      provider: 'openai',
+      endpoint,
+      model: ctx.model,
+      userId: ctx.userId,
+      bookId: ctx.bookId,
+      characterId: ctx.characterId,
+      pageIndex: ctx.pageIndex,
+      promptVersion: ctx.promptVersion,
+      durationMs,
+      payload: { error: err instanceof Error ? err.message : String(err) },
     })
     throw err
   }
@@ -88,6 +125,21 @@ export async function imageEditWithLog(
       durationMs,
       requestMeta: buildRequestMeta(ctx),
     })
+    void appendAiDebugLog({
+      stage: 'error',
+      operationType: ctx.operationType,
+      provider: 'openai',
+      endpoint,
+      model: ctx.model,
+      userId: ctx.userId,
+      bookId: ctx.bookId,
+      characterId: ctx.characterId,
+      pageIndex: ctx.pageIndex,
+      promptVersion: ctx.promptVersion,
+      status: response.status,
+      durationMs,
+      payload: sanitizeForDebugLog({ error: errorText }),
+    })
     throwHttpError('GPT-image API error', response.status, errorText)
   }
 
@@ -102,6 +154,22 @@ export async function imageEditWithLog(
     status: 'success', imageCount, costUsd, durationMs,
     requestMeta: buildRequestMeta(ctx),
     responseMeta: { usage: result.usage ?? null },
+  })
+
+  void appendAiDebugLog({
+    stage: 'response',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint,
+    model: ctx.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    pageIndex: ctx.pageIndex,
+    promptVersion: ctx.promptVersion,
+    status: response.status,
+    durationMs,
+    payload: sanitizeForDebugLog(result),
   })
 
   return result
@@ -132,10 +200,28 @@ export async function imageGenerateWithLog(
   if (!apiKey) throw new Error('OPENAI_API_KEY is not set')
 
   const startedAt = Date.now()
+  const endpoint = '/v1/images/generations'
+
+  void appendAiDebugLog({
+    stage: 'request',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint,
+    model: ctx.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    pageIndex: ctx.pageIndex,
+    promptVersion: ctx.promptVersion,
+    payload: sanitizeForDebugLog({
+      body,
+      context: buildRequestMeta(ctx),
+    }),
+  })
 
   let response: Response
   try {
-    response = await fetch('https://api.openai.com/v1/images/generations', {
+    response = await fetch(`https://api.openai.com${endpoint}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -153,6 +239,20 @@ export async function imageGenerateWithLog(
       durationMs,
       requestMeta: buildRequestMeta(ctx),
     })
+    void appendAiDebugLog({
+      stage: 'error',
+      operationType: ctx.operationType,
+      provider: 'openai',
+      endpoint,
+      model: ctx.model,
+      userId: ctx.userId,
+      bookId: ctx.bookId,
+      characterId: ctx.characterId,
+      pageIndex: ctx.pageIndex,
+      promptVersion: ctx.promptVersion,
+      durationMs,
+      payload: { error: err instanceof Error ? err.message : String(err) },
+    })
     throw err
   }
 
@@ -168,6 +268,21 @@ export async function imageGenerateWithLog(
       durationMs,
       requestMeta: buildRequestMeta(ctx),
     })
+    void appendAiDebugLog({
+      stage: 'error',
+      operationType: ctx.operationType,
+      provider: 'openai',
+      endpoint,
+      model: ctx.model,
+      userId: ctx.userId,
+      bookId: ctx.bookId,
+      characterId: ctx.characterId,
+      pageIndex: ctx.pageIndex,
+      promptVersion: ctx.promptVersion,
+      status: response.status,
+      durationMs,
+      payload: sanitizeForDebugLog({ error: errorText }),
+    })
     throwHttpError('GPT-image API error', response.status, errorText)
   }
 
@@ -182,6 +297,22 @@ export async function imageGenerateWithLog(
     status: 'success', imageCount, costUsd, durationMs,
     requestMeta: buildRequestMeta(ctx),
     responseMeta: { usage: result.usage ?? null },
+  })
+
+  void appendAiDebugLog({
+    stage: 'response',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint,
+    model: ctx.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    pageIndex: ctx.pageIndex,
+    promptVersion: ctx.promptVersion,
+    status: response.status,
+    durationMs,
+    payload: sanitizeForDebugLog(result),
   })
 
   return result

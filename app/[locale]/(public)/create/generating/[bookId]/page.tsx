@@ -78,7 +78,7 @@ export default function GeneratingPage({ params }: PageProps) {
   const locale = useLocale()
   const router = useRouter()
   const { title, progress, step, isDone, isError, isLoading, lastGenerationError } =
-    useBookGenerationStatus(bookId, 1500)
+    useBookGenerationStatus(bookId)
   const [displayProgress, setDisplayProgress] = useState(0)
 
   useEffect(() => {

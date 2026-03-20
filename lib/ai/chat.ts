@@ -17,6 +17,7 @@
 import type OpenAI from 'openai'
 import { insertAIRequest, type AIOperationType } from '@/lib/db/ai-requests'
 import { chatCostUsdFromUsage } from '@/lib/pricing/openai-usage-cost'
+import { appendAiDebugLog, sanitizeForDebugLog } from '@/lib/debug/ai-debug-log'
 
 // ============================================================================
 // Context
@@ -49,6 +50,22 @@ export async function chatWithLog(
   let status: 'success' | 'error' = 'success'
   let errorMessage: string | null = null
 
+  void appendAiDebugLog({
+    stage: 'request',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint: '/v1/chat/completions',
+    model: params.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    promptVersion: ctx.promptVersion,
+    payload: sanitizeForDebugLog({
+      request: params,
+      requestMeta: ctx.requestMeta ?? {},
+    }),
+  })
+
   try {
     completion = await openai.chat.completions.create(params)
   } catch (err) {
@@ -68,6 +85,22 @@ export async function chatWithLog(
       errorMessage,
       durationMs,
       requestMeta: ctx.requestMeta,
+    })
+
+    void appendAiDebugLog({
+      stage: 'error',
+      operationType: ctx.operationType,
+      provider: 'openai',
+      endpoint: '/v1/chat/completions',
+      model: params.model,
+      userId: ctx.userId,
+      bookId: ctx.bookId,
+      characterId: ctx.characterId,
+      promptVersion: ctx.promptVersion,
+      durationMs,
+      payload: {
+        error: err instanceof Error ? err.message : String(err),
+      },
     })
 
     throw err
@@ -95,6 +128,20 @@ export async function chatWithLog(
     durationMs,
     requestMeta: ctx.requestMeta,
     responseMeta: { usage, finishReason: completion.choices[0]?.finish_reason },
+  })
+
+  void appendAiDebugLog({
+    stage: 'response',
+    operationType: ctx.operationType,
+    provider: 'openai',
+    endpoint: '/v1/chat/completions',
+    model: params.model,
+    userId: ctx.userId,
+    bookId: ctx.bookId,
+    characterId: ctx.characterId,
+    promptVersion: ctx.promptVersion,
+    durationMs,
+    payload: sanitizeForDebugLog(completion),
   })
 
   return completion

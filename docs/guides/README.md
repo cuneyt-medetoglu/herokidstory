@@ -7,6 +7,7 @@ Rehberler, kurulum talimatları ve özellik dokümanları.
 - **CODE_COMMENT_STANDARDS.md** – Kod yorum standardı (JSDoc, TODO→ROADMAP) – FAZ 7
 - **LOGGING_GUIDE.md** – Logger kullanımı, env (NEXT_PUBLIC_ENABLE_LOGGING, DEBUG_LOGGING) – FAZ 8
 - **AI_COST_AND_USAGE_LOGGING.md** – `ai_requests.cost_usd`: OpenAI `usage` + fiyat tabloları; TTS Gemini; `worker` vs `worker:dev`
+- **AI Debug Log Viewer** – `public/ai-debug-log-viewer.html` ile `logs/ai-api-debug.jsonl` dosyasını filtreli/okunur inceleme (request/response/error; base64 maskeli)
 - Environment, API test, Supabase, PDF, Image Edit, Currency, Pricing, Examples, Hero, Prompt, TTS, Step6 spec, Migration, Authentication vb. rehberler
 
 ## Arşiv

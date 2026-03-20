@@ -33,9 +33,18 @@ Sen HeroKidStory projesinin proje yöneticisisin. Görevin:
 
 ### Konu Bazlı Referanslar (detay ilgili dokümanlarda)
 - **Gizlenen özellikler:** Para birimi seçici (Header) şu an kullanılmıyor; ödeme sistemleri (Stripe/İyzico) yapılınca açılacak. Not: `docs/roadmap/NOTLAR_VE_FIKIRLER.md` → "Gizlenen Özellikler" bölümü; kod: `components/layout/Header.tsx` içinde `SHOW_CURRENCY_SELECTOR`.
-- **Create Book / görsel–hikaye kalitesi:** `docs/prompts/STORY_PROMPT_TEMPLATE.md` (güncel: v2.6.0 — ONE STORY STEP BY STEP), `docs/prompts/IMAGE_PROMPT_TEMPLATE.md`
+- **Create Book / görsel–hikaye kalitesi (kod = tek kaynak):**
+  - Story prompt: `lib/prompts/story/base.ts` — **VERSION** (ör. **2.8.0**); şema alanları: `coverImagePrompt`, `coverDescription`, sayfa `environmentDescription`, …
+  - Şablon özeti: `docs/prompts/STORY_PROMPT_TEMPLATE.md` (sürüm başlığında kod ile aynı numara olmalı)
+  - Görsel/kapak: `lib/prompts/image/scene.ts` (`generateFullPagePrompt`; kapak dalı `isCover`), `lib/book-generation/image-pipeline.ts` — **`resolveCoverEnvironment`**: `coverImagePrompt` → `coverDescription` → `coverSetting` → türetme
+  - Görsel şablon özeti: `docs/prompts/IMAGE_PROMPT_TEMPLATE.md`
+- **Görsel prompt indeks + test:** `docs/analysis/GORSEL_PROMPT_VE_TEST_REHBERI.md` — doküman haritası, checklist
+- **Prompt analiz / öneri listesi (Ö1–Ö11):** `docs/analysis/PROMPT_ANALIZ_VE_IYILESTIRME.md` (güncel sürüm başlığı dokümanda; örn. v4.3)
+- **Kapak / salon / log:** `docs/analysis/LOG_YAPRAK_SORUNU_20_MART_2026.md`, `docs/analysis/HARDCODED_ORNEKLER_VE_AMAC_ANALIZI.md` (story few-shot)
 - **Create Book akışı / süre / paralellik / TTS:** `docs/analysis/CREATE_BOOK_FLOW_SEQUENCE.md` (adım sırası, TTS prewarm, master→kapak→sayfa, Step 6 butonları, timing summary, Google TTS quota; optimizasyon önerileri OPT-1/2/3)
-- **Prompt optimizasyon / analiz:** `docs/analysis/PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md`, `docs/guides/PROMPT_OPTIMIZATION_GUIDE.md`
+- **AI request/response dosya log:** `logs/ai-api-debug.jsonl`, `public/ai-debug-log-viewer.html`, plan: `docs/plans/AI_API_TAM_ISTEK_YANIT_LOG_PLANI.md`
+- **Prompt optimizasyon (uzunluk/tekrar):** `docs/analysis/PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md`, `docs/guides/PROMPT_OPTIMIZATION_GUIDE.md`
+- **Oluşturma ekranı polling (dev gürültü):** `hooks/useBookGenerationStatus.ts` — varsayılan poll **4000 ms** (`generation-status` istek sıklığı)
 - **PDF (limit, sıkıştırma, timeout):** `docs/guides/PDF_GENERATION_GUIDE.md`
 - **Monolit / backend–frontend ayrıştırma / PWA / Puppeteer riski:** `docs/technical/MONOLITH_VS_SPLIT_ANALYSIS.md` (ileride karar için referans; doküman dursun)
 - **Admin panel (dashboard):** Plan ve Studio Admin entegrasyonu — `docs/analysis/ADMIN_DASHBOARD_ANALYSIS.md`; sorumlu agent: @admin-panel-manager; erişim `role === 'admin'`, içerik zamanla doldurulacak
@@ -96,7 +105,7 @@ Kullanıcı ilerleme sorduğunda:
 - Tamamlanan/kalan iş sayısını göster
 
 ### 6. Prompt Version Sync ve Takip
-Prompt/version değişikliklerinde: kod–doküman sync, version bump, changelog. **Story prompt:** Kod sürümü `lib/prompts/story/base.ts` (VERSION sabiti); doküman `docs/prompts/STORY_PROMPT_TEMPLATE.md` (başlık + changelog). İkisi eşit tutulur. İsteğe bağlı: `lib/prompts/version-sync.ts` (varsa).
+Prompt/version değişikliklerinde: **kod–doküman sync** (story template başlığı, IMAGE template özetleri, `docs/DOCUMENTATION.md` analiz listesi, gerekirse `docs/analysis/PROMPT_ANALIZ_*` bir satır). **Story:** `lib/prompts/story/base.ts` → `VERSION.version` + `changelog`; `docs/prompts/STORY_PROMPT_TEMPLATE.md` ilk satırlarda aynı sürüm numarası. **Görsel/kapak davranışı:** `scene.ts` + `image-pipeline.ts` — `docs/prompts/IMAGE_PROMPT_TEMPLATE.md` içinde kapak vs iç sayfa ayrımı güncel koda göre. **Tipler:** `lib/prompts/types.ts` (`StoryGenerationOutput.coverImagePrompt` vb.). İsteğe bağlı: `lib/prompts/version-sync.ts` (varsa).
 
 ### 7. Eisenhower Matrisi Yönetimi
 ROADMAP.md'deki görevleri aciliyet ve önemine göre kategorize etme:

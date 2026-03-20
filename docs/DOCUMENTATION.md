@@ -140,9 +140,9 @@ docs/
 │   ├── CHARACTER_CREATION_FLOW.md # Karakter oluşturma akışı
 │   └── (AI_TOOLS_COMPARISON → archive/2026-q1/ai/)
 │
-├── prompts/                     # AI prompt template'leri ve listeleri
+├── prompts/                     # AI prompt template'leri ve listeleri (sürüm = kod `lib/prompts/**` ile senkron)
 │   ├── IMAGE_PROMPT_TEMPLATE.md # Görsel üretimi prompt template
-│   ├── STORY_PROMPT_TEMPLATE.md # Hikaye üretimi prompt template
+│   ├── STORY_PROMPT_TEMPLATE.md # Hikaye üretimi prompt template (story: base.ts VERSION)
 │   ├── HERO_TRANSFORMATION_PROMPTS.md # Hero sahne prompt örnekleri (FAZ 9)
 │   └── ...
 │
@@ -243,6 +243,11 @@ docs/
 20. **archive/2026-02/analysis/** - Arşivlenen analizler
 21. **analysis/AI_REQUEST_LOGGING_ANALYSIS.md** - AI istek/yanıt loglama analizi; `ai_requests` tablo tasarımı, maliyet takibi, entegrasyon noktaları (story/image/TTS/karakter analizi)
 22. **analysis/BRAND_RENAME_KIDSTORYBOOK_TO_HEROKIDSTORY_ANALYSIS.md** - KidStoryBook → herokidstory marka/proje adı değişikliği (tamamlandı); fazlama (Faz 1–4), kod/doküman/S3/DB/repo liste.
+23. **analysis/KAPAK_CICEK_CERCEVE_LOG_ANALIZI.md** - `logs/ai-api-debug.jsonl` üzerinden kapakta tekrarlayan çiçek/çimen çerçevesi analizi; sorun adımı: `image_cover` (`/v1/images/edits`)
+24. **analysis/GORSEL_PROMPT_VE_TEST_REHBERI.md** — Görsel prompt, log ve test tek giriş; doküman haritası, kod özeti, test checklist
+25. **analysis/PROMPT_ANALIZ_VE_IYILESTIRME.md** — Pipeline önerileri (Ö1–Ö11), log karşılaştırmaları; güncel başlık sürümü dokümanda
+26. **analysis/LOG_YAPRAK_SORUNU_20_MART_2026.md** — Salon/yaprak/sky log analizi; `route.ts` batch hizası notları
+27. **public/ai-debug-log-viewer.html** - `ai-api-debug.jsonl` dosyasını insan-okur formatta inceleme aracı (filtre, arama, tam ekran JSON modal, kopyalama)
 
 ### Strateji Dokümanları
 1. **strategies/TTS_STRATEGY.md** - Text-to-Speech (TTS) strateji ve gereksinimler dokümanı

@@ -29,6 +29,8 @@ import { getStyleDescription, getCinematicPack } from '@/lib/prompts/image/style
 import { getLayoutSafeMasterDirectives } from '@/lib/prompts/image/master'
 import { generateTts } from '@/lib/tts/generate'
 import { imageEditWithLog, imageGenerateWithLog } from '@/lib/ai/images'
+import { chatWithLog } from '@/lib/ai/chat'
+import { appendAiDebugLog, sanitizeForDebugLog, summarizeFormData } from '@/lib/debug/ai-debug-log'
 
 // ============================================================================
 // Types
@@ -144,10 +146,19 @@ export async function retryFetch(
   url: string,
   options: RequestInit,
   maxRetries: number = 3,
-  context: string = 'API call'
+  context: string = 'API call',
+  debugContext?: {
+    operationType: 'story_generation' | 'image_cover' | 'image_page' | 'image_master' | 'image_entity' | 'image_edit' | 'image_regenerate' | 'character_analysis' | 'tts'
+    model: string
+    userId: string
+    bookId?: string | null
+    pageIndex?: number | null
+  }
 ): Promise<Response> {
   return retryWithBackoff(async () => {
-    const response = await fetch(url, options)
+    const response = debugContext
+      ? await fetchWithAiDebug(url, options, debugContext)
+      : await fetch(url, options)
     if (!response.ok) {
       const status = response.status
       if (isPermanentError(status)) {
@@ -172,6 +183,63 @@ export async function retryFetch(
     }
     return response
   }, maxRetries, context)
+}
+
+async function fetchWithAiDebug(
+  url: string,
+  options: RequestInit,
+  context: {
+    operationType: 'story_generation' | 'image_cover' | 'image_page' | 'image_master' | 'image_entity' | 'image_edit' | 'image_regenerate' | 'character_analysis' | 'tts'
+    model: string
+    userId: string
+    bookId?: string | null
+    pageIndex?: number | null
+  }
+): Promise<Response> {
+  const startedAt = Date.now()
+  const endpoint = url.replace('https://api.openai.com', '')
+  const requestBody =
+    options.body instanceof FormData
+      ? { formData: summarizeFormData(options.body) }
+      : typeof options.body === 'string'
+      ? { body: sanitizeForDebugLog(options.body) }
+      : { bodyType: options.body ? typeof options.body : 'none' }
+
+  void appendAiDebugLog({
+    stage: 'request',
+    operationType: context.operationType,
+    provider: 'openai',
+    endpoint,
+    model: context.model,
+    userId: context.userId,
+    bookId: context.bookId ?? null,
+    pageIndex: context.pageIndex ?? null,
+    payload: sanitizeForDebugLog(requestBody),
+  })
+
+  const response = await fetch(url, options)
+  const durationMs = Date.now() - startedAt
+  const clone = response.clone()
+  const contentType = response.headers.get('content-type') || ''
+  const responsePayload = contentType.includes('application/json')
+    ? sanitizeForDebugLog(await clone.json().catch(() => null))
+    : sanitizeForDebugLog(await clone.text().catch(() => ''))
+
+  void appendAiDebugLog({
+    stage: response.ok ? 'response' : 'error',
+    operationType: context.operationType,
+    provider: 'openai',
+    endpoint,
+    model: context.model,
+    userId: context.userId,
+    bookId: context.bookId ?? null,
+    pageIndex: context.pageIndex ?? null,
+    status: response.status,
+    durationMs,
+    payload: responsePayload,
+  })
+
+  return response
 }
 
 /** Hikayeden kapak ortamı türet */
@@ -211,24 +279,63 @@ export function deriveCoverEnvironmentFromStory(
   return ''
 }
 
+/**
+ * Kapak sahne metni: story JSON önceliği — coverImagePrompt → coverDescription → coverSetting → derive.
+ * Worker ve API (senkron kapak) aynı mantığı kullanır.
+ */
+export function resolveCoverEnvironment(
+  storyData: {
+    coverImagePrompt?: string
+    coverDescription?: string
+    coverSetting?: string
+    pages?: Array<{ sceneDescription?: string; sceneContext?: string; text?: string; imagePrompt?: string }>
+  } | null | undefined,
+  customRequests?: string
+): string {
+  if (typeof storyData?.coverImagePrompt === 'string' && storyData.coverImagePrompt.trim()) {
+    return storyData.coverImagePrompt.trim()
+  }
+  if (typeof storyData?.coverDescription === 'string' && storyData.coverDescription.trim()) {
+    return storyData.coverDescription.trim()
+  }
+  if (typeof storyData?.coverSetting === 'string' && storyData.coverSetting.trim()) {
+    return storyData.coverSetting.trim()
+  }
+  if (storyData?.pages?.length) {
+    return deriveCoverEnvironmentFromStory(customRequests, storyData.pages)
+  }
+  return ''
+}
+
 /** From-example: örnek kapak görselinden sahne betimi alır */
-async function describeCoverSceneForPrompt(imageUrl: string): Promise<string> {
+async function describeCoverSceneForPrompt(
+  imageUrl: string,
+  logCtx?: { userId: string; bookId: string }
+): Promise<string> {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const visionParams = {
+      model: 'gpt-4o-mini' as const,
       messages: [{
-        role: 'user',
+        role: 'user' as const,
         content: [
           {
-            type: 'text',
+            type: 'text' as const,
             text: "Describe this children's book cover in 1-2 short sentences for an image generation prompt. Include: setting (e.g. path, cottage, trees, flowers), key objects (e.g. ball, bunny, toys), and composition. English only, concise. No character description.",
           },
-          { type: 'image_url', image_url: { url: imageUrl } },
+          { type: 'image_url' as const, image_url: { url: imageUrl } },
         ],
       }],
       max_tokens: 150,
-    })
+    }
+    const completion = logCtx
+      ? await chatWithLog(openai, visionParams, {
+          userId: logCtx.userId,
+          bookId: logCtx.bookId,
+          operationType: 'story_generation',
+          requestMeta: { step: 'vision_example_cover_scene' },
+        })
+      : await openai.chat.completions.create(visionParams)
     const text = completion.choices[0]?.message?.content?.trim()
     return text ? ` Scene must include these key elements: ${text}` : ''
   } catch (e) {
@@ -286,7 +393,6 @@ export async function generateMasterCharacterIllustration(
       : illustrationStyle
 
   const outfitPart = !isPet && storyClothing?.trim() ? `Character wearing exactly: ${storyClothing}. ` : ''
-  const layoutSafeDirectives = getLayoutSafeMasterDirectives()
 
   let masterPrompt: string
   let softMasterPrompt: string
@@ -295,12 +401,10 @@ export async function generateMasterCharacterIllustration(
     masterPrompt = [
       `[STYLE] ${styleDirective}, children's book illustration [/STYLE]`,
       `Full body, all four paws visible, natural standing or sitting pose. ${animalKind} animal. ${characterPrompt}. Plain neutral background. Illustration style (NOT photorealistic). Match reference photo for fur color, markings, body shape and face.`,
-      layoutSafeDirectives,
     ].join(' ')
     softMasterPrompt = [
       `[STYLE] ${styleDirective}, children's book illustration [/STYLE]`,
       `Full body view. Friendly ${animalKind}, relaxed pose. ${characterPrompt}. Plain neutral background. Illustration style only (NOT photorealistic). Match reference photo. Child-safe illustration for children's book.`,
-      layoutSafeDirectives,
     ].join(' ')
   } else {
     masterPrompt = [
@@ -308,13 +412,11 @@ export async function generateMasterCharacterIllustration(
       `[STYLE] ${styleDirective} [/STYLE]`,
       '[EXPRESSION] Neutral or gentle facial expression, closed mouth or soft closed-mouth smile, calm and relaxed face. Not a big open-mouthed smile. [/EXPRESSION]',
       `Full body, standing, feet visible, neutral pose. Child from head to toe. ${characterPrompt}. ${outfitPart}Plain neutral background. Illustration style (NOT photorealistic). Match reference photos for face and body.`,
-      layoutSafeDirectives,
     ].join(' ')
     softMasterPrompt = [
       `[STYLE] ${styleDirective}, children's book illustration [/STYLE]`,
       '[EXPRESSION] Gentle facial expression, calm soft smile, relaxed. [/EXPRESSION]',
       `Standing, neutral pose, fully clothed. ${characterPrompt}. ${outfitPart}Plain neutral background. Illustration style only (NOT photorealistic). Match reference photo for face and hair. Fully clothed character. Child-safe illustration for children's book.`,
-      layoutSafeDirectives,
     ].join(' ')
   }
 
@@ -518,7 +620,7 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
   // Bu sayede API route anında bookId döndürür, kullanıcı hemen generating page'e gider.
   // ----------------------------------------------------------------
   if (needsStoryGeneration) {
-    const effectiveStoryModel = ctx.storyModel || 'gpt-4o-mini'
+    const effectiveStoryModel = ctx.storyModel || 'gpt-4.1-mini'
     const effectivePageCount = ctx.pageCount || 4
 
     const languageNames: Record<string, string> = {
@@ -573,7 +675,11 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
         const storyStart = Date.now()
-        const completion = await openaiForStory.chat.completions.create(storyRequestBody)
+        const completion = await chatWithLog(openaiForStory, storyRequestBody, {
+          userId,
+          bookId,
+          operationType: 'story_generation',
+        })
         const storyMs = Date.now() - storyStart
 
         const storyContent = completion.choices[0].message.content
@@ -886,7 +992,10 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
 
     // From-example: enrich with example cover scene
     if (isFromExampleMode && exampleBook?.cover_image_url) {
-      const exampleSceneExtra = await describeCoverSceneForPrompt(exampleBook.cover_image_url)
+      const exampleSceneExtra = await describeCoverSceneForPrompt(exampleBook.cover_image_url, {
+        userId,
+        bookId,
+      })
       if (exampleSceneExtra) {
         coverSceneDescription += exampleSceneExtra
         console.log('[Pipeline] 📍 From-example: cover prompt enriched')
@@ -905,13 +1014,8 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
 
     const ageGroup = isCoverOnlyMode ? 'preschool' : storyData?.metadata?.ageGroup || 'preschool'
 
-    const coverEnvironment =
-      typeof storyData?.coverSetting === 'string' && storyData.coverSetting.trim()
-        ? storyData.coverSetting.trim()
-        : storyData?.pages?.length
-        ? deriveCoverEnvironmentFromStory(customRequests, storyData.pages)
-        : ''
-    if (coverEnvironment) console.log('[Pipeline] 🌍 Cover environment:', coverEnvironment)
+    const coverEnvironment = resolveCoverEnvironment(storyData, customRequests)
+    if (coverEnvironment) console.log('[Pipeline] 🌍 Cover environment (length):', coverEnvironment.length)
 
     const useMasterForClothing = Object.keys(masterIllustrations).length > 0
     const coverClothing = useMasterForClothing ? 'match_reference' : undefined
@@ -929,10 +1033,11 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
           : themeKey === 'sports'
           ? 'exciting'
           : 'happy',
+      // Nötr: "wonder/adventure" dış mekân çerçevesi ve yaprak kenar bias'ı yaratıyordu.
       characterAction:
         characters.length > 1
-          ? 'characters integrated into environment as guides into the world; sense of wonder and adventure'
-          : 'character integrated into environment as guide into the world; sense of wonder and adventure',
+          ? 'Poses and staging must match the cover scene description below; same story moment.'
+          : 'Pose and staging must match the cover scene description below; same story moment.',
       focusPoint: 'balanced' as const,
       ...(coverClothing && { clothing: coverClothing }),
       ...(coverEnvironment && { coverEnvironment }),
@@ -970,20 +1075,28 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
       for (let i = 0; i < referenceImageUrls.length; i++) {
         const referenceImageUrl = referenceImageUrls[i]
         try {
+          let rawBuffer: Buffer
           if (referenceImageUrl.startsWith('data:')) {
             const base64Data = referenceImageUrl.split(',')[1]
-            const binaryData = Buffer.from(base64Data, 'base64')
-            const imageBlob = new Blob([binaryData], { type: 'image/png' })
-            imageBlobs.push({ blob: imageBlob, filename: `reference_${i + 1}.png` })
+            rawBuffer = Buffer.from(base64Data, 'base64')
           } else {
             const imageResponse = await fetch(referenceImageUrl)
             if (!imageResponse.ok) {
               throw new Error(`Failed to download reference image: ${imageResponse.status} ${imageResponse.statusText}`)
             }
-            const imageBuffer = await imageResponse.arrayBuffer()
-            const imageBlob = new Blob([imageBuffer], { type: 'image/png' })
-            imageBlobs.push({ blob: imageBlob, filename: `reference_${i + 1}.png` })
+            rawBuffer = Buffer.from(await imageResponse.arrayBuffer())
           }
+          // Kapak için referans görseli küçült: karakter kapakta küçük görünür,
+          // büyük görsel sadece token maliyetini artırır. 512x768 kimlik için yeterli.
+          let finalBuffer: Buffer
+          try {
+            const sharp = (await import('sharp')).default
+            finalBuffer = await sharp(rawBuffer).resize(512, 768, { fit: 'inside', withoutEnlargement: true }).png().toBuffer()
+            console.log(`[Pipeline] 🗜️ Cover reference ${i + 1} resized: ${rawBuffer.length} → ${finalBuffer.length} bytes`)
+          } catch {
+            finalBuffer = rawBuffer
+          }
+          imageBlobs.push({ blob: new Blob([new Uint8Array(finalBuffer)], { type: 'image/png' }), filename: `reference_${i + 1}.png` })
         } catch (imageError) {
           console.error('[Pipeline] ❌ Error processing reference image:', imageError)
         }
@@ -1007,7 +1120,13 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
               'https://api.openai.com/v1/images/edits',
               { method: 'POST', headers: { Authorization: `Bearer ${apiKey}` }, body: formData },
               3,
-              'Cover edits API'
+              'Cover edits API',
+              {
+                operationType: 'image_cover',
+                model: IMAGE_MODEL,
+                userId,
+                bookId,
+              }
             )
           } catch (error: any) {
             if (isModerationBlockedError(error)) {
@@ -1020,10 +1139,15 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
               formData2.append('quality', IMAGE_QUALITY)
               formData2.append('input_fidelity', 'high')
               imageBlobs.forEach(({ blob, filename }) => formData2.append('image[]', blob, filename))
-              const res = await fetch('https://api.openai.com/v1/images/edits', {
+              const res = await fetchWithAiDebug('https://api.openai.com/v1/images/edits', {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${apiKey}` },
                 body: formData2,
+              }, {
+                operationType: 'image_cover',
+                model: IMAGE_MODEL,
+                userId,
+                bookId,
               })
               if (!res.ok) {
                 const errText = await res.text()
@@ -1059,7 +1183,7 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
     // Fallback to generations API
     if (!coverImageUrl && !coverImageB64) {
       console.log('[Pipeline] Falling back to /v1/images/generations for cover...')
-      const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+      const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1072,6 +1196,11 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
           size: IMAGE_SIZE,
           quality: IMAGE_QUALITY,
         }),
+      }, {
+        operationType: 'image_cover',
+        model: IMAGE_MODEL,
+        userId,
+        bookId,
       })
 
       if (!genResponse.ok) {
@@ -1246,6 +1375,9 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
             const hasValidShotPlan =
               pageShotPlan && typeof pageShotPlan === 'object' && !Array.isArray(pageShotPlan)
 
+            const pageEnvironmentDescription = (page as any).environmentDescription?.trim() || undefined
+            const pageCameraDistance = (page as any).cameraDistance || undefined
+
             const sceneInput = {
               pageNumber,
               sceneDescription: sceneDescription ?? '',
@@ -1256,6 +1388,8 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
               ...(pageClothing && { clothing: pageClothing }),
               ...(Object.keys(characterExpressions).length > 0 && { characterExpressions }),
               ...(hasValidShotPlan && { shotPlan: pageShotPlan }),
+              ...(pageEnvironmentDescription && { environmentDescription: pageEnvironmentDescription }),
+              ...(pageCameraDistance && { cameraDistance: pageCameraDistance }),
             }
 
             const mainCharacter =
@@ -1381,7 +1515,14 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
                     'https://api.openai.com/v1/images/edits',
                     { method: 'POST', headers: { Authorization: `Bearer ${apiKey}` }, body: formData },
                     3,
-                    `Page ${pageNumber} edits API`
+                    `Page ${pageNumber} edits API`,
+                    {
+                      operationType: 'image_page',
+                      model: IMAGE_MODEL,
+                      userId,
+                      bookId,
+                      pageIndex: pageNumber,
+                    }
                   )
                 } catch (error: any) {
                   const errorStatus = error.status || 'unknown'
@@ -1398,10 +1539,16 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
 
               // Only use generations if no reference images processed
               if (!pageImageUrl && !pageImageB64 && referenceImageUrls.length === 0) {
-                const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+                const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
                   body: JSON.stringify({ model: IMAGE_MODEL, prompt: fullPrompt, n: 1, size: IMAGE_SIZE, quality: IMAGE_QUALITY }),
+                }, {
+                  operationType: 'image_page',
+                  model: IMAGE_MODEL,
+                  userId,
+                  bookId,
+                  pageIndex: pageNumber,
                 })
                 if (!genResponse.ok) return null
                 const genResult = await genResponse.json()
@@ -1411,10 +1558,16 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
               }
             } else {
               // No reference images: use generations directly
-              const genResponse = await fetch('https://api.openai.com/v1/images/generations', {
+              const genResponse = await fetchWithAiDebug('https://api.openai.com/v1/images/generations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
                 body: JSON.stringify({ model: IMAGE_MODEL, prompt: fullPrompt, n: 1, size: IMAGE_SIZE, quality: IMAGE_QUALITY }),
+              }, {
+                operationType: 'image_page',
+                model: IMAGE_MODEL,
+                userId,
+                bookId,
+                pageIndex: pageNumber,
               })
               if (!genResponse.ok) return null
               const genResult = await genResponse.json()
