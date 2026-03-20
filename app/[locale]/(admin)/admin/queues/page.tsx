@@ -247,55 +247,65 @@ export default function AdminQueuesPage() {
           )}
 
           {!loading && filteredJobs.length > 0 && (
-            <div className="divide-y">
+            <div className="divide-y overflow-x-auto">
               {filteredJobs.map((job) => {
                 const config = STATUS_CONFIG[job.status] ?? STATUS_CONFIG.waiting
                 const Icon = config.icon
                 return (
-                  <div key={job.id} className="flex items-center gap-3 px-6 py-3 hover:bg-muted/30">
+                  <div
+                    key={job.id}
+                    className={cn(
+                      'grid w-full min-w-[52rem] items-center gap-x-3 px-6 py-3 hover:bg-muted/30',
+                      'grid-cols-[auto_minmax(0,5.5rem)_minmax(0,1fr)_minmax(0,6.5rem)_2.75rem_7rem_auto_auto]'
+                    )}
+                  >
                     <Icon className={cn('h-4 w-4 shrink-0', config.className, job.status === 'active' && 'animate-spin')} />
 
-                    <div className="flex-1 min-w-0 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-0.5">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Job ID</p>
-                        <p className="text-xs font-mono truncate">{job.id}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Book ID</p>
-                        <p className="text-xs font-mono truncate">{job.bookId ?? '—'}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Oluşturuldu</p>
-                        <p className="text-xs">{timeAgo(job.createdAt)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Deneme</p>
-                        <p className="text-xs">{job.attemptsMade}</p>
-                      </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Job ID</p>
+                      <p className="text-xs font-mono truncate">{job.id}</p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Book ID</p>
+                      <p className="text-xs font-mono truncate" title={job.bookId ?? undefined}>
+                        {job.bookId ?? '—'}
+                      </p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Oluşturuldu</p>
+                      <p className="text-xs tabular-nums">{timeAgo(job.createdAt)}</p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground">Deneme</p>
+                      <p className="text-xs tabular-nums">{job.attemptsMade}</p>
                     </div>
 
-                    {/* Progress bar (active jobs) */}
-                    {job.status === 'active' && (
-                      <div className="w-24 shrink-0">
-                        <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5">
-                          <span>İlerleme</span>
-                          <span>{job.progress}%</span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-blue-500 transition-all"
-                            style={{ width: `${job.progress}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
+                    {/* İlerleme sütunu: her satırda aynı genişlik; sadece aktifte dolu */}
+                    <div className="w-full min-w-0 max-w-[7rem] justify-self-start">
+                      {job.status === 'active' ? (
+                        <>
+                          <div className="flex justify-between gap-1 text-[10px] text-muted-foreground mb-0.5">
+                            <span className="shrink-0">İlerleme</span>
+                            <span className="tabular-nums">{job.progress}%</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-blue-500 transition-all"
+                              style={{ width: `${job.progress}%` }}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <div className="h-[26px]" aria-hidden />
+                      )}
+                    </div>
 
-                    <Badge variant="outline" className={cn('text-[10px] shrink-0', config.badgeClass)}>
+                    <Badge variant="outline" className={cn('text-[10px] w-fit justify-self-start', config.badgeClass)}>
                       {config.label}
                     </Badge>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center justify-end gap-1 shrink-0">
                       {job.status === 'failed' && (
                         <Button
                           variant="ghost"
