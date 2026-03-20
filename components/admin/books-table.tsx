@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter, usePathname } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -187,10 +188,13 @@ export function BooksTable({
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     {book.cover_image_url ? (
-                      <img
+                      <Image
                         src={book.cover_image_url}
                         alt={book.title}
+                        width={28}
+                        height={36}
                         className="h-9 w-7 rounded object-cover shrink-0"
+                        sizes="28px"
                       />
                     ) : (
                       <div className="h-9 w-7 rounded bg-muted flex items-center justify-center shrink-0">

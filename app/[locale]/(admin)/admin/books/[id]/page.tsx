@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { getAdminBookById } from '@/lib/db/admin'
 import { getAIRequestsByBook } from '@/lib/db/ai-requests'
@@ -286,10 +287,13 @@ export default async function AdminBookDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             {book.cover_image_url ? (
-              <img
+              <Image
                 src={book.cover_image_url}
                 alt={book.title}
+                width={180}
+                height={240}
                 className="w-full max-w-[180px] mx-auto rounded-lg shadow object-cover"
+                sizes="180px"
               />
             ) : (
               <div className="flex h-40 items-center justify-center rounded-lg border-2 border-dashed text-muted-foreground">

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { auth } from '@/auth'
 import { getAdminUserById } from '@/lib/db/admin'
@@ -146,10 +147,13 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
               {user.recentBooks.map((book) => (
                 <div key={book.id} className="flex items-center gap-3">
                   {book.cover_image_url ? (
-                    <img
+                    <Image
                       src={book.cover_image_url}
                       alt={book.title}
+                      width={24}
+                      height={32}
                       className="h-8 w-6 rounded object-cover shrink-0"
+                      sizes="24px"
                     />
                   ) : (
                     <div className="h-8 w-6 rounded bg-muted flex items-center justify-center shrink-0">

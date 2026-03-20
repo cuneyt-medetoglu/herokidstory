@@ -511,7 +511,7 @@ function ExamplesPageContent() {
       {/* Filter chips */}
       <section className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b">
         <div className="container px-4 md:px-6 lg:px-8 py-2 md:py-3">
-          <div className="relative flex gap-1.5 md:gap-2 overflow-x-auto pb-2 -mb-2 scrollbar-hide flex-nowrap">
+          <div className="relative flex gap-1.5 md:gap-2 overflow-x-auto px-1 py-1 pb-2 -mb-2 scrollbar-hide flex-nowrap [scrollbar-gutter:stable]">
             {ageFilters.map((filter) => (
               <button
                 key={filter.value}

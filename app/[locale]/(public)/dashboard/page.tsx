@@ -536,20 +536,22 @@ export default function LibraryPage() {
             </motion.div>
           )}
 
-          {/* Filters and Controls */}
-          <div className="space-y-4">
+          {/* Filters and Controls — single outer frame avoids border clipping from overflow-x-auto */}
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
             {/* Top Row: Tabs and Create Button */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 overflow-x-auto">
-              <Tabs value={filter} onValueChange={setFilter} className="w-full sm:w-auto min-w-0">
-                <TabsList className="flex-wrap sm:flex-nowrap">
-                  <TabsTrigger value="all" className="text-xs sm:text-sm">{t("tabs.all")}</TabsTrigger>
-                  <TabsTrigger value="completed" className="text-xs sm:text-sm">{t("tabs.completed")}</TabsTrigger>
-                  <TabsTrigger value="in-progress" className="text-xs sm:text-sm">{t("tabs.inProgress")}</TabsTrigger>
-                  <TabsTrigger value="drafts" className="text-xs sm:text-sm">{t("tabs.drafts")}</TabsTrigger>
-                </TabsList>
-              </Tabs>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 w-full sm:w-auto">
+                <Tabs value={filter} onValueChange={setFilter} className="w-full sm:w-auto">
+                  <TabsList className="flex h-auto min-h-10 w-full flex-wrap justify-start sm:inline-flex sm:h-10 sm:w-auto sm:flex-nowrap">
+                    <TabsTrigger value="all" className="text-xs sm:text-sm">{t("tabs.all")}</TabsTrigger>
+                    <TabsTrigger value="completed" className="text-xs sm:text-sm">{t("tabs.completed")}</TabsTrigger>
+                    <TabsTrigger value="in-progress" className="text-xs sm:text-sm">{t("tabs.inProgress")}</TabsTrigger>
+                    <TabsTrigger value="drafts" className="text-xs sm:text-sm">{t("tabs.drafts")}</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex w-full shrink-0 flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
                 {!isSelectMode && (
                   <Button
                     variant="outline"
@@ -565,7 +567,7 @@ export default function LibraryPage() {
                 <Button
                   size="lg"
                   onClick={handleCreateBook}
-                  className="bg-gradient-to-r from-primary to-brand-2 hover:opacity-90 transition-opacity w-full sm:w-auto shrink-0 text-white text-sm sm:text-base"
+                  className="w-full shrink-0 bg-gradient-to-r from-primary to-brand-2 text-sm text-white transition-opacity hover:opacity-90 sm:w-auto sm:text-base"
                 >
                   <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="hidden sm:inline">{t("createNewBook")}</span>
@@ -574,25 +576,27 @@ export default function LibraryPage() {
               </div>
             </div>
 
+            <div className="my-4 h-px bg-border" aria-hidden />
+
             {/* Bottom Row: Search, View Toggle, Sort */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 overflow-x-auto">
-              <div className="relative flex-1 min-w-0">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full"
+                  className="pl-10"
                 />
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                <div className="flex items-center border rounded-lg p-1">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 md:shrink-0">
+                <div className="inline-flex w-full items-center rounded-md bg-muted p-1 sm:w-auto">
                   <Button
                     variant={viewMode === "grid" ? "secondary" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
-                    className="px-2 sm:px-3"
+                    className="flex-1 px-2 sm:flex-none sm:px-3"
                   >
                     <Grid3x3 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
@@ -600,14 +604,14 @@ export default function LibraryPage() {
                     variant={viewMode === "list" ? "secondary" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("list")}
-                    className="px-2 sm:px-3"
+                    className="flex-1 px-2 sm:flex-none sm:px-3"
                   >
                     <List className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
 
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-[140px] sm:w-[180px]">
+                  <SelectTrigger className="w-full min-w-0 sm:w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
