@@ -110,11 +110,11 @@ export function Header() {
       }`}
     >
       <nav className="container mx-auto flex h-20 items-center justify-between gap-2 px-4 md:px-6 max-w-full overflow-hidden">
-        {/* Logo */}
-        <Link href="/" className="shrink-0">
+        {/* Logo - Modern Underline Accent */}
+        <Link href="/" className="group shrink-0">
           <motion.div
-            className="flex items-center gap-2.5 md:gap-3"
-            whileHover={{ scale: 1.05 }}
+            className="relative flex items-center gap-2.5 pb-1 md:gap-3"
+            whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
             <Image
@@ -125,14 +125,13 @@ export function Header() {
               className="h-10 w-10 shrink-0 sm:h-11 sm:w-11 md:h-12 md:w-12 lg:h-[3.25rem] lg:w-[3.25rem]"
               priority
             />
-            <Image
-              src="/brand.png"
-              alt="HeroKidStory"
-              width={180}
-              height={40}
-              className="h-6 w-auto sm:h-7 md:h-8 lg:h-9"
-              priority
-            />
+            <span className="text-xl font-bold leading-none tracking-tight sm:text-2xl md:text-[1.7rem]">
+              <span className="text-primary">Hero</span>
+              <span className="text-brand-2">Kid</span>
+              <span className="text-primary">Story</span>
+            </span>
+            {/* Animated underline */}
+            <span className="absolute bottom-0 left-0 h-[2px] w-1/3 bg-gradient-to-r from-primary to-brand-2 transition-all duration-300 group-hover:w-full" />
           </motion.div>
         </Link>
 
@@ -376,21 +375,20 @@ export function Header() {
               >
                 {/* 1. Üst: Logo + Kapat */}
                 <div className="mb-6 flex shrink-0 items-center justify-between">
-                  <div className="flex items-center gap-2.5">
+                  <div className="relative flex items-center gap-2 pb-1">
                     <Image
                       src="/logo.png"
                       alt="HeroKidStory"
                       width={48}
                       height={48}
-                      className="h-11 w-11 shrink-0"
+                      className="h-10 w-10 shrink-0"
                     />
-                    <Image
-                      src="/brand.png"
-                      alt="HeroKidStory"
-                      width={140}
-                      height={32}
-                      className="h-5 w-auto"
-                    />
+                    <span className="text-lg font-bold leading-none tracking-tight">
+                      <span className="text-primary">Hero</span>
+                      <span className="text-brand-2">Kid</span>
+                      <span className="text-primary">Story</span>
+                    </span>
+                    <span className="absolute bottom-0 left-0 h-[2px] w-2/3 bg-gradient-to-r from-primary to-brand-2" />
                   </div>
                   <Button
                     variant="ghost"
