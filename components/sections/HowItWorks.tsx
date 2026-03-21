@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Upload, Sparkles, Gift, ArrowRight } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
+import { WaveDivider } from "./WaveDivider"
 
 const stepIcons = [Upload, Sparkles, Gift]
 
@@ -40,21 +41,10 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="relative overflow-visible bg-gradient-to-b from-brand-2/5 via-primary/5 to-brand-2/5 pb-16 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 sm:pb-20 md:overflow-hidden md:pt-4 md:pb-24 lg:pt-5 lg:pb-32">
+    <section className="relative overflow-visible bg-gradient-to-b from-[color-mix(in_srgb,hsl(var(--brand-2))_5%,white)] via-[color-mix(in_srgb,hsl(var(--primary))_5%,white)] to-[color-mix(in_srgb,hsl(var(--brand-2))_5%,white)] pb-16 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 sm:pb-20 md:overflow-hidden md:pt-4 md:pb-24 lg:pt-5 lg:pb-32">
       {/* Top Wave Separator (mobile) */}
       <div className="pointer-events-none absolute left-0 top-0 z-0 w-full -translate-y-[48px] md:hidden sm:-translate-y-[64px]">
-        <svg
-          className="h-12 w-full text-brand-2/10 dark:text-slate-950 sm:h-16"
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
-            fill="currentColor"
-          />
-        </svg>
+        <WaveDivider className="h-12 sm:h-16" />
       </div>
 
       {/* Decorative background elements */}

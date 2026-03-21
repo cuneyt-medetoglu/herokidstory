@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Sparkles, Heart, BookOpen, Star } from "lucide-react"
 import { useRef, useState, useEffect } from "react"
 import { HeroBookTransformation } from "./HeroBookTransformation"
+import { WaveDivider } from "./WaveDivider"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 
@@ -169,18 +170,7 @@ export function Hero() {
 
       {/* Bottom Wave Separator — Only on tablet/web */}
       <div className="hidden md:absolute md:bottom-0 md:left-0 md:block md:w-full">
-        <svg
-          className="h-12 w-full text-brand-2/10 dark:text-slate-950 sm:h-16 md:h-20 lg:h-24"
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
-            fill="currentColor"
-          />
-        </svg>
+        <WaveDivider className="h-12 sm:h-16 md:h-20 lg:h-24" />
       </div>
     </section>
     </div>
