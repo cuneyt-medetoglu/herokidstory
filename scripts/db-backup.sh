@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# KidStoryBook – Production DB backup (pg_dump) + S3 upload + retention
+# HeroKidStory – Production DB backup (pg_dump) + S3 upload + retention
 # Kullanım: EC2'de cron ile (örn. günlük 03:00) veya elle: ./scripts/db-backup.sh
 # Gereken env: PGPASSWORD (ve isteğe bağlı PGHOST, PGUSER, PGDATABASE, AWS_S3_BUCKET, AWS_REGION)
 
 set -e
 
-# Varsayılanlar (EC2 production)
+# Varsayılanlar (EC2 production) — DB kullanıcı/veritabanı adı: herokidstory
 PGHOST="${PGHOST:-localhost}"
-PGUSER="${PGUSER:-kidstorybook}"
-PGDATABASE="${PGDATABASE:-kidstorybook}"
-S3_BUCKET="${AWS_S3_BUCKET:-kidstorybook}"
+PGUSER="${PGUSER:-herokidstory}"
+PGDATABASE="${PGDATABASE:-herokidstory}"
+S3_BUCKET="${AWS_S3_BUCKET:-herokidstory}"
 S3_PREFIX="backups/db"
 RETENTION_DAYS="${DB_BACKUP_RETENTION_DAYS:-14}"
 
 DATE=$(date +%Y-%m-%d-%H%M)
-DUMP_NAME="kidstorybook-${DATE}.dump"
+DUMP_NAME="herokidstory-${DATE}.dump"
 # Script proje kökünden veya scripts/ içinden çalıştırılabilsin
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
