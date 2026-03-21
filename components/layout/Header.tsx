@@ -276,7 +276,10 @@ export function Header() {
           {/* Auth Buttons / User Menu - Desktop */}
           <div className="hidden items-center gap-2 lg:gap-3 md:flex shrink-0">
             {isLoading ? (
-              <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-slate-700 shrink-0" />
+              <div className="flex items-center gap-2" aria-busy="true" aria-label={tCommon("loading")}>
+                <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-slate-700" />
+                <div className="hidden h-8 w-20 animate-pulse rounded-md bg-gray-200 dark:bg-slate-700 sm:block" />
+              </div>
             ) : user ? (
               <>
                 <motion.div

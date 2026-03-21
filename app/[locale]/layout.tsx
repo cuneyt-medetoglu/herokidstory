@@ -11,6 +11,7 @@ import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import { buildPageMetadata } from '@/lib/metadata'
+import { auth } from '@/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -54,7 +55,7 @@ export default async function LocaleLayout({
     notFound()
   }
 
-  const messages = await getMessages()
+  const [messages, session] = await Promise.all([getMessages(), auth()])
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -67,7 +68,7 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <NavigationProgress />
-            <SessionProvider>
+            <SessionProvider session={session}>
               <CurrencyProvider>
                 <CartProvider>
                   {children}
