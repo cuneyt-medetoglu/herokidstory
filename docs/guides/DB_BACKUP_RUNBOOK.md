@@ -10,7 +10,7 @@
 
 ### 1.1 S3’te prefix
 
-Mevcut bucket’ta (örn. kidstorybook) `backups/db` klasörü oluşturman gerekmez; script ilk yüklemede otomatik oluşturur. İstersen S3 Console → Create folder: `backups`, içinde `db`.
+Mevcut bucket’ta (örn. `herokidstory`) `backups/db` klasörü oluşturman gerekmez; script ilk yüklemede otomatik oluşturur. İstersen S3 Console → Create folder: `backups`, içinde `db`.
 
 ### 1.2 Script’i çalıştırılabilir yap
 
@@ -24,7 +24,7 @@ chmod +x scripts/db-backup.sh
 Cron ortamında `PGPASSWORD` vermek için `.pgpass` kullan:
 
 ```bash
-echo "localhost:5432:kidstorybook:kidstorybook:GERCEK_DB_SIFREN" >> ~/.pgpass
+echo "localhost:5432:herokidstory:herokidstory:GERCEK_DB_SIFREN" >> ~/.pgpass
 chmod 600 ~/.pgpass
 ```
 
@@ -40,9 +40,9 @@ Script şunları kullanır (varsayılanlar parantez içinde):
 |----------|------------|----------|
 | `PGPASSWORD` | — | Zorunlu (cron için .pgpass veya export). |
 | `PGHOST` | localhost | |
-| `PGUSER` | kidstorybook | |
-| `PGDATABASE` | kidstorybook | |
-| `AWS_S3_BUCKET` | kidstorybook | S3 bucket adı. |
+| `PGUSER` | herokidstory | |
+| `PGDATABASE` | herokidstory | |
+| `AWS_S3_BUCKET` | herokidstory | S3 bucket adı. |
 | `AWS_REGION` | eu-central-1 | EC2 IAM role ile zaten set olabilir. |
 | `DB_BACKUP_RETENTION_DAYS` | 14 | S3’te kaç günlük yedek tutulacak. |
 
@@ -58,7 +58,7 @@ export PGPASSWORD='GERCEK_DB_SIFREN'   # veya .pgpass kullan
 ./scripts/db-backup.sh
 ```
 
-Çıktı: `backups/kidstorybook-YYYY-MM-DD-HHMM.dump` oluşturulur, S3’e yüklenir, yerel dosya silinir.
+Çıktı: `backups/herokidstory-YYYY-MM-DD-HHMM.dump` oluşturulur, S3’e yüklenir, yerel dosya silinir.
 
 ---
 
@@ -87,8 +87,8 @@ Log dizini yoksa: `mkdir -p /home/ubuntu/herokidstory/logs`.
 ## 4. S3’ten yedek listeleme / indirme
 
 ```bash
-aws s3 ls s3://kidstorybook/backups/db/
-aws s3 cp s3://kidstorybook/backups/db/kidstorybook-2026-02-12-0300.dump ./
+aws s3 ls s3://herokidstory/backups/db/
+aws s3 cp s3://herokidstory/backups/db/herokidstory-2026-02-12-0300.dump ./
 ```
 
 ---
@@ -101,8 +101,8 @@ aws s3 cp s3://kidstorybook/backups/db/kidstorybook-2026-02-12-0300.dump ./
 2. Gerekirse mevcut bağlantıları kes; tek kullanıcı modunda restore daha güvenli:
 
 ```bash
-sudo -u postgres psql -d kidstorybook -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'kidstorybook' AND pid <> pg_backend_pid();"
-pg_restore -h localhost -U kidstorybook -d kidstorybook --clean --if-exists -F c kidstorybook-2026-02-12-0300.dump
+sudo -u postgres psql -d herokidstory -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'herokidstory' AND pid <> pg_backend_pid();"
+pg_restore -h localhost -U herokidstory -d herokidstory --clean --if-exists -F c herokidstory-2026-02-12-0300.dump
 ```
 
 `--clean --if-exists`: Var olan objeleri siler sonra yükler. Şema uyumsuzluğu olursa hata alabilirsin; migration ile uyumlu yedek kullan.

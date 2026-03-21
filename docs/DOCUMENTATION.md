@@ -2,7 +2,7 @@
 
 Bu klasör projenin tüm dokümantasyonunu içerir.
 
-**Son güncelleme:** 20 Mart 2026 — `books` zaman damgaları: migration `024_books_timestamps_timestamptz.sql`, `pool` UTC oturumu, admin kitap detayında İstanbul saati + üretim süresi (`docs/implementation/FAZ5_5_IMPLEMENTATION.md`). Önceki: AI maliyet satırları (`docs/guides/AI_COST_AND_USAGE_LOGGING.md`); 7 Mart 2026 Design Token (`docs/guides/THEME_AND_COLOR_GUIDE.md`).
+**Son güncelleme:** 21 Mart 2026 — `analysis/DEPLOYMENT_LOCAL_VS_PROD_OPS.md` (Redis yerel/prod, db-backup S3). Önceki: 20 Mart 2026 — `books` zaman damgaları: migration `024_books_timestamps_timestamptz.sql`, `pool` UTC oturumu, admin kitap detayında İstanbul saati + üretim süresi (`docs/implementation/FAZ5_5_IMPLEMENTATION.md`). Önceki: AI maliyet satırları (`docs/guides/AI_COST_AND_USAGE_LOGGING.md`); 7 Mart 2026 Design Token (`docs/guides/THEME_AND_COLOR_GUIDE.md`).
 
 ---
 
@@ -45,6 +45,7 @@ docs/
 ├── checklists/                 # Kontrol listeleri (aktif)
 │   ├── PRODUCTION_ENV_5_5_6.md # Production env kontrol listesi (5.5.6)
 │   ├── WIZARD_LOADING_QA.md    # Wizard/site loading geri bildirim QA checklist (20 Mart 2026)
+│   ├── EC2_DEPLOY_POST_PULL_2026.md # EC2: EBS genişletme, disk/log, Redis, build, migration, PM2 (geçici)
 │   └── ...
 │
 ├── archive/                    # Arşivlenmiş dosyalar (referans için)
@@ -247,7 +248,8 @@ docs/
 24. **analysis/GORSEL_PROMPT_VE_TEST_REHBERI.md** — Görsel prompt, log ve test tek giriş; doküman haritası, kod özeti, test checklist
 25. **analysis/PROMPT_ANALIZ_VE_IYILESTIRME.md** — Pipeline önerileri (Ö1–Ö11), log karşılaştırmaları; güncel başlık sürümü dokümanda
 26. **analysis/LOG_YAPRAK_SORUNU_20_MART_2026.md** — Salon/yaprak/sky log analizi; `route.ts` batch hizası notları
-27. **public/ai-debug-log-viewer.html** - `ai-api-debug.jsonl` dosyasını insan-okur formatta inceleme aracı (filtre, arama, tam ekran JSON modal, kopyalama)
+27. **analysis/DEPLOYMENT_LOCAL_VS_PROD_OPS.md** — Yerel Docker Redis vs EC2 systemd; `db-backup.sh` + S3 `backups/db/`, cron; migration öncesi yedek; PG kullanıcı adı uyumu
+28. **public/ai-debug-log-viewer.html** - `ai-api-debug.jsonl` dosyasını insan-okur formatta inceleme aracı (filtre, arama, tam ekran JSON modal, kopyalama)
 
 ### Strateji Dokümanları
 1. **strategies/TTS_STRATEGY.md** - Text-to-Speech (TTS) strateji ve gereksinimler dokümanı

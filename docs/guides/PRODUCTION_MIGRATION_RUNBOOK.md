@@ -8,7 +8,7 @@
 ## 1. Ne zaman bu runbook kullanılır?
 
 - `migrations/` klasörüne **yeni bir .sql dosyası** eklediğinde (örn. `018_xxx.sql`, `019_yyy.sql`)
-- Bu migration’ı **production** veritabanında (EC2’deki `kidstorybook` DB) çalıştırman gerektiğinde
+- Bu migration’ı **production** veritabanında (EC2’deki `herokidstory` DB) çalıştırman gerektiğinde
 
 ---
 
@@ -50,7 +50,7 @@ scp -i KEY_PEM migrations/018_xxx.sql ubuntu@EC2_IP:~/herokidstory/migrations/
 - **Sadece sunucuda (EC2).** Lokal PC'de `psql` kurulu değilse migration orada çalıştırılamaz. Uygulama (hem local hem sunucu) aynı PostgreSQL'e bağlanıyorsa (local SSH tüneli ile), migration **bir kez EC2'de** çalıştırıldığında yeterlidir.
 - EC2'ye SSH ile bağlan, proje dizinine geç: `cd ~/herokidstory`
 
-**4.1** Bağlantı: Sunucuda PostgreSQL kullanıcısı `kidstorybook` (ubuntu değil). `.env` içindeki `DATABASE_URL` ile çalıştır:
+**4.1** Bağlantı: Sunucuda PostgreSQL kullanıcısı `herokidstory` (ubuntu değil). `.env` içindeki `DATABASE_URL` ile çalıştır:
 
 ```bash
 cd ~/herokidstory
@@ -61,14 +61,14 @@ psql "$DATABASE_URL" -f migrations/020_ai_requests.sql
 Eğer `DATABASE_URL` shell'de yüklü değilse (direkt vermek için):
 
 ```bash
-psql "postgresql://kidstorybook:ŞİFRENİZ@localhost:5432/kidstorybook" -f migrations/020_ai_requests.sql
+psql "postgresql://herokidstory:ŞİFRENİZ@localhost:5432/herokidstory" -f migrations/020_ai_requests.sql
 ```
 (ŞİFRENİZ = .env'deki DATABASE_URL içindeki parola; boşluk/special char varsa tırnak içinde kullan.)
 
 **4.2** Eski yöntem (Runbook’ta geçen): `-h -U -d` ile tek tek parametre:
 
 ```bash
-psql -h localhost -U kidstorybook -d kidstorybook -f migrations/020_ai_requests.sql
+psql -h localhost -U herokidstory -d herokidstory -f migrations/020_ai_requests.sql
 ```
 Şifre sorarsa: .env’deki parolayı gir (KidStoryBook_Pg_8kL3mN9pQr2 vb.).
 
