@@ -110,32 +110,27 @@ export function Header() {
       }`}
     >
       <nav className="container mx-auto flex h-20 items-center justify-between gap-2 px-4 md:px-6 max-w-full overflow-hidden">
-        {/* Logo - Premium Floating Badge */}
+        {/* Logo */}
         <Link href="/" className="shrink-0">
           <motion.div
-            className="flex items-center gap-2 rounded-2xl bg-white/80 px-2 py-1.5 shadow-md ring-1 ring-slate-200/60 backdrop-blur-sm transition-shadow hover:shadow-lg dark:bg-slate-800/80 dark:ring-slate-700/60 sm:gap-2.5 sm:px-2.5 md:gap-3 md:px-3 md:py-2"
-            whileHover={{ scale: 1.03 }}
+            className="flex items-center gap-2.5 md:gap-3"
+            whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
-            {/* Kare ikon - gradient ring ile rozet efekti */}
-            <div className="relative shrink-0">
-              <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-br from-primary to-brand-2 opacity-60 blur-[2px]" />
-              <Image
-                src="/logo.png"
-                alt="HeroKidStory"
-                width={64}
-                height={64}
-                className="relative h-9 w-9 rounded-xl ring-2 ring-primary/30 sm:h-10 sm:w-10 md:h-11 md:w-11 lg:h-12 lg:w-12"
-                priority
-              />
-            </div>
-            {/* Wordmark - brand.png kullanarak */}
+            <Image
+              src="/logo.png"
+              alt="HeroKidStory"
+              width={64}
+              height={64}
+              className="h-10 w-10 shrink-0 sm:h-11 sm:w-11 md:h-12 md:w-12 lg:h-[3.25rem] lg:w-[3.25rem]"
+              priority
+            />
             <Image
               src="/brand.png"
               alt="HeroKidStory"
               width={180}
               height={40}
-              className="h-6 w-auto dark:brightness-0 dark:invert sm:h-7 md:h-8 lg:h-9"
+              className="h-6 w-auto sm:h-7 md:h-8 lg:h-9"
               priority
             />
           </motion.div>
@@ -381,23 +376,20 @@ export function Header() {
               >
                 {/* 1. Üst: Logo + Kapat */}
                 <div className="mb-6 flex shrink-0 items-center justify-between">
-                  <div className="flex items-center gap-2.5 rounded-xl bg-slate-100/80 px-2 py-1.5 ring-1 ring-slate-200/60 dark:bg-slate-800/80 dark:ring-slate-700/60">
-                    <div className="relative shrink-0">
-                      <div className="absolute -inset-0.5 rounded-lg bg-gradient-to-br from-primary to-brand-2 opacity-50 blur-[2px]" />
-                      <Image
-                        src="/logo.png"
-                        alt="HeroKidStory"
-                        width={48}
-                        height={48}
-                        className="relative h-9 w-9 rounded-lg ring-2 ring-primary/30"
-                      />
-                    </div>
+                  <div className="flex items-center gap-2.5">
+                    <Image
+                      src="/logo.png"
+                      alt="HeroKidStory"
+                      width={48}
+                      height={48}
+                      className="h-11 w-11 shrink-0"
+                    />
                     <Image
                       src="/brand.png"
                       alt="HeroKidStory"
                       width={140}
                       height={32}
-                      className="h-5 w-auto dark:brightness-0 dark:invert"
+                      className="h-5 w-auto"
                     />
                   </div>
                   <Button
