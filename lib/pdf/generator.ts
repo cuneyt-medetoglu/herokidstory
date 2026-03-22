@@ -1,10 +1,17 @@
 /**
  * PDF Generation — Puppeteer + HTML/CSS
  *
- * Sayfa sırası:
+ * Metin yarım sayfa deseni (#48 Yıldızlı Kıyı): `getTextPageBackgroundSvgInline()` — SVG doğrudan HTML’e
+ * (CSS `background-image` + data URI, Chromium PDF’de sık görünmez).
+ *
+ * **pdfLayout: dashboard (varsayılan)**
  *   1. Ön kapak  — A5 portrait  (148.5mm × 210mm)
- *   2. Spread'ler — A4 landscape (297mm   × 210mm)
+ *   2. Spread'ler — A4 landscape (297mm × 210mm)
  *   3. Arka kapak — A5 portrait  (148.5mm × 210mm)
+ *
+ * **pdfLayout: print** (yalnızca admin `generate-pdf` — spiral cilt / duplex kısa kenar)
+ *   A4 yatay sayfalar: her yüzde iki A5 yarım; arka yüzde sol↔sağ ters sıra (short-edge imposizyon).
+ *   Detay: `docs/guides/PDF_GENERATION_GUIDE.md` — Spiral Cilt bölümü, `public/dev/print-layout-guide.html`.
  */
 
 import puppeteer from 'puppeteer'
@@ -30,6 +37,11 @@ export interface PDFOptions {
   pages: PageData[]
   theme?: string
   illustrationStyle?: string
+  /**
+   * dashboard: A5 ön + A4 içerik + A5 arka (kullanıcı / kayıtlı PDF).
+   * print: A4 duplex baskı + kesim için imposizyon (admin indir).
+   */
+  pdfLayout?: 'dashboard' | 'print'
 }
 
 interface SpreadData {
@@ -41,6 +53,19 @@ interface SpreadData {
     type: 'image' | 'text'
     data: PageData | null
   }
+}
+
+/** A4 yatay sayfanın bir yarısı — spiral/duplex imposizyonu */
+type PrintCell =
+  | { kind: 'blank' }
+  | { kind: 'cover-front' }
+  | { kind: 'cover-back' }
+  | { kind: 'text'; page: PageData }
+  | { kind: 'image'; page: PageData }
+
+interface PrintSheet {
+  front: { left: PrintCell; right: PrintCell }
+  back: { left: PrintCell; right: PrintCell }
 }
 
 // ============================================================================
@@ -91,46 +116,36 @@ function splitIntoSentences(block: string): string[] {
 // Cover Pages
 // ============================================================================
 
-/**
- * Ön kapak — A5 portrait
- * Full-bleed görsel + gradient + başlık + kurumsal HeroKidStory wordmark + altında küçük logo
- */
-function generateFrontCoverHTML(options: PDFOptions, logoDataUri: string): string {
+function buildFrontCoverInner(options: PDFOptions, logoDataUri: string): string {
   const coverImage = options.coverImageUrl
     ? `<img src="${escapeHtml(options.coverImageUrl)}" alt="" class="cover-image" />`
     : ''
 
-  const logoImg = logoDataUri
-    ? `<img src="${logoDataUri}" alt="" class="cover-logo-below" />`
-    : ''
-
   return `
-    <div class="page front-cover">
       ${coverImage}
       <div class="cover-gradient"></div>
       <div class="cover-content">
         <h1 class="cover-title">${escapeHtml(options.title)}</h1>
-        <div class="cover-branding">
-          <div class="cover-wordmark">
-            <span class="cw-hero">Hero</span><span class="cw-kid">Kid</span><span class="cw-story">Story</span>
-          </div>
-          ${logoImg}
-        </div>
+        ${logoDataUri ? `<div class="cover-branding"><img src="${logoDataUri}" alt="" class="cover-logo-below" /></div>` : ''}
       </div>
-    </div>
   `
 }
 
 /**
- * Arka kapak — A5 portrait
- * Üst: logo üzerinde değil, logo üstte + altında HeroKidStory; tagline; alt footer: "ile oluşturuldu" + logo + marka
+ * Ön kapak — A5 portrait
+ * Full-bleed görsel + gradient + başlık + altında küçük logo
  */
-function generateBackCoverHTML(logoDataUri: string, qrDataUri: string): string {
-  const logoLg = logoDataUri
+function generateFrontCoverHTML(options: PDFOptions, logoDataUri: string): string {
+  return `
+    <div class="page front-cover">
+      ${buildFrontCoverInner(options, logoDataUri)}
+    </div>
+  `
+}
+
+function buildBackCoverInner(logoDataUri: string, qrDataUri: string): string {
+  const logoMain = logoDataUri
     ? `<img src="${logoDataUri}" alt="" class="bc-logo-main" />`
-    : ''
-  const logoSm = logoDataUri
-    ? `<img src="${logoDataUri}" alt="" class="bc-logo-footer" />`
     : ''
 
   const wordmark =
@@ -143,26 +158,76 @@ function generateBackCoverHTML(logoDataUri: string, qrDataUri: string): string {
     : ''
 
   return `
-    <div class="page back-cover">
       <span class="bc-corner bc-corner-tl"></span>
       <span class="bc-corner bc-corner-tr"></span>
       <span class="bc-corner bc-corner-bl"></span>
       <span class="bc-corner bc-corner-br"></span>
       <div class="bc-main">
-        <div class="bc-logo-stack">${logoLg}${wordmark}</div>
+        <div class="bc-brand-stack">
+          ${logoMain}
+          ${wordmark}
+        </div>
         <div class="bc-divider"></div>
         <p class="bc-tagline">Çocuğunuzun kendi hikayesinin kahramanı olduğu, AI ile oluşturulmuş kişisel kitaplar.</p>
         ${qrBlock}
       </div>
       <footer class="bc-footer">
         <p class="bc-created-line">herokidstory.com ile oluşturuldu</p>
-        <div class="bc-footer-brand">
-          ${logoSm}
-          ${wordmark}
-        </div>
       </footer>
+  `
+}
+
+/**
+ * Arka kapak — A5 portrait
+ * Üst: logo üzerinde değil, logo üstte + altında HeroKidStory; tagline; alt footer: "ile oluşturuldu" + logo + marka
+ */
+function generateBackCoverHTML(logoDataUri: string, qrDataUri: string): string {
+  return `
+    <div class="page back-cover">
+      ${buildBackCoverInner(logoDataUri, qrDataUri)}
     </div>
   `
+}
+
+// ============================================================================
+// Metin sayfası arka plan SVG (#48) — HTML’e gömülür (Puppeteer’da CSS `background-image: url(data:…)` / dosya yolu sık görünmez)
+// ============================================================================
+
+let cachedTextPageBgSvg: string | undefined
+
+function getTextPageBackgroundSvgInline(): string {
+  if (cachedTextPageBgSvg !== undefined) return cachedTextPageBgSvg
+  const svgPath = path.join(process.cwd(), 'public', 'pdf-backgrounds', 'yildizli-kiyi-p48.svg')
+  try {
+    if (!fs.existsSync(svgPath)) {
+      cachedTextPageBgSvg = ''
+      return ''
+    }
+    let raw = fs.readFileSync(svgPath, 'utf-8')
+    raw = raw.replace(/<\?xml[^?]*\?>/gi, '').trim()
+    cachedTextPageBgSvg = raw
+  } catch {
+    cachedTextPageBgSvg = ''
+  }
+  return cachedTextPageBgSvg
+}
+
+function textPageBackgroundLayer(): string {
+  const svg = getTextPageBackgroundSvgInline()
+  if (!svg) return ''
+  return `<div class="text-page-bg-layer" aria-hidden="true">${svg}</div>`
+}
+
+function buildTextPageHalf(page: PageData): string {
+  return `
+        <div class="half-page text-page">
+          ${textPageBackgroundLayer()}
+          <div class="text-content">
+            <div class="page-text">${formatText(page.text)}</div>
+            <span class="page-number">${page.pageNumber}</span>
+          </div>
+        </div>
+      `
 }
 
 // ============================================================================
@@ -179,18 +244,7 @@ function generateSpreadHTML(spread: SpreadData): string {
         </div>
       `
     } else if (spread.left.type === 'text') {
-      leftHTML = `
-        <div class="half-page text-page">
-          <span class="corner-pattern corner-top-left"></span>
-          <span class="corner-pattern corner-top-right"></span>
-          <span class="corner-pattern corner-bottom-left"></span>
-          <span class="corner-pattern corner-bottom-right"></span>
-          <div class="text-content">
-            <div class="page-text">${formatText(spread.left.data.text)}</div>
-            <span class="page-number">${spread.left.data.pageNumber}</span>
-          </div>
-        </div>
-      `
+      leftHTML = buildTextPageHalf(spread.left.data)
     }
   }
 
@@ -203,18 +257,7 @@ function generateSpreadHTML(spread: SpreadData): string {
         </div>
       `
     } else if (spread.right.type === 'text') {
-      rightHTML = `
-        <div class="half-page text-page">
-          <span class="corner-pattern corner-top-left"></span>
-          <span class="corner-pattern corner-top-right"></span>
-          <span class="corner-pattern corner-bottom-left"></span>
-          <span class="corner-pattern corner-bottom-right"></span>
-          <div class="text-content">
-            <div class="page-text">${formatText(spread.right.data.text)}</div>
-            <span class="page-number">${spread.right.data.pageNumber}</span>
-          </div>
-        </div>
-      `
+      rightHTML = buildTextPageHalf(spread.right.data)
     }
   }
 
@@ -267,6 +310,152 @@ function prepareSpreads(pages: PageData[]): SpreadData[] {
   return spreads
 }
 
+/**
+ * Spiral cilt + kısa kenar duplex: N+1 adet A5 yaprak → ceil((N+1)/2) adet A4.
+ * Arka yüz PDF’de [back(sağ yaprak) | back(sol yaprak)]; tek yaprak kalan sayfada [back | boş].
+ */
+function buildPrintSheets(pages: PageData[]): PrintSheet[] {
+  const N = pages.length
+  const numLeaves = N + 1
+  const numSheets = Math.ceil(numLeaves / 2)
+  const sheets: PrintSheet[] = []
+
+  for (let s = 0; s < numSheets; s++) {
+    const leftLeaf = 2 * s
+    const rightLeaf = 2 * s + 1
+    const hasRight = rightLeaf < numLeaves
+
+    const frontLeft = leafFront(leftLeaf, pages)
+    const frontRight: PrintCell = hasRight ? leafFront(rightLeaf, pages) : { kind: 'blank' }
+
+    let backLeft: PrintCell
+    let backRight: PrintCell
+    if (hasRight) {
+      // Short-edge flip: sol ön → sağ arka; sağ ön → sol arka
+      backLeft = leafBack(rightLeaf, pages)
+      backRight = leafBack(leftLeaf, pages)
+    } else {
+      // Tek yaprak: ön [sol | boş] → çevirince [boş | sol arkaları]
+      backLeft = { kind: 'blank' }
+      backRight = leafBack(leftLeaf, pages)
+    }
+
+    sheets.push({
+      front: { left: frontLeft, right: frontRight },
+      back: { left: backLeft, right: backRight },
+    })
+  }
+
+  return sheets
+}
+
+function leafFront(leafIndex: number, pages: PageData[]): PrintCell {
+  const N = pages.length
+  if (leafIndex === 0) return { kind: 'cover-front' }
+  if (leafIndex > N) return { kind: 'blank' }
+  return { kind: 'text', page: pages[leafIndex - 1]! }
+}
+
+function leafBack(leafIndex: number, pages: PageData[]): PrintCell {
+  const N = pages.length
+  if (leafIndex === 0) {
+    if (N === 0) return { kind: 'cover-back' }
+    return { kind: 'image', page: pages[0]! }
+  }
+  if (leafIndex < N) return { kind: 'image', page: pages[leafIndex]! }
+  if (leafIndex === N) return { kind: 'cover-back' }
+  return { kind: 'blank' }
+}
+
+function halfPageFromCell(
+  cell: PrintCell,
+  options: PDFOptions,
+  logoDataUri: string,
+  qrDataUri: string
+): string {
+  switch (cell.kind) {
+    case 'blank':
+      return '<div class="half-page half-page--blank"></div>'
+    case 'cover-front':
+      return `
+        <div class="half-page cover-spread-half cover-spread-half--front">
+          <div class="front-cover front-cover--embedded">
+            ${buildFrontCoverInner(options, logoDataUri)}
+          </div>
+        </div>
+      `
+    case 'cover-back':
+      return `
+        <div class="half-page cover-spread-half cover-spread-half--back">
+          <div class="back-cover back-cover--embedded">
+            ${buildBackCoverInner(logoDataUri, qrDataUri)}
+          </div>
+        </div>
+      `
+    case 'text': {
+      const p = cell.page
+      return `
+        <div class="half-page text-page">
+          ${textPageBackgroundLayer()}
+          <div class="text-content">
+            <div class="page-text">${formatText(p.text)}</div>
+            <span class="page-number">${p.pageNumber}</span>
+          </div>
+        </div>
+      `
+    }
+    case 'image': {
+      const p = cell.page
+      if (p.imageUrl) {
+        return `
+          <div class="half-page image-page">
+            <img src="${escapeHtml(p.imageUrl)}" alt="" class="page-image" />
+          </div>
+        `
+      }
+      return `
+        <div class="half-page text-page">
+          ${textPageBackgroundLayer()}
+          <div class="text-content">
+            <div class="page-text">${formatText(p.text)}</div>
+            <span class="page-number">${p.pageNumber}</span>
+          </div>
+        </div>
+      `
+    }
+    default:
+      return '<div class="half-page half-page--blank"></div>'
+  }
+}
+
+function printFaceNeedsCoversSpread(left: PrintCell, right: PrintCell): boolean {
+  return (
+    left.kind === 'cover-front' ||
+    left.kind === 'cover-back' ||
+    right.kind === 'cover-front' ||
+    right.kind === 'cover-back'
+  )
+}
+
+function generatePrintFaceHTML(
+  left: PrintCell,
+  right: PrintCell,
+  options: PDFOptions,
+  logoDataUri: string,
+  qrDataUri: string
+): string {
+  const useCoversSpread = printFaceNeedsCoversSpread(left, right)
+  const pageClass = useCoversSpread ? 'page spread-page covers-spread' : 'page spread-page'
+  return `
+    <div class="${pageClass}">
+      <div class="spread-container">
+        ${halfPageFromCell(left, options, logoDataUri, qrDataUri)}
+        ${halfPageFromCell(right, options, logoDataUri, qrDataUri)}
+      </div>
+    </div>
+  `
+}
+
 /** Ana site URL’si — QR kodda kullanılır */
 async function buildQrDataUri(): Promise<string> {
   const base = (process.env.NEXT_PUBLIC_APP_URL || 'https://herokidstory.com').replace(/\/$/, '')
@@ -287,50 +476,85 @@ async function buildQrDataUri(): Promise<string> {
 // HTML Assembly
 // ============================================================================
 
-async function generateHTML(options: PDFOptions, spreads: SpreadData[]): Promise<string> {
-  // CSS
-  const cssPath = path.join(process.cwd(), 'lib', 'pdf', 'templates', 'book-styles.css')
-  let css = fs.readFileSync(cssPath, 'utf-8')
+interface PdfAssets {
+  css: string
+  logoDataUri: string
+  qrDataUri: string
+}
 
-  // SVG pattern → base64 (köşe desenleri için)
-  const svgPath = path.join(process.cwd(), 'public', 'pdf-backgrounds', 'children-pattern.svg')
-  if (fs.existsSync(svgPath)) {
+/**
+ * `book-styles.css` içindeki `/pdf-backgrounds/*.svg` url'lerini base64 data URI ile değiştirir
+ * (Puppeteer setContent ile dosya sistemi yolu çözülmediği için).
+ */
+function embedPdfBackgroundSvgs(css: string): string {
+  const bgDir = path.join(process.cwd(), 'public', 'pdf-backgrounds')
+  if (!fs.existsSync(bgDir)) return css
+
+  const files = fs.readdirSync(bgDir).filter((f) => f.endsWith('.svg'))
+  for (const filename of files) {
+    const svgPath = path.join(bgDir, filename)
     const svgContent = fs.readFileSync(svgPath, 'utf-8')
     const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`
-    css = css.replace(
-      /url\(['"]?\/pdf-backgrounds\/children-pattern\.svg['"]?\)/g,
-      `url('${dataUri}')`
-    )
+    const escaped = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    css = css.replace(new RegExp(`url\\(['"]?/pdf-backgrounds/${escaped}['"]?\\)`, 'g'), `url('${dataUri}')`)
   }
+  return css
+}
 
-  // Logo → base64 (kapak + arka kapak için)
-  const logoPath = path.join(process.cwd(), 'public', 'logo.png')
+async function loadPdfStylesAndLogo(): Promise<PdfAssets> {
+  const cssPath = path.join(process.cwd(), 'lib', 'pdf', 'templates', 'book-styles.css')
+  let css = fs.readFileSync(cssPath, 'utf-8')
+  css = embedPdfBackgroundSvgs(css)
+
+  const logoPath = path.join(process.cwd(), 'public', 'brand', 'logo.png')
   const logoDataUri = fs.existsSync(logoPath)
     ? `data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}`
     : ''
 
   const qrDataUri = await buildQrDataUri()
 
-  const frontCoverHTML = generateFrontCoverHTML(options, logoDataUri)
-  const spreadsHTML    = spreads.map(generateSpreadHTML).join('\n')
-  const backCoverHTML  = generateBackCoverHTML(logoDataUri, qrDataUri)
+  return { css, logoDataUri, qrDataUri }
+}
 
+function wrapHtmlDocument(title: string, css: string, bodyContent: string): string {
   return `<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>${escapeHtml(options.title)}</title>
+  <title>${escapeHtml(title)}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Alegreya:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>${css}</style>
 </head>
 <body>
-  ${frontCoverHTML}
-  ${spreadsHTML}
-  ${backCoverHTML}
+  ${bodyContent}
 </body>
 </html>`
+}
+
+/** dashboard: A5 kapak + spread + A5 arka kapak */
+async function generateDashboardHTML(options: PDFOptions, spreads: SpreadData[]): Promise<string> {
+  const { css, logoDataUri, qrDataUri } = await loadPdfStylesAndLogo()
+  const spreadsHTML = spreads.map(generateSpreadHTML).join('\n')
+  const bodyContent = `${generateFrontCoverHTML(options, logoDataUri)}\n${spreadsHTML}\n${generateBackCoverHTML(logoDataUri, qrDataUri)}`
+  return wrapHtmlDocument(options.title, css, bodyContent)
+}
+
+/** print: yalnızca A4 landscape — duplex kısa kenar + kesim için imposizyon */
+async function generatePrintLayoutHTML(options: PDFOptions): Promise<string> {
+  const { css, logoDataUri, qrDataUri } = await loadPdfStylesAndLogo()
+  const sheets = buildPrintSheets(options.pages || [])
+  const parts: string[] = []
+  for (const sheet of sheets) {
+    parts.push(
+      generatePrintFaceHTML(sheet.front.left, sheet.front.right, options, logoDataUri, qrDataUri)
+    )
+    parts.push(
+      generatePrintFaceHTML(sheet.back.left, sheet.back.right, options, logoDataUri, qrDataUri)
+    )
+  }
+  return wrapHtmlDocument(options.title, css, parts.join('\n'))
 }
 
 // ============================================================================
@@ -349,8 +573,11 @@ export async function generateBookPDF(options: PDFOptions): Promise<Buffer> {
     // Büyük base64 içerik için timeout artırıldı
     page.setDefaultNavigationTimeout(120_000)
 
-    const spreads = prepareSpreads(options.pages || [])
-    const html = await generateHTML(options, spreads)
+    const layout = options.pdfLayout ?? 'dashboard'
+    const html =
+      layout === 'print'
+        ? await generatePrintLayoutHTML(options)
+        : await generateDashboardHTML(options, prepareSpreads(options.pages || []))
 
     await page.setContent(html, { waitUntil: 'networkidle0' })
 

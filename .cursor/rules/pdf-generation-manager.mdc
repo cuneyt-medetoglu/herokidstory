@@ -12,8 +12,8 @@ Sen HeroKidStory projesinde **kitap PDF export** akışından, **layout/template
 
 1. **Mevcut mimariyi bilmek:** Puppeteer + HTML/CSS, veri akışı, sıkıştırma ve limitler.
 2. **İyileştirme planını takip etmek:** `docs/analysis/PDF_OUTPUT_IMPROVEMENT_PLAN.md` (ön kapak A5, içerik A4 spread, arka kapak, marka).
-3. **Test / önizleme:** `public/dev/pdf-preview-test.html` → `/dev/pdf-preview-test.html` (tasarım denemeleri; üretim `lib/pdf/*`).
-4. **Marka tutarlılığı:** Renkler `BrandWordmark.tsx` ile uyumlu (`#29b5a8` / `#1ba8e0`). **Ön kapak:** renkli HeroKidStory wordmark + altında küçük logo. **Arka kapak:** logo üstte, wordmark altında; en altta “herokidstory.com ile oluşturuldu” + logo + wordmark.
+3. **Test / önizleme:** `public/dev/pdf-preview-test.html` → `/dev/pdf-preview-test.html` (tasarım denemeleri; üretim `lib/pdf/*`). **Spiral / duplex baskı mantığı:** `public/dev/print-layout-guide.html` → `/dev/print-layout-guide.html` (sadece dokümantasyon; üretim `pdfLayout: 'print'`).
+4. **Marka tutarlılığı:** Renkler `BrandWordmark.tsx` ile uyumlu (`#29b5a8` / `#1ba8e0`). Kapak şablonları `book-styles.css` / `generator.ts` ile güncel tutulmalı (ön kapak: başlık + logo; arka kapak: logo + wordmark + tagline + footer metni — detay koda bak).
 5. **@project-manager ile:** ROADMAP’taki PDF maddeleri (Faz 5.7 vb.) için teknik detay burada; checkbox güncellemesi project-manager’da.
 
 ## PDF önbellek (cache)
@@ -31,10 +31,11 @@ Sen HeroKidStory projesinde **kitap PDF export** akışından, **layout/template
 
 | Dosya | Açıklama |
 |--------|----------|
-| `lib/pdf/generator.ts` | HTML üretimi, spread, QR (`qrcode`), Puppeteer `page.pdf()` |
+| `lib/pdf/generator.ts` | HTML üretimi, `pdfLayout` (`dashboard` \| `print`), spread, imposizyon (`buildPrintSheets`), QR (`qrcode`), Puppeteer `page.pdf()` |
 | `lib/pdf/templates/book-styles.css` | `@page`, kapak/spread stilleri |
 | `lib/pdf/image-compress.ts` | Görsellerin sıkıştırılması (50 MB bucket limiti) |
-| `app/api/books/[id]/generate-pdf/route.ts` | Auth, kitap verisi, sıkıştırma, PDF upload |
+| `app/api/books/[id]/generate-pdf/route.ts` | Auth, kitap verisi, sıkıştırma, PDF upload (`pdfLayout: 'dashboard'`) |
+| `app/api/admin/books/[id]/generate-pdf/route.ts` | Admin: `pdfLayout: 'print'` — spiral imposizyon PDF, önbellek yok |
 | `app/api/admin/books/[id]/clear-pdf/route.ts` | Admin: PDF önbelleğini sil |
 
 ## Tek kaynak dokümanlar
@@ -45,6 +46,7 @@ Sen HeroKidStory projesinde **kitap PDF export** akışından, **layout/template
 | `docs/guides/PDF_GENERATION_TEST_GUIDE.md` | Test senaryoları |
 | `docs/analysis/PDF_OUTPUT_IMPROVEMENT_PLAN.md` | Hedef layout (A5 kapak + A4 spread + arka kapak), marka kuralları, riskler |
 | `public/dev/pdf-preview-test.html` | Tarayıcıda layout önizlemesi (`/dev/pdf-preview-test.html`) |
+| `public/dev/print-layout-guide.html` | Spiral/duplex A4 imposizyon rehberi (`/dev/print-layout-guide.html`) |
 | `docs/technical/MONOLITH_VS_SPLIT_ANALYSIS.md` | Puppeteer / sunucu yükü (bağlam) |
 
 ## Marka varlıkları
@@ -61,15 +63,13 @@ Sen HeroKidStory projesinde **kitap PDF export** akışından, **layout/template
 
 ## Mevcut durum (22 Mart 2026)
 
-Faz 1–3 tamamlandı; kapak/marka/metin iyileştirmeleri uygulandı:
-- **Ön kapak:** Kurumsal wordmark (Hero/Kid/Story renkleri) + altında küçük `logo.png`
-- **Metin sayfaları:** Cümlelere bölünen paragraflar (`formatText`); ortalanmış blok, `max-width: 38ch`, satır aralığı artırıldı
-- **Arka kapak:** Üstte logo, altında wordmark + tagline; altta `herokidstory.com ile oluşturuldu` + logo + wordmark
-- `book-styles.css`: `@page cover` / `spread`, `.front-cover`, `.back-cover`, `.spread-page`
-- `generator.ts`: logo base64; `preferCSSPageSize: true`
-- `route.ts`: değişiklik gerekmedi
+- **Dashboard PDF (`pdfLayout: 'dashboard'`):** A5 ön kapak → A4 spread’ler → A5 arka kapak; S3 önbellek.
+- **Admin PDF (`pdfLayout: 'print'`):** `POST /api/admin/books/[id]/generate-pdf` — yalnızca A4 landscape, `buildPrintSheets()` ile spiral/duplex imposizyon; önbellek yok. Rehber: `PDF_GENERATION_GUIDE.md` — Spiral Cilt; görsel: `print-layout-guide.html`.
+- **Metin sayfaları:** `formatText`, ortalanmış blok, `max-width: 38ch`; arka plan **#48 Yıldızlı Kıyı** — `public/pdf-backgrounds/yildizli-kiyi-p48.svg` dosyası **`generator.ts` içinde HTML’e inline** (`.text-page-bg-layer`); CSS `background-image` PDF’de güvenilir olmadığı için. `embedPdfBackgroundSvgs()` yalnızca CSS’te kalan `url(/pdf-backgrounds/…)` için.
+- `book-styles.css`: `@page cover` / `spread`, gömülü kapaklar (`.covers-spread`, `--embedded`), `.half-page--blank` (print)
+- `generator.ts`: `preferCSSPageSize: true`; logo/QR base64
 
-Kalan: `PDF_GENERATION_GUIDE.md` güncellemesi; önizleme: `public/dev/pdf-preview-test.html`.
+Yeni özellik / değişiklik sonrası: `PDF_GENERATION_GUIDE.md` + bu kural dosyası + gerekiyorsa `print-layout-guide.html` senkron.
 
 ## Yeni özellik / değişiklik sırası
 

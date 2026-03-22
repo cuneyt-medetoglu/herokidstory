@@ -30,6 +30,7 @@
 | Konu | Durum |
 |------|--------|
 | Layout A5 kapak + A4 spread + arka kapak | ✅ |
+| Admin `pdfLayout: 'print'` (spiral/duplex imposizyon) | ✅ `generator.ts` `buildPrintSheets` |
 | Admin PDF cache temizleme | ✅ |
 | Arka kapak QR | ✅ |
 | `PDF_GENERATION_GUIDE.md` | ⏳ |

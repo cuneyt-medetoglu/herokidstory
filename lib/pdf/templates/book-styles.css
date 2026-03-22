@@ -24,7 +24,7 @@
 
 body {
   font-family: 'Fredoka', sans-serif;
-  background: #fefefe;
+  background: #ffffff;
   color: #1a1a1a;
 }
 
@@ -91,37 +91,20 @@ body {
   margin: 0 0 4mm;
 }
 
-/* Kurumsal wordmark + altında küçük logo (BrandWordmark renkleri) */
+/* Sadece logo — wordmark kaldırıldı */
 .front-cover .cover-branding {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2.5mm;
-  margin-bottom: 3mm;
-  padding: 4mm 5mm 3mm;
-  background: rgba(0,0,0,0.35);
-  border-radius: 12px;
+  justify-content: center;
+  margin-bottom: 5mm;
 }
-
-.front-cover .cover-wordmark {
-  font-family: 'Fredoka', sans-serif;
-  font-size: 15pt;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
-}
-
-.front-cover .cover-wordmark .cw-hero,
-.front-cover .cover-wordmark .cw-story { color: #29b5a8; }
-.front-cover .cover-wordmark .cw-kid   { color: #1ba8e0; }
 
 .front-cover .cover-logo-below {
-  height: 9mm;
+  height: 12mm;
   width: auto;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
 }
 
 /* ============================================================
@@ -132,7 +115,7 @@ body {
   page: cover;
   width: 148.5mm;
   height: 210mm;
-  background: #fef9f3;
+  background: #ffffff; /* iç sayfalar / spread ile aynı düz beyaz */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -141,20 +124,10 @@ body {
   position: relative;
 }
 
+/* Köşe SVG desenleri kaldırıldı — düz beyaz arka plan (iç sayfalarla uyum) */
 .back-cover .bc-corner {
-  position: absolute;
-  width: 55mm;
-  height: 55mm;
-  background-image: url('/pdf-backgrounds/children-pattern.svg');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  opacity: 0.25;
+  display: none;
 }
-
-.back-cover .bc-corner-tl { top: 0;    left: 0;  transform: rotate(0deg);   }
-.back-cover .bc-corner-tr { top: 0;    right: 0; transform: rotate(90deg);  }
-.back-cover .bc-corner-bl { bottom: 0; left: 0;  transform: rotate(-90deg); }
-.back-cover .bc-corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
 
 .back-cover .bc-main {
   flex: 1;
@@ -162,12 +135,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4mm;
+  gap: 3mm;
   z-index: 1;
 }
 
-/* Logo üstte, HeroKidStory hemen altında */
-.back-cover .bc-logo-stack {
+/* Logo + HeroKidStory dikey sıralı, ortalanımş */
+.back-cover .bc-brand-stack {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -175,14 +148,14 @@ body {
 }
 
 .back-cover .bc-logo-main {
-  height: 18mm;
+  height: 56mm; /* 4× bigger */
   width: auto;
   object-fit: contain;
 }
 
 .back-cover .bc-wordmark {
   font-family: 'Fredoka', sans-serif;
-  font-size: 22pt;
+  font-size: 44pt; /* 2× bigger */
   font-weight: 700;
   line-height: 1;
 }
@@ -241,7 +214,7 @@ body {
   font-size: 9pt;
   font-style: italic;
   color: #666;
-  margin: 0 0 3mm;
+  margin: 0;
 }
 
 .back-cover .bc-footer-brand {
@@ -269,25 +242,8 @@ body {
   page: spread;
   width: 297mm;
   height: 210mm;
-  background: #fef9f3;
+  background: #ffffff;
   position: relative;
-}
-
-.spread-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #fffef8;
-  background-image:
-    radial-gradient(circle at 20mm 20mm, rgba(255, 200, 200, 0.2) 2px, transparent 2px),
-    radial-gradient(circle at 60mm 60mm, rgba(200, 220, 255, 0.2) 1.5px, transparent 1.5px),
-    radial-gradient(circle at 40mm 80mm, rgba(255, 230, 200, 0.2) 1.5px, transparent 1.5px),
-    radial-gradient(circle at 80mm 40mm, rgba(220, 255, 200, 0.2) 1.5px, transparent 1.5px);
-  background-size: 50mm 50mm;
-  background-position: 0 0, 25mm 25mm, 12.5mm 40mm, 40mm 12.5mm;
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .spread-container {
@@ -299,6 +255,8 @@ body {
 }
 
 .half-page {
+  flex: 0 0 50%;
+  min-width: 0;
   width: 50%;
   height: 100%;
   position: relative;
@@ -306,6 +264,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Baskı imposizyonu (pdfLayout: print): boş yarı */
+.half-page.half-page--blank {
+  background: #ffffff;
+  padding: 0;
 }
 
 .half-page.image-page {
@@ -318,7 +282,7 @@ body {
 }
 
 .spread-container > .half-page:first-child.image-page .page-image {
-  object-position: left center;
+  object-position: left top;
 }
 
 .spread-container > .half-page:last-child.image-page {
@@ -326,34 +290,52 @@ body {
 }
 
 .spread-container > .half-page:last-child.image-page .page-image {
-  object-position: right center;
+  object-position: right top;
 }
 
 .image-page {
-  background: #fef9f3;
+  background: #ffffff;
   padding: 0;
   position: relative;
 }
 
 .page-image {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
   border-radius: 0;
   box-shadow: none;
   position: relative;
   z-index: 1;
 }
 
+/* Metin yarım sayfa — desen: generator.ts içinde HTML’e gömülü SVG (#48 Yıldızlı Kıyı); PDF’de CSS background-image güvenilir olmadığı için katman kullanılır */
 .text-page {
-  background: #fef9f3;
+  background-color: #ffffff;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 10mm;
   position: relative;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* SVG tam yarım sayfayı kaplar; metin üstte */
+.text-page-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.text-page-bg-layer svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .text-content {
@@ -404,16 +386,9 @@ body {
 }
 
 /* Köşe desenleri — sadece metin sayfalarında */
+/* Köşe desenleri kaldırıldı */
 .corner-pattern {
-  position: absolute;
-  width: 40mm;
-  height: 40mm;
-  background-image: url('/pdf-backgrounds/children-pattern.svg');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .corner-top-left     { top: 0;    left: 0;  transform: rotate(0deg);   }
@@ -421,15 +396,85 @@ body {
 .corner-bottom-left  { bottom: 0; left: 0;  transform: rotate(-90deg); }
 .corner-bottom-right { bottom: 0; right: 0; transform: rotate(180deg); }
 
-/* Orta ayırıcı çizgi */
+/* Orta ayırıcı çizgi kaldırıldı */
 .spread-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 0;
-  height: 100%;
-  border-left: 1px dashed rgba(232, 213, 192, 0.4);
-  z-index: 1;
-  display: block;
+  display: none;
+}
+
+/* ============================================================
+   Admin pdfLayout: ilk spread — ön + arka kapak yan yana (A4)
+   @page cover değil; spread sayfası içinde gömülü kapaklar
+   ============================================================ */
+
+.covers-spread .cover-spread-half {
+  padding: 0 !important;
+  width: 50%;
+  flex: 0 0 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.front-cover.front-cover--embedded {
+  /* override .front-cover { page: cover; width/height A5 } */
+  page: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.back-cover.back-cover--embedded {
+  /* override .back-cover { page: cover; width/height A5 } */
+  page: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  padding: 7mm 4mm 4mm !important;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.covers-spread .front-cover.front-cover--embedded .cover-title {
+  font-size: 22pt;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-logo-main {
+  height: 44mm;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-wordmark {
+  font-size: 34pt;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-tagline {
+  font-size: 9pt;
+  max-width: 58mm;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-qr-img {
+  width: 16mm;
+  height: 16mm;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-main {
+  gap: 2.5mm;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-footer {
+  margin-top: 2mm;
+  padding-top: 3mm;
+}
+
+.covers-spread .back-cover.back-cover--embedded .bc-created-line {
+  font-size: 8pt;
+  margin-bottom: 2mm;
 }

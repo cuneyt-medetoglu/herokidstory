@@ -17,6 +17,7 @@
     "optimize-images": "node scripts/optimize-hero-images.mjs",
     "copy-examples-to-locale": "tsx scripts/copy-examples-to-locale.ts",
     "roadmap": "node scripts/generate-roadmap-csv.js",
+    "generate-center-line-pdf": "tsx scripts/generate-center-line-only-pdf.ts",
     "ssh:server": "ssh -i herokidstory-key.pem ubuntu@18.184.150.1",
     "ssh:tunnel": "ssh -i herokidstory-key.pem -L 5432:localhost:5432 ubuntu@18.184.150.1",
     "clean": "node scripts/clean-dirs.mjs .next",

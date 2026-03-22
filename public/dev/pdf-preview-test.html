@@ -20,6 +20,7 @@
       --a4-w: 297mm;
       --a4-h: 210mm;
       --bg-cream: #fef9f3;
+      --bg-spread: #ffffff; /* kitap içi spread — baskıda toner tasarrufu */
       --brand-teal: #29b5a8;
       --brand-blue: #1ba8e0;
       --text-dark: #1a1a1a;
@@ -114,7 +115,7 @@
       height: var(--a4-h);
       position: relative;
       overflow: hidden;
-      background: var(--bg-cream);
+      background: var(--bg-spread);
     }
 
     /* =========================================================
@@ -176,31 +177,19 @@
       margin-bottom: 5mm;
     }
 
+    /* Sadece logo — wordmark kaldırıldı */
     .cover-a .cover-branding {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 2.5mm;
-      margin-bottom: 3mm;
-      padding: 4mm 5mm 3mm;
-      background: rgba(0,0,0,0.35);
-      border-radius: 12px;
+      justify-content: center;
+      margin-bottom: 5mm;
     }
-    .cover-a .cover-wordmark {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 15pt;
-      font-weight: 700;
-      line-height: 1.1;
-      text-shadow: 0 1px 8px rgba(0,0,0,0.5);
-    }
-    .cover-a .cover-wordmark .cw-hero,
-    .cover-a .cover-wordmark .cw-story { color: #29b5a8; }
-    .cover-a .cover-wordmark .cw-kid   { color: #1ba8e0; }
     .cover-a .cover-logo-below {
-      height: 9mm;
+      height: 12mm;
       width: auto;
+      display: block;
       object-fit: contain;
-      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
     }
 
     /* =========================================================
@@ -214,16 +203,12 @@
       position: relative;
     }
 
-    /* Orta ayırıcı çizgi */
-    .page-spread .spread-container::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%; width: 0; height: 100%;
-      border-left: 1px dashed rgba(232, 213, 192, 0.5);
-      z-index: 10;
-    }
+    /* Orta ayırıcı çizgi kaldırıldı */
+    .page-spread .spread-container::after { display: none; }
 
     .half-page {
+      flex: 0 0 50%;
+      min-width: 0;
       width: 50%;
       height: 100%;
       position: relative;
@@ -232,7 +217,7 @@
     /* Görsel yarısı */
     .half-image {
       overflow: hidden;
-      background: var(--bg-cream);
+      background: var(--bg-spread);
     }
     .half-image img,
     .half-image .img-placeholder {
@@ -241,6 +226,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
     }
     .half-image .img-placeholder {
       background: linear-gradient(160deg, #b8e4f0 0%, #d4f0d0 50%, #f0e0c0 100%);
@@ -251,14 +237,31 @@
     .half-image.img-right img { object-position: right center; }
     .half-image.img-left  img { object-position: left center; }
 
-    /* Metin yarısı */
+    /* Metin yarısı — üretimle aynı: SVG katmanı (#48 Yıldızlı Kıyı) */
     .half-text {
-      background: var(--bg-cream);
+      background-color: var(--bg-spread);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 10mm;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .text-page-bg-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .text-page-bg-layer svg,
+    .text-page-bg-layer img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
     }
 
     .text-content {
@@ -267,6 +270,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      z-index: 1;
     }
 
     .page-text {
@@ -301,24 +305,15 @@
     /* 4 Köşe deseni */
     .corner-pattern {
       position: absolute;
-      width: 40mm;
-      height: 40mm;
-      background: radial-gradient(circle at 30% 30%, rgba(41,181,168,0.12) 20%, transparent 70%),
-                  radial-gradient(circle at 70% 70%, rgba(27,168,224,0.10) 20%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+      display: none;
     }
-    .corner-tl { top: 0; left: 0; }
-    .corner-tr { top: 0; right: 0; transform: rotate(90deg); }
-    .corner-bl { bottom: 0; left: 0; transform: rotate(-90deg); }
-    .corner-br { bottom: 0; right: 0; transform: rotate(180deg); }
 
     /* =========================================================
        ARKA KAPAK — A5 Portrait
        ========================================================= */
 
     .back-cover {
-      background: var(--bg-cream);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -327,15 +322,8 @@
       overflow: hidden;
     }
     .back-cover .bc-corner {
-      position: absolute;
-      width: 55mm;
-      height: 55mm;
-      opacity: 0.25;
+      display: none;
     }
-    .back-cover .bc-corner-tl { top: 0; left: 0; background: radial-gradient(circle at 30% 30%, rgba(41,181,168,0.45) 30%, transparent 70%); }
-    .back-cover .bc-corner-tr { top: 0; right: 0; background: radial-gradient(circle at 70% 30%, rgba(27,168,224,0.45) 30%, transparent 70%); }
-    .back-cover .bc-corner-bl { bottom: 0; left: 0; background: radial-gradient(circle at 30% 70%, rgba(27,168,224,0.45) 30%, transparent 70%); }
-    .back-cover .bc-corner-br { bottom: 0; right: 0; background: radial-gradient(circle at 70% 70%, rgba(41,181,168,0.45) 30%, transparent 70%); }
 
     .back-cover .bc-main {
       flex: 1;
@@ -346,14 +334,14 @@
       gap: 4mm;
       z-index: 1;
     }
-    .back-cover .bc-logo-stack {
+    .back-cover .bc-brand-stack {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3mm;
     }
-    .back-cover .bc-logo-main { height: 18mm; width: auto; }
-    .back-cover .bc-wordmark { font-family: 'Fredoka', sans-serif; font-size: 22pt; font-weight: 700; line-height: 1; }
+    .back-cover .bc-logo-main { height: 56mm; width: auto; object-fit: contain; }
+    .back-cover .bc-wordmark { font-family: 'Fredoka', sans-serif; font-size: 44pt; font-weight: 700; line-height: 1; }
     .back-cover .bc-wordmark .bc-hero,
     .back-cover .bc-wordmark .bc-story { color: var(--brand-teal); }
     .back-cover .bc-wordmark .bc-kid   { color: var(--brand-blue); }
@@ -385,14 +373,7 @@
       color: #666;
       margin: 0 0 3mm;
     }
-    .back-cover .bc-footer-brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2.5mm;
-    }
-    .back-cover .bc-logo-footer { height: 8mm; width: auto; }
-    .back-cover .bc-footer-brand .bc-wordmark { font-size: 13pt; }
+    /* bc-footer-brand kaldırıldı */
 
     /* =========================================================
        @MEDIA PRINT — Tarayıcı Print Preview testi için
@@ -461,10 +442,7 @@
         <div class="cover-content">
           <div class="cover-title" id="coverTitle">Arya ve Gizemli Kitap</div>
           <div class="cover-branding">
-            <div class="cover-wordmark">
-              <span class="cw-hero">Hero</span><span class="cw-kid">Kid</span><span class="cw-story">Story</span>
-            </div>
-            <img src="/logo.png" alt="" class="cover-logo-below" />
+            <img src="/brand/logo.png" alt="" class="cover-logo-below" />
           </div>
         </div>
       </div>
@@ -491,10 +469,9 @@
           </div>
           <!-- Sağ: Metin -->
           <div class="half-page half-text">
-            <span class="corner-pattern corner-tl"></span>
-            <span class="corner-pattern corner-tr"></span>
-            <span class="corner-pattern corner-bl"></span>
-            <span class="corner-pattern corner-br"></span>
+            <div class="text-page-bg-layer" aria-hidden="true">
+              <img src="/pdf-backgrounds/yildizli-kiyi-p48.svg" alt="" />
+            </div>
             <div class="text-content">
               <div class="page-text">
                 <p>Arya çalına bakıyor. Yeşil çalılar! Büyük çalılar!</p>
@@ -519,10 +496,9 @@
         <div class="spread-container">
           <!-- Sol: Metin -->
           <div class="half-page half-text">
-            <span class="corner-pattern corner-tl"></span>
-            <span class="corner-pattern corner-tr"></span>
-            <span class="corner-pattern corner-bl"></span>
-            <span class="corner-pattern corner-br"></span>
+            <div class="text-page-bg-layer" aria-hidden="true">
+              <img src="/pdf-backgrounds/yildizli-kiyi-p48.svg" alt="" />
+            </div>
             <div class="text-content">
               <div class="page-text">
                 <p>Sabah oldu. Güneş doğdu parıl parıl.</p>
@@ -564,10 +540,9 @@
             </div>
           </div>
           <div class="half-page half-text">
-            <span class="corner-pattern corner-tl"></span>
-            <span class="corner-pattern corner-tr"></span>
-            <span class="corner-pattern corner-bl"></span>
-            <span class="corner-pattern corner-br"></span>
+            <div class="text-page-bg-layer" aria-hidden="true">
+              <img src="/pdf-backgrounds/yildizli-kiyi-p48.svg" alt="" />
+            </div>
             <div class="text-content">
               <div class="page-text">
                 <p>Akşam oldu. Ateş yaktılar. Kıvılcımlar havaya uçtu.</p>
@@ -594,8 +569,8 @@
         <span class="bc-corner bc-corner-bl"></span>
         <span class="bc-corner bc-corner-br"></span>
         <div class="bc-main">
-          <div class="bc-logo-stack">
-            <img src="/logo.png" alt="" class="bc-logo-main" />
+          <div class="bc-brand-stack">
+            <img src="/brand/logo.png" alt="" class="bc-logo-main" />
             <span class="bc-wordmark"><span class="bc-hero">Hero</span><span class="bc-kid">Kid</span><span class="bc-story">Story</span></span>
           </div>
           <div class="bc-divider"></div>
@@ -603,10 +578,6 @@
         </div>
         <footer class="bc-footer">
           <p class="bc-created-line">herokidstory.com ile oluşturuldu</p>
-          <div class="bc-footer-brand">
-            <img src="/logo.png" alt="" class="bc-logo-footer" />
-            <span class="bc-wordmark"><span class="bc-hero">Hero</span><span class="bc-kid">Kid</span><span class="bc-story">Story</span></span>
-          </div>
         </footer>
       </div>
     </div>

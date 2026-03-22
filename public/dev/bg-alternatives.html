@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arka Plan Desen Alternatifleri — HeroKidStory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       TEMEL & DEĞIŞKENLER
+       ============================================================ */
+    :root {
+      --teal: #29b5a8;
+      --blue: #1ba8e0;
+      --cream: #fef9f3;
+      --paper-white: #ffffff;
+      --dark: #1a1a1a;
+      --card-w: 210px;
+      --card-h: 297px;
+      --modal-w: 448px;
+      --modal-h: 634px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: #18182a;
+      color: #fff;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+    .header {
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      border-bottom: 1px solid rgba(41,181,168,0.25);
+      padding: 28px 40px 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .header-left h1 {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .header-left h1 .teal { color: var(--teal); }
+    .header-left h1 .blue { color: var(--blue); }
+    .header-left p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+      max-width: 480px;
+    }
+    .header-right {
+      background: rgba(41,181,168,0.12);
+      border: 1px solid rgba(41,181,168,0.3);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      min-width: 220px;
+    }
+    .header-right strong { color: var(--teal); }
+
+    /* Seçim bandı */
+    .selection-bar {
+      background: rgba(41,181,168,0.1);
+      border-bottom: 1px solid rgba(41,181,168,0.15);
+      padding: 10px 40px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .selection-bar #selectionText { color: var(--teal); font-weight: 600; }
+
+    /* ============================================================
+       GRID
+       ============================================================ */
+    .grid-container {
+      padding: 36px 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 32px 24px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       KART
+       ============================================================ */
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+    }
+    .card.selected .page-preview {
+      outline: 3px solid var(--teal);
+      outline-offset: 3px;
+    }
+    .card.selected .card-number { color: var(--teal); }
+
+    .preview-wrap {
+      position: relative;
+      width: var(--card-w);
+      height: var(--card-h);
+      flex-shrink: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.55);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .card:hover .preview-wrap {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.7);
+    }
+
+    /* ============================================================
+       SAYFA ÖNİZLEME (ortak)
+       ============================================================ */
+    .page-preview {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Alegreya', serif;
+    }
+    .page-preview svg.bg-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .preview-text {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 22px;
+      text-align: center;
+      color: #1a1a1a;
+    }
+    .preview-text p {
+      font-size: 9.5px;
+      line-height: 1.75;
+      margin-bottom: 6px;
+      max-width: 30ch;
+    }
+    .preview-text p:last-of-type { margin-bottom: 0; }
+    .preview-pagenum {
+      position: absolute;
+      bottom: 6px;
+      right: 10px;
+      font-size: 7px;
+      color: #aaa;
+      z-index: 2;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    /* Modal önizleme için büyük metin */
+    .modal-page-preview .preview-text p { font-size: 14.5px; }
+    .modal-page-preview .preview-pagenum { font-size: 10px; bottom: 10px; right: 16px; }
+
+    /* ============================================================
+       KART ALT BİLGİ
+       ============================================================ */
+    .card-info {
+      width: var(--card-w);
+      padding: 10px 4px 0;
+    }
+    .card-number {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      font-family: monospace;
+      margin-bottom: 1px;
+    }
+    .card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 3px;
+      line-height: 1.2;
+    }
+    .card-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .card-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: monospace;
+      margin-bottom: 8px;
+    }
+    .tag-subtle    { background: rgba(41,181,168,0.15); color: var(--teal); }
+    .tag-medium    { background: rgba(27,168,224,0.15); color: var(--blue); }
+    .tag-bold      { background: rgba(255,105,105,0.15); color: #ff7070; }
+    .tag-vintage   { background: rgba(180,140,80,0.2); color: #c9a060; }
+    .tag-geometric { background: rgba(180,80,200,0.15); color: #c080e0; }
+    .tag-current   { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+    .tag-ink       { background: rgba(200,230,255,0.12); color: #9dd4e8; }
+    .tag-ai        { background: rgba(160,140,255,0.14); color: #c4b5fd; }
+    .tag-shore     { background: rgba(255,200,175,0.18); color: #d4a088; }
+
+    .select-btn {
+      width: 100%;
+      padding: 6px 0;
+      background: transparent;
+      border: 1px solid rgba(41,181,168,0.35);
+      border-radius: 6px;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .select-btn:hover, .card.selected .select-btn {
+      background: rgba(41,181,168,0.18);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* ============================================================
+       MODAL
+       ============================================================ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .modal-preview-wrap {
+      width: var(--modal-w);
+      height: var(--modal-h);
+      flex-shrink: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+    .modal-page-preview {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Alegreya', serif;
+    }
+    .modal-page-preview svg.bg-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .modal-info {
+      width: 240px;
+      flex-shrink: 0;
+      padding-top: 8px;
+    }
+    .modal-info .modal-num { font-size: 12px; color: rgba(255,255,255,0.35); font-family: monospace; margin-bottom: 4px; }
+    .modal-info h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .modal-info p { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 20px; }
+    .modal-select-btn {
+      width: 100%;
+      padding: 11px 0;
+      background: var(--teal);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .modal-select-btn:hover { background: #23a095; }
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.2); }
+    .modal-overlay { position: fixed; }
+
+    /* ============================================================
+       1 — MEVCUT TASARIM
+       CSS: sadece background rengi, ikonlar SVG ile
+       ============================================================ */
+    .p1 { background: var(--cream); }
+
+    /* ============================================================
+       2 — İNCE NOKTA SİSİ (Ghost Dot Grid)
+       Çok hafif, tüm sayfada ızgara nokta dokusu
+       ============================================================ */
+    .p2 {
+      background: var(--cream);
+      background-image:
+        radial-gradient(circle, rgba(41,181,168,0.22) 1.2px, transparent 1.2px),
+        radial-gradient(circle, rgba(27,168,224,0.16) 1px, transparent 1px);
+      background-size: 16px 16px, 16px 16px;
+      background-position: 0 0, 8px 8px;
+    }
+
+    /* ============================================================
+       3 — SULUBOYA KÖŞE AKIŞI (Watercolor Corner Wash)
+       Köşelerden merkeze doğru akan renkli yıkama
+       ============================================================ */
+    .p3 {
+      background: var(--cream);
+      background-image:
+        radial-gradient(ellipse 65% 52% at 0% 0%, rgba(41,181,168,0.32) 0%, transparent 100%),
+        radial-gradient(ellipse 55% 62% at 100% 0%, rgba(27,168,224,0.28) 0%, transparent 100%),
+        radial-gradient(ellipse 65% 52% at 0% 100%, rgba(27,168,224,0.26) 0%, transparent 100%),
+        radial-gradient(ellipse 55% 62% at 100% 100%, rgba(41,181,168,0.30) 0%, transparent 100%);
+    }
+
+    /* ============================================================
+       4 — BOTANİK SARMAŞIK (Botanical Vines)
+       Köşelerden çıkan ince yaprak-sarmaşık SVG
+       ============================================================ */
+    .p4 { background: var(--cream); }
+
+    /* ============================================================
+       5 — ELİMAS KAFES (Diamond Grid)
+       Tüm sayfada çok ince elmas şekli tekrarlayan desen
+       ============================================================ */
+    .p5 {
+      background: var(--cream);
+      background-image:
+        linear-gradient(45deg, rgba(41,181,168,0.11) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(41,181,168,0.11) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(41,181,168,0.11) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(41,181,168,0.11) 75%);
+      background-size: 22px 22px;
+      background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+    }
+
+    /* ============================================================
+       6 — PASTEL BALONLAR (Soft Bubbles)
+       Sayfa etrafında dağılmış yumuşak renkli daireler
+       ============================================================ */
+    .p6 {
+      background: var(--cream);
+      background-image:
+        radial-gradient(circle 35px at  6% 10%, rgba(255,182,193,0.30) 0%, transparent 100%),
+        radial-gradient(circle 50px at 14% 38%, rgba(41,181,168,0.22) 0%, transparent 100%),
+        radial-gradient(circle 28px at  5% 68%, rgba(27,168,224,0.24) 0%, transparent 100%),
+        radial-gradient(circle 42px at 12% 90%, rgba(255,215,0,0.22) 0%, transparent 100%),
+        radial-gradient(circle 26px at 88% 8%,  rgba(41,181,168,0.26) 0%, transparent 100%),
+        radial-gradient(circle 46px at 93% 35%, rgba(255,182,193,0.26) 0%, transparent 100%),
+        radial-gradient(circle 32px at 85% 58%, rgba(27,168,224,0.22) 0%, transparent 100%),
+        radial-gradient(circle 52px at 92% 85%, rgba(255,215,0,0.22) 0%, transparent 100%),
+        radial-gradient(circle 22px at 50%  4%, rgba(255,182,193,0.18) 0%, transparent 100%),
+        radial-gradient(circle 26px at 48% 97%, rgba(41,181,168,0.18) 0%, transparent 100%);
+    }
+
+    /* ============================================================
+       7 — VİNTAGE KAĞIT (Aged Paper)
+       Sararmış eski kağıt dokusu, sepia kenarlar
+       ============================================================ */
+    .p7 {
+      background:
+        radial-gradient(ellipse 72% 52% at 0%   0%,   rgba(110,70,20,0.22) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 70% at 100%  0%,   rgba(130,80,25,0.18) 0%, transparent 100%),
+        radial-gradient(ellipse 72% 52% at 0%   100%,  rgba(130,80,25,0.20) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 70% at 100% 100%,  rgba(110,70,20,0.22) 0%, transparent 100%),
+        radial-gradient(ellipse 100% 100% at 50% 50%,  rgba(100,60,15,0.08) 0%, transparent 100%),
+        #f3e6c4;
+    }
+
+    /* ============================================================
+       8 — BÜYÜK AGRESİF (Bold & Loud)
+       Yüksek opacity, büyük semboller — tüm sayfa kaplanır
+       ============================================================ */
+    .p8 { background: var(--cream); }
+
+    /* ============================================================
+       9 — DALGA KENARLIK (Wave/Scallop Frame)
+       İç çerçeve olarak süslü dalga deseni
+       ============================================================ */
+    .p9 { background: var(--cream); }
+
+    /* ============================================================
+       10 — ART DECO KÖŞE (Geometric Corners)
+       Temiz geometrik köşe süsleri, minimal
+       ============================================================ */
+    .p10 { background: var(--cream); }
+
+    /* ============================================================
+       11–20 — BEYAZ KAĞIT + ÜSTÜNE DESEN (düşük mürekkep)
+       Zemin her zaman #ffffff; renk sadece çok düşük opaklıkta.
+       ============================================================ */
+
+    /* 11 — İpek nokta (beyaz üzerine neredeyse görünmez grid) */
+    .p11 {
+      background: var(--paper-white);
+      background-image:
+        radial-gradient(circle, rgba(41,181,168,0.09) 0.9px, transparent 0.9px);
+      background-size: 14px 14px;
+    }
+
+    /* 12 — Köşe bulutları (referans tarzı yumuşak lekeler, sadece kenar) */
+    .p12 {
+      background:
+        radial-gradient(ellipse 70% 55% at 0% 0%, rgba(255,200,180,0.14) 0%, transparent 72%),
+        radial-gradient(ellipse 65% 50% at 100% 0%, rgba(255,220,230,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 70% 55% at 0% 100%, rgba(200,230,240,0.12) 0%, transparent 72%),
+        radial-gradient(ellipse 65% 50% at 100% 100%, rgba(41,181,168,0.08) 0%, transparent 70%),
+        var(--paper-white);
+    }
+
+    /* 13 — Üst/alt saçak (ince renk şeridi, merkez beyaz kalır) */
+    .p13 {
+      background:
+        linear-gradient(180deg, rgba(41,181,168,0.06) 0%, transparent 28%),
+        linear-gradient(0deg, rgba(27,168,224,0.06) 0%, transparent 26%),
+        var(--paper-white);
+    }
+
+    /* 14 — Bal peteği hayalet (çok hafif çizgiler) */
+    .p14 {
+      background:
+        repeating-linear-gradient(
+          60deg,
+          transparent,
+          transparent 11px,
+          rgba(41,181,168,0.045) 11px,
+          rgba(41,181,168,0.045) 12px
+        ),
+        repeating-linear-gradient(
+          -60deg,
+          transparent,
+          transparent 11px,
+          rgba(27,168,224,0.04) 11px,
+          rgba(27,168,224,0.04) 12px
+        ),
+        var(--paper-white);
+    }
+
+    /* 15 — Yatay nefes çizgileri */
+    .p15 {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 18px,
+          rgba(41,181,168,0.035) 18px,
+          rgba(41,181,168,0.035) 19px
+        ),
+        var(--paper-white);
+    }
+
+    /* 16–20: SVG ile tam kontrol — sınıf sadece beyaz */
+    .p16, .p17, .p18, .p19, .p20 {
+      background: var(--paper-white);
+    }
+
+    /* 21–30: el çizimi + alt dalga birlikte (saf beyaz zemin) */
+    .p21, .p22, .p23, .p24, .p25, .p26, .p27, .p28, .p29, .p30 {
+      background: var(--paper-white);
+    }
+
+    /* 31–40: yumuşak “AI / dijital” hissi (düşük mürekkep, beyaz zemin) */
+    .p31, .p32, .p33, .p34, .p35, .p36, .p37, .p38, .p39, .p40 {
+      background: var(--paper-white);
+    }
+
+    /* 41–50: “Sabah Kıyısı” (p21) tarzı türevler — alt dalga + üst fısıltı */
+    .p41, .p42, .p43, .p44, .p45, .p46, .p47, .p48, .p49, .p50 {
+      background: var(--paper-white);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 900px) {
+      .header { padding: 20px; }
+      .grid-container { padding: 24px 20px; }
+      .modal-box { flex-direction: column; align-items: center; }
+      .modal-info { width: 100%; max-width: var(--modal-w); }
+    }
+    @media (max-width: 500px) {
+      :root { --card-w: 160px; --card-h: 226px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <h1><span class="teal">Hero</span><span class="blue">Kid</span><span class="teal">Story</span> — Arka Plan Desen Alternatifleri</h1>
+    <p>Metin sayfaları için <strong>50</strong> arka plan önerisi. <strong>#41–#50</strong> <strong>Sabah Kıyısı</strong> (#21) tarzı türevler (renk / dalga / üst süs). <strong>#31–#40</strong> AI / dijital yumuşak. <strong>#21–#30</strong> el + dalga. <strong>#11–#20</strong> beyaz + hafif. <strong>#1–#10</strong> krem / klasik.</p>
+  </div>
+  <div class="header-right">
+    <strong>Sayfa boyutu:</strong> A5 Portrait (148.5 × 210 mm)<br>
+    <strong>Kullanım:</strong> Metin yarı-sayfaları<br>
+    <strong>Arka plan:</strong> Sadece görsel önizleme<br>
+    <strong>#11–50:</strong> Zemin #fff · <strong>#41–50</strong> kıyı türevi · <strong>#31–40</strong> AI · <strong>#21–30</strong> el+dalga<br>
+    <strong>Not:</strong> Ekranda krem tonlar biraz daha sıcak görünebilir
+  </div>
+</header>
+<div class="selection-bar">
+  <span>Seçiminiz:</span>
+  <span id="selectionText">Henüz seçim yapılmadı</span>
+</div>
+
+<!-- GRID -->
+<div class="grid-container">
+  <div class="grid" id="patternGrid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div style="position:relative;">
+    <button class="modal-close-btn" onclick="closeModalBtn()">✕</button>
+    <div class="modal-box" id="modalBox">
+      <div class="modal-preview-wrap">
+        <div class="modal-page-preview" id="modalPagePreview"></div>
+      </div>
+      <div class="modal-info">
+        <div class="modal-num" id="modalNum"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDesc"></p>
+        <button class="modal-select-btn" onclick="selectCurrent()">✓ Bu deseni seç</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   VERİ: 50 Desen (#41–50 Sabah Kıyısı türevleri)
+   ============================================================ */
+const patterns = [
+  {
+    id: 1,
+    name: "Mevcut Tasarım",
+    desc: "Mevcut sistemdeki gibi dört köşede küçük semboller: yıldız, kalp, bulut, kelebek. Hafif, neşeli, tanıdık bir görünüm.",
+    tag: "current", tagLabel: "mevcut",
+    bgClass: "p1",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <!-- SOL ÜST -->
+        <g opacity="0.35">
+          <path d="M5,3 L6.5,7 L11,7 L7.5,9.5 L9,13.5 L5,11 L1,13.5 L2.5,9.5 L-1,7 L3.5,7 Z" fill="#FFD700"/>
+          <path d="M13,2 C13,0 11,-.5 9.5,1 C8,-0.5 6,0 6,2 C6,3.5 8,5.5 9.5,7 C11,5.5 13,3.5 13,2 Z" fill="#FF69B4" transform="translate(1,3)"/>
+          <ellipse cx="3" cy="14" rx="5" ry="3" fill="#87CEEB"/>
+          <ellipse cx="1" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <ellipse cx="5" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <circle cx="16" cy="5" r="1.5" fill="#FFD700"/>
+          <circle cx="8" cy="17" r="1" fill="#FF69B4"/>
+        </g>
+        <!-- SAĞ ÜST -->
+        <g opacity="0.35" transform="translate(100,0) scale(-1,1)">
+          <path d="M5,3 L6.5,7 L11,7 L7.5,9.5 L9,13.5 L5,11 L1,13.5 L2.5,9.5 L-1,7 L3.5,7 Z" fill="#FFD700"/>
+          <path d="M13,2 C13,0 11,-.5 9.5,1 C8,-0.5 6,0 6,2 C6,3.5 8,5.5 9.5,7 C11,5.5 13,3.5 13,2 Z" fill="#FF69B4" transform="translate(1,3)"/>
+          <ellipse cx="3" cy="14" rx="5" ry="3" fill="#87CEEB"/>
+          <ellipse cx="1" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <ellipse cx="5" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <circle cx="16" cy="5" r="1.5" fill="#FFD700"/>
+          <circle cx="8" cy="17" r="1" fill="#FF69B4"/>
+        </g>
+        <!-- SOL ALT -->
+        <g opacity="0.35" transform="translate(0,141.4) scale(1,-1)">
+          <path d="M5,3 L6.5,7 L11,7 L7.5,9.5 L9,13.5 L5,11 L1,13.5 L2.5,9.5 L-1,7 L3.5,7 Z" fill="#FFD700"/>
+          <path d="M13,2 C13,0 11,-.5 9.5,1 C8,-0.5 6,0 6,2 C6,3.5 8,5.5 9.5,7 C11,5.5 13,3.5 13,2 Z" fill="#FF69B4" transform="translate(1,3)"/>
+          <ellipse cx="3" cy="14" rx="5" ry="3" fill="#87CEEB"/>
+          <ellipse cx="1" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <ellipse cx="5" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <circle cx="16" cy="5" r="1.5" fill="#FFD700"/>
+        </g>
+        <!-- SAĞ ALT -->
+        <g opacity="0.35" transform="translate(100,141.4) scale(-1,-1)">
+          <path d="M5,3 L6.5,7 L11,7 L7.5,9.5 L9,13.5 L5,11 L1,13.5 L2.5,9.5 L-1,7 L3.5,7 Z" fill="#FFD700"/>
+          <path d="M13,2 C13,0 11,-.5 9.5,1 C8,-0.5 6,0 6,2 C6,3.5 8,5.5 9.5,7 C11,5.5 13,3.5 13,2 Z" fill="#FF69B4" transform="translate(1,3)"/>
+          <ellipse cx="3" cy="14" rx="5" ry="3" fill="#87CEEB"/>
+          <ellipse cx="1" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+          <ellipse cx="5" cy="13" rx="3.5" ry="2.5" fill="#87CEEB"/>
+        </g>
+      </svg>
+    `
+  },
+
+  {
+    id: 2,
+    name: "İnce Nokta Sisi",
+    desc: "Tüm sayfaya yayılmış çok hafif nokta ızgarası. Düz beyazdan daha ilgi çekici ama çok göze batmayan, minimal seçenek.",
+    tag: "subtle", tagLabel: "minimal",
+    bgClass: "p2",
+    svgContent: ""
+  },
+
+  {
+    id: 3,
+    name: "Suluboya Köşe Akışı",
+    desc: "Dört köşeden merkeze doğru akan yumuşak teal ve mavi renk yıkama etkisi. Suluboya kitap illüstrasyonlarını anımsatır.",
+    tag: "medium", tagLabel: "orta yoğunluk",
+    bgClass: "p3",
+    svgContent: ""
+  },
+
+  {
+    id: 4,
+    name: "Botanik Sarmaşık",
+    desc: "Köşelerden büyüyen ince çizgi yaprak ve sarmaşık deseni. Doğayı ve macerayı simgeleyen organik bir his verir.",
+    tag: "medium", tagLabel: "orta yoğunluk",
+    bgClass: "p4",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <!-- SOL ÜST köşe sarmaşık -->
+        <g opacity="0.42" fill="none">
+          <path d="M2,18 C5,13 10,10 14,6" stroke="#5a9e6a" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M2,24 C8,18 14,15 18,10" stroke="#5a9e6a" stroke-width="0.7" stroke-linecap="round"/>
+          <ellipse cx="8"  cy="14" rx="4.5" ry="2"   fill="#6ab87a" transform="rotate(-40 8 14)"/>
+          <ellipse cx="13" cy="8"  rx="4"   ry="1.8" fill="#6ab87a" transform="rotate(-60 13 8)"/>
+          <ellipse cx="5"  cy="20" rx="3.5" ry="1.5" fill="#5a9e6a" transform="rotate(-25 5 20)"/>
+          <ellipse cx="17" cy="14" rx="3"   ry="1.4" fill="#7dcf8d" transform="rotate(-50 17 14)"/>
+          <circle cx="14" cy="6"  r="1.8" fill="#ffb5c8" opacity="0.7"/>
+          <circle cx="13" cy="5"  r="0.8" fill="#ffd700" opacity="0.6"/>
+          <circle cx="18" cy="10" r="1.5" fill="#ffb5c8" opacity="0.6"/>
+        </g>
+        <!-- SAĞ ÜST köşe -->
+        <g opacity="0.42" fill="none" transform="translate(100,0) scale(-1,1)">
+          <path d="M2,18 C5,13 10,10 14,6" stroke="#5a9e6a" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M2,24 C8,18 14,15 18,10" stroke="#5a9e6a" stroke-width="0.7" stroke-linecap="round"/>
+          <ellipse cx="8"  cy="14" rx="4.5" ry="2"   fill="#6ab87a" transform="rotate(-40 8 14)"/>
+          <ellipse cx="13" cy="8"  rx="4"   ry="1.8" fill="#6ab87a" transform="rotate(-60 13 8)"/>
+          <ellipse cx="5"  cy="20" rx="3.5" ry="1.5" fill="#5a9e6a" transform="rotate(-25 5 20)"/>
+          <ellipse cx="17" cy="14" rx="3"   ry="1.4" fill="#7dcf8d" transform="rotate(-50 17 14)"/>
+          <circle cx="14" cy="6"  r="1.8" fill="#ffb5c8" opacity="0.7"/>
+          <circle cx="18" cy="10" r="1.5" fill="#ffb5c8" opacity="0.6"/>
+        </g>
+        <!-- SOL ALT köşe -->
+        <g opacity="0.42" fill="none" transform="translate(0,141.4) scale(1,-1)">
+          <path d="M2,18 C5,13 10,10 14,6" stroke="#5a9e6a" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M2,24 C8,18 14,15 18,10" stroke="#5a9e6a" stroke-width="0.7" stroke-linecap="round"/>
+          <ellipse cx="8"  cy="14" rx="4.5" ry="2"   fill="#6ab87a" transform="rotate(-40 8 14)"/>
+          <ellipse cx="13" cy="8"  rx="4"   ry="1.8" fill="#6ab87a" transform="rotate(-60 13 8)"/>
+          <ellipse cx="5"  cy="20" rx="3.5" ry="1.5" fill="#5a9e6a" transform="rotate(-25 5 20)"/>
+          <circle cx="14" cy="6"  r="1.8" fill="#ffb5c8" opacity="0.7"/>
+        </g>
+        <!-- SAĞ ALT köşe -->
+        <g opacity="0.42" fill="none" transform="translate(100,141.4) scale(-1,-1)">
+          <path d="M2,18 C5,13 10,10 14,6" stroke="#5a9e6a" stroke-width="0.8" stroke-linecap="round"/>
+          <path d="M2,24 C8,18 14,15 18,10" stroke="#5a9e6a" stroke-width="0.7" stroke-linecap="round"/>
+          <ellipse cx="8"  cy="14" rx="4.5" ry="2"   fill="#6ab87a" transform="rotate(-40 8 14)"/>
+          <ellipse cx="13" cy="8"  rx="4"   ry="1.8" fill="#6ab87a" transform="rotate(-60 13 8)"/>
+          <circle cx="14" cy="6"  r="1.8" fill="#ffb5c8" opacity="0.7"/>
+        </g>
+      </svg>
+    `
+  },
+
+  {
+    id: 5,
+    name: "Elmas Kafes",
+    desc: "Tüm sayfaya dağılan çok ince elmas şekli tekrarlayan desen. Baskıda çok hafif görünür, kağıda doku hissi verir.",
+    tag: "subtle", tagLabel: "minimal",
+    bgClass: "p5",
+    svgContent: ""
+  },
+
+  {
+    id: 6,
+    name: "Pastel Baloncuklar",
+    desc: "Sayfa kenarlarına yerleştirilmiş büyük yumuşak renk daireleri. Rüya gibi, hafif, çocuksu bir his. Merkez temiz kalır.",
+    tag: "medium", tagLabel: "orta yoğunluk",
+    bgClass: "p6",
+    svgContent: ""
+  },
+
+  {
+    id: 7,
+    name: "Vintage Kağıt",
+    desc: "Eski antika kitap sayfası hissi — sıcak sarı zemin ve köşelerde sepia lekelenme efekti. Nostaljik, sıcak atmosfer.",
+    tag: "vintage", tagLabel: "vintage",
+    bgClass: "p7",
+    svgContent: ""
+  },
+
+  {
+    id: 8,
+    name: "Büyük Agresif (Cesur)",
+    desc: "Yüksek opaklıkta büyük renkli semboller tüm sayfaya yayılmış. En dikkat çekici, en 'çocuk kitabı' seçenek — cesur deney.",
+    tag: "bold", tagLabel: "agresif / cesur",
+    bgClass: "p8",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <!-- Büyük yıldızlar -->
+        <path d="M10,10 L12,17 L20,17 L14,21 L16,28 L10,24 L4,28 L6,21 L0,17 L8,17 Z"   fill="#FFD700" opacity="0.30"/>
+        <path d="M82,15 L83.5,20 L89,20 L85,23 L86.5,28 L82,25 L77.5,28 L79,23 L75,20 L80.5,20 Z" fill="#FF69B4" opacity="0.28"/>
+        <path d="M5,115  L7,121 L14,121 L9,125 L11,131 L5,128 L-1,131 L1,125 L-4,121 L3,121 Z"  fill="#29b5a8" opacity="0.28"/>
+        <path d="M85,120 L86.5,125 L92,125 L88,128 L89.5,133 L85,130 L80.5,133 L82,128 L78,125 L83.5,125 Z" fill="#1ba8e0" opacity="0.28"/>
+        <!-- Kalpler -->
+        <path d="M44,6 C44,3 41,2 39.5,4 C38,2 35,3 35,6 C35,8 38,11 39.5,13 C41,11 44,8 44,6 Z" fill="#FF69B4" opacity="0.30"/>
+        <path d="M64,130 C64,127 61,126 59.5,128 C58,126 55,127 55,130 C55,132 58,135 59.5,137 C61,135 64,132 64,130 Z" fill="#FF69B4" opacity="0.28"/>
+        <!-- Orta etrafında dağılmış noktalar -->
+        <circle cx="25"  cy="30"  r="3.5" fill="#FFD700"  opacity="0.25"/>
+        <circle cx="72"  cy="25"  r="3"   fill="#87CEEB"  opacity="0.28"/>
+        <circle cx="18"  cy="60"  r="2.5" fill="#FF69B4"  opacity="0.25"/>
+        <circle cx="80"  cy="65"  r="3"   fill="#FFD700"  opacity="0.22"/>
+        <circle cx="22"  cy="95"  r="3.5" fill="#29b5a8"  opacity="0.25"/>
+        <circle cx="76"  cy="98"  r="2.5" fill="#1ba8e0"  opacity="0.25"/>
+        <circle cx="35"  cy="122" r="3"   fill="#FFD700"  opacity="0.22"/>
+        <circle cx="62"  cy="18"  r="2.5" fill="#87CEEB"  opacity="0.22"/>
+        <!-- Çiçekler -->
+        <g transform="translate(88,48)" opacity="0.28">
+          <circle cx="0" cy="-5" r="3.5" fill="#FFB6C1"/>
+          <circle cx="5" cy="0"  r="3.5" fill="#FFB6C1"/>
+          <circle cx="0" cy="5"  r="3.5" fill="#FFB6C1"/>
+          <circle cx="-5" cy="0" r="3.5" fill="#FFB6C1"/>
+          <circle cx="0" cy="0"  r="2"   fill="#FFD700"/>
+        </g>
+        <g transform="translate(8,82)" opacity="0.26">
+          <circle cx="0" cy="-4.5" r="3" fill="#FFB6C1"/>
+          <circle cx="4.5" cy="0"  r="3" fill="#FFB6C1"/>
+          <circle cx="0" cy="4.5"  r="3" fill="#FFB6C1"/>
+          <circle cx="-4.5" cy="0" r="3" fill="#FFB6C1"/>
+          <circle cx="0" cy="0"    r="1.8" fill="#FFD700"/>
+        </g>
+        <!-- Bulutlar -->
+        <g opacity="0.22">
+          <ellipse cx="50" cy="8"   rx="10" ry="5" fill="#87CEEB"/>
+          <ellipse cx="44" cy="7"   rx="6"  ry="4" fill="#87CEEB"/>
+          <ellipse cx="56" cy="7"   rx="6"  ry="4" fill="#87CEEB"/>
+        </g>
+        <g opacity="0.20">
+          <ellipse cx="50" cy="134" rx="9"  ry="4.5" fill="#87CEEB"/>
+          <ellipse cx="44" cy="133" rx="5.5" ry="3.5" fill="#87CEEB"/>
+          <ellipse cx="56" cy="133" rx="5.5" ry="3.5" fill="#87CEEB"/>
+        </g>
+      </svg>
+    `
+  },
+
+  {
+    id: 9,
+    name: "Dalga Kenarlık",
+    desc: "Sayfanın iç kenarını çerçeveleyen ince dalga/kıvrım çizgisi. Zarif, geleneksel bir kitap hissi. Köşelerde küçük süsler.",
+    tag: "geometric", tagLabel: "geometrik",
+    bgClass: "p9",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <marker id="dot" viewBox="0 0 4 4" refX="2" refY="2" markerWidth="3" markerHeight="3">
+            <circle cx="2" cy="2" r="1.5" fill="#29b5a8" opacity="0.5"/>
+          </marker>
+        </defs>
+        <!-- Üst dalga kenarlık -->
+        <path d="M6,5 Q8.5,3 11,5 Q13.5,7 16,5 Q18.5,3 21,5 Q23.5,7 26,5 Q28.5,3 31,5 Q33.5,7 36,5 Q38.5,3 41,5 Q43.5,7 46,5 Q48.5,3 51,5 Q53.5,7 56,5 Q58.5,3 61,5 Q63.5,7 66,5 Q68.5,3 71,5 Q73.5,7 76,5 Q78.5,3 81,5 Q83.5,7 86,5 Q88.5,3 91,5 Q93.5,7 94,5"
+              fill="none" stroke="#29b5a8" stroke-width="0.75" opacity="0.45"/>
+        <!-- Alt dalga kenarlık -->
+        <path d="M6,136.4 Q8.5,134.4 11,136.4 Q13.5,138.4 16,136.4 Q18.5,134.4 21,136.4 Q23.5,138.4 26,136.4 Q28.5,134.4 31,136.4 Q33.5,138.4 36,136.4 Q38.5,134.4 41,136.4 Q43.5,138.4 46,136.4 Q48.5,134.4 51,136.4 Q53.5,138.4 56,136.4 Q58.5,134.4 61,136.4 Q63.5,138.4 66,136.4 Q68.5,134.4 71,136.4 Q73.5,138.4 76,136.4 Q78.5,134.4 81,136.4 Q83.5,138.4 86,136.4 Q88.5,134.4 94,136.4"
+              fill="none" stroke="#29b5a8" stroke-width="0.75" opacity="0.45"/>
+        <!-- Sol dalga kenarlık -->
+        <path d="M5,7 Q3,9.5 5,12 Q7,14.5 5,17 Q3,19.5 5,22 Q7,24.5 5,27 Q3,29.5 5,32 Q7,34.5 5,37 Q3,39.5 5,42 Q7,44.5 5,47 Q3,49.5 5,52 Q7,54.5 5,57 Q3,59.5 5,62 Q7,64.5 5,67 Q3,69.5 5,72 Q7,74.5 5,77 Q3,79.5 5,82 Q7,84.5 5,87 Q3,89.5 5,92 Q7,94.5 5,97 Q3,99.5 5,102 Q7,104.5 5,107 Q3,109.5 5,112 Q7,114.5 5,117 Q3,119.5 5,122 Q7,124.5 5,127 Q3,129.5 5,132 Q7,134.4 5,135"
+              fill="none" stroke="#1ba8e0" stroke-width="0.75" opacity="0.40"/>
+        <!-- Sağ dalga kenarlık -->
+        <path d="M95,7 Q97,9.5 95,12 Q93,14.5 95,17 Q97,19.5 95,22 Q93,24.5 95,27 Q97,29.5 95,32 Q93,34.5 95,37 Q97,39.5 95,42 Q93,44.5 95,47 Q97,49.5 95,52 Q93,54.5 95,57 Q97,59.5 95,62 Q93,64.5 95,67 Q97,69.5 95,72 Q93,74.5 95,77 Q97,79.5 95,82 Q93,84.5 95,87 Q97,89.5 95,92 Q93,94.5 95,97 Q97,99.5 95,102 Q93,104.5 95,107 Q97,109.5 95,112 Q93,114.5 95,117 Q97,119.5 95,122 Q93,124.5 95,127 Q97,129.5 95,132 Q93,134.4 95,135"
+              fill="none" stroke="#1ba8e0" stroke-width="0.75" opacity="0.40"/>
+        <!-- Köşe süsleri -->
+        <circle cx="5"  cy="5"    r="2"   fill="#29b5a8" opacity="0.5"/>
+        <circle cx="95" cy="5"    r="2"   fill="#29b5a8" opacity="0.5"/>
+        <circle cx="5"  cy="136.4" r="2"  fill="#1ba8e0" opacity="0.5"/>
+        <circle cx="95" cy="136.4" r="2"  fill="#1ba8e0" opacity="0.5"/>
+        <circle cx="5"  cy="5"    r="4.5" fill="none" stroke="#29b5a8" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="95" cy="5"    r="4.5" fill="none" stroke="#29b5a8" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="5"  cy="136.4" r="4.5" fill="none" stroke="#1ba8e0" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="95" cy="136.4" r="4.5" fill="none" stroke="#1ba8e0" stroke-width="0.6" opacity="0.3"/>
+      </svg>
+    `
+  },
+
+  {
+    id: 10,
+    name: "Art Deco Köşe",
+    desc: "Temiz geometrik çizgilerden oluşan köşe süsleri — art deco stilinde. Modern ve şık. Çizgiler markanın teal rengiyle.",
+    tag: "geometric", tagLabel: "geometrik",
+    bgClass: "p10",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <!-- SOL ÜST art deco köşe -->
+        <g opacity="0.50" stroke="#29b5a8" fill="none">
+          <line x1="3" y1="18" x2="3" y2="3"   stroke-width="1.2"/>
+          <line x1="3" y1="3"  x2="18" y2="3"   stroke-width="1.2"/>
+          <line x1="6" y1="15" x2="6" y2="6"    stroke-width="0.7"/>
+          <line x1="6" y1="6"  x2="15" y2="6"   stroke-width="0.7"/>
+          <line x1="9" y1="12" x2="9" y2="9"    stroke-width="0.5"/>
+          <line x1="9" y1="9"  x2="12" y2="9"   stroke-width="0.5"/>
+          <circle cx="3" cy="3" r="2" fill="#29b5a8" stroke="none"/>
+          <circle cx="3" cy="3" r="4" stroke-width="0.5"/>
+          <circle cx="6" cy="6" r="1" fill="#29b5a8" stroke="none" opacity="0.7"/>
+        </g>
+        <!-- SAĞ ÜST -->
+        <g opacity="0.50" stroke="#29b5a8" fill="none">
+          <line x1="97" y1="18" x2="97" y2="3"  stroke-width="1.2"/>
+          <line x1="97" y1="3"  x2="82" y2="3"  stroke-width="1.2"/>
+          <line x1="94" y1="15" x2="94" y2="6"  stroke-width="0.7"/>
+          <line x1="94" y1="6"  x2="85" y2="6"  stroke-width="0.7"/>
+          <line x1="91" y1="12" x2="91" y2="9"  stroke-width="0.5"/>
+          <line x1="91" y1="9"  x2="88" y2="9"  stroke-width="0.5"/>
+          <circle cx="97" cy="3"  r="2" fill="#29b5a8" stroke="none"/>
+          <circle cx="97" cy="3"  r="4" stroke-width="0.5"/>
+          <circle cx="94" cy="6"  r="1" fill="#29b5a8" stroke="none" opacity="0.7"/>
+        </g>
+        <!-- SOL ALT -->
+        <g opacity="0.50" stroke="#1ba8e0" fill="none">
+          <line x1="3" y1="123.4" x2="3"  y2="138.4" stroke-width="1.2"/>
+          <line x1="3" y1="138.4" x2="18" y2="138.4" stroke-width="1.2"/>
+          <line x1="6" y1="126.4" x2="6"  y2="135.4" stroke-width="0.7"/>
+          <line x1="6" y1="135.4" x2="15" y2="135.4" stroke-width="0.7"/>
+          <line x1="9" y1="129.4" x2="9"  y2="132.4" stroke-width="0.5"/>
+          <line x1="9" y1="132.4" x2="12" y2="132.4" stroke-width="0.5"/>
+          <circle cx="3"  cy="138.4" r="2" fill="#1ba8e0" stroke="none"/>
+          <circle cx="3"  cy="138.4" r="4" stroke-width="0.5"/>
+          <circle cx="6"  cy="135.4" r="1" fill="#1ba8e0" stroke="none" opacity="0.7"/>
+        </g>
+        <!-- SAĞ ALT -->
+        <g opacity="0.50" stroke="#1ba8e0" fill="none">
+          <line x1="97" y1="123.4" x2="97" y2="138.4" stroke-width="1.2"/>
+          <line x1="97" y1="138.4" x2="82" y2="138.4" stroke-width="1.2"/>
+          <line x1="94" y1="126.4" x2="94" y2="135.4" stroke-width="0.7"/>
+          <line x1="94" y1="135.4" x2="85" y2="135.4" stroke-width="0.7"/>
+          <line x1="91" y1="129.4" x2="91" y2="132.4" stroke-width="0.5"/>
+          <line x1="91" y1="132.4" x2="88" y2="132.4" stroke-width="0.5"/>
+          <circle cx="97" cy="138.4" r="2" fill="#1ba8e0" stroke="none"/>
+          <circle cx="97" cy="138.4" r="4" stroke-width="0.5"/>
+          <circle cx="94" cy="135.4" r="1" fill="#1ba8e0" stroke="none" opacity="0.7"/>
+        </g>
+        <!-- Yatay ince dekoratif şeritler -->
+        <line x1="22" y1="3"   x2="78" y2="3"   stroke="#29b5a8" stroke-width="0.4" opacity="0.30"/>
+        <line x1="3"  y1="21"  x2="3"  y2="120.4" stroke="#29b5a8" stroke-width="0.4" opacity="0.20"/>
+        <line x1="97" y1="21"  x2="97" y2="120.4" stroke="#29b5a8" stroke-width="0.4" opacity="0.20"/>
+        <line x1="22" y1="138.4" x2="78" y2="138.4" stroke="#1ba8e0" stroke-width="0.4" opacity="0.30"/>
+      </svg>
+    `
+  },
+
+  /* ─── Beyaz kağıt + desen (11–20) ─── */
+  {
+    id: 11,
+    name: "İpek Nokta (beyaz)",
+    desc: "Saf beyaz zemin; üzerine çok düşük opaklıkta teal nokta ızgarası. Baskıda neredeyse sadece beyaz, çok az ton.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p11",
+    svgContent: ""
+  },
+  {
+    id: 12,
+    name: "Köşe Pastel Bulutları",
+    desc: "Beyaz zemin; sadece dört köşede yumuşak şeftali / pembe / mint lekeler (düşük opaklık). Ekteki örneğe yakın his, mürekkep dostu.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p12",
+    svgContent: ""
+  },
+  {
+    id: 13,
+    name: "Üst–Alt Nehir",
+    desc: "Beyaz; üst ve alt kenarda çok hafif teal/mavi sis. Metin alanı ortada tertemiz kalır.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p13",
+    svgContent: ""
+  },
+  {
+    id: 14,
+    name: "Hayalet Petek",
+    desc: "Beyaz üzerine neredeyse görünmez altıgen örgü. Doku verir, toner/mürekkep çok az.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p14",
+    svgContent: ""
+  },
+  {
+    id: 15,
+    name: "Nefes Çizgileri",
+    desc: "Beyaz; yatay çok ince teal çizgiler (not defteri hissi, çok hafif).",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p15",
+    svgContent: ""
+  },
+  {
+    id: 16,
+    name: "El Çizimi Fısıltılar",
+    desc: "Beyaz zemin; ince çizgi ile squiggle, yıldız, nokta — sadece stroke, düşük opaklık. Oyuncu, çocuk kitabı hissi.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p16",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.38">
+          <path d="M8,12 Q12,8 18,14 T28,10" stroke="#29b5a8" stroke-width="0.55"/>
+          <path d="M72,18 Q78,12 88,20" stroke="#f0a8b8" stroke-width="0.5"/>
+          <path d="M12,128 Q16,132 22,126 T32,130" stroke="#1ba8e0" stroke-width="0.5"/>
+          <path d="M78,122 Q82,128 90,124" stroke="#29b5a8" stroke-width="0.45"/>
+        </g>
+        <g opacity="0.35">
+          <path d="M8,95 L9,97.5 L12,97.5 L9.8,99.5 L10.8,103 L8,101.5 L5.2,103 L6.2,99.5 L4,97.5 L7,97.5 Z" fill="#29b5a8" stroke="none"/>
+          <path d="M87,107 L88,109 L91,109 L89,110.5 L90,113 L87,111.5 L84,113 L85,110.5 L83,109 L86,109 Z" fill="#f5c2a0" stroke="none"/>
+          <circle cx="14" cy="22" r="2.2" fill="none" stroke="#29b5a8" stroke-width="0.5" opacity="0.5"/>
+          <circle cx="86" cy="32" r="1.6" fill="#1ba8e0" opacity="0.25"/>
+          <circle cx="10" cy="118" r="1.4" fill="#f0a8b8" opacity="0.35"/>
+        </g>
+      </svg>
+    `
+  },
+  {
+    id: 17,
+    name: "Alt Dalga Kıyısı",
+    desc: "Beyaz; sayfanın alt üçte birinde yumuşak dalga ve organik şekiller — açık renk dolgu, düşük opaklık.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p17",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,118 Q25,108 50,115 T100,112 L100,141.4 L0,141.4 Z" fill="rgba(255,200,190,0.18)"/>
+        <path d="M0,124 Q30,118 55,125 T100,120 L100,141.4 L0,141.4 Z" fill="rgba(200,230,240,0.14)"/>
+        <path d="M0,128 Q28,125 52,130 T100,126" fill="none" stroke="rgba(41,181,168,0.35)" stroke-width="0.6"/>
+        <ellipse cx="18" cy="132" rx="8" ry="4" fill="rgba(255,182,193,0.12)"/>
+        <ellipse cx="78" cy="134" rx="10" ry="5" fill="rgba(41,181,168,0.08)"/>
+      </svg>
+    `
+  },
+  {
+    id: 18,
+    name: "Yıldız Yağmuru",
+    desc: "Beyaz; kenarlara dağılmış küçük içi boş yıldız ve çizgi — çocuksu, hafif.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p18",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="none" stroke="#29b5a8" stroke-width="0.45" opacity="0.4">
+          <path d="M10,8 L11.5,11.5 L15.5,11.5 L12.5,14 L14,18 L10,15.5 L6,18 L7.5,14 L4.5,11.5 L8.5,11.5 Z"/>
+          <path d="M88,14 L89,16.5 L92,16.5 L89.5,18.5 L90.5,22 L88,20.5 L85.5,22 L86.5,18.5 L84,16.5 L87,16.5 Z" transform="scale(0.75)" transform-origin="88 16"/>
+          <path d="M6,125 L7,128 L11,128 L8,130 L9.5,134 L6,132 L2.5,134 L4,130 L1,128 L5,128 Z"/>
+          <path d="M92,118 L93,120.5 L96,120.5 L93.8,122.5 L94.8,126 L92,124.5 L89.2,126 L90.2,122.5 L88,120.5 L91,120.5 Z"/>
+        </g>
+        <g stroke="#1ba8e0" stroke-width="0.4" opacity="0.32" fill="none">
+          <line x1="4" y1="45" x2="14" y2="48"/>
+          <line x1="88" y1="52" x2="96" y2="49"/>
+          <line x1="8" y1="88" x2="16" y2="85"/>
+        </g>
+      </svg>
+    `
+  },
+  {
+    id: 19,
+    name: "Not Defteri Marjı",
+    desc: "Beyaz; sol kenarda ince renk çizgisi + birkaç minik ikon. Çok az ekstra mürekkep.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p19",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <line x1="12" y1="4" x2="12" y2="137.4" stroke="rgba(41,181,168,0.35)" stroke-width="0.55"/>
+        <circle cx="8" cy="18" r="2" fill="none" stroke="rgba(27,168,224,0.4)" stroke-width="0.45"/>
+        <path d="M6,42 L10,46 L6,50" fill="none" stroke="rgba(255,182,193,0.55)" stroke-width="0.5" stroke-linecap="round"/>
+        <circle cx="9" cy="118" r="1.5" fill="rgba(41,181,168,0.2)"/>
+      </svg>
+    `
+  },
+  {
+    id: 20,
+    name: "Minik Cam Küreler",
+    desc: "Beyaz; köşelere yakın birkaç yarı saydam halka ve nokta — modern, sakin.",
+    tag: "ink", tagLabel: "beyaz + desen",
+    bgClass: "p20",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="none" opacity="0.45">
+          <circle cx="12" cy="16" r="14" stroke="rgba(255,200,190,0.7)" stroke-width="0.65"/>
+          <circle cx="88" cy="22" r="11" stroke="rgba(255,210,220,0.65)" stroke-width="0.55"/>
+          <circle cx="10" cy="128" r="12" stroke="rgba(200,230,240,0.65)" stroke-width="0.6"/>
+          <circle cx="90" cy="122" r="10" stroke="rgba(41,181,168,0.4)" stroke-width="0.5"/>
+        </g>
+        <circle cx="22" cy="10" r="1.2" fill="rgba(41,181,168,0.25)"/>
+        <circle cx="78" cy="12" r="1" fill="rgba(27,168,224,0.22)"/>
+        <circle cx="18" cy="132" r="1.1" fill="rgba(255,182,193,0.3)"/>
+        <circle cx="84" cy="130" r="1" fill="rgba(41,181,168,0.2)"/>
+      </svg>
+    `
+  },
+
+  /* ─── El çizimi + alt dalga (21–30) ─── */
+  {
+    id: 21,
+    name: "Sabah Kıyısı",
+    desc: "Altta iki yumuşak dalga yıkama; üst köşelerde teal/pembe squiggle. Gün doğumu sahili hissi.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p21",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,116 Q22,106 48,118 T100,114 L100,141.4 L0,141.4 Z" fill="rgba(255,210,195,0.16)"/>
+        <path d="M0,123 Q32,115 58,126 T100,121 L100,141.4 L0,141.4 Z" fill="rgba(200,235,245,0.13)"/>
+        <path d="M0,127 Q28,122 55,129 T100,125" fill="none" stroke="rgba(41,181,168,0.34)" stroke-width="0.55"/>
+        <ellipse cx="20" cy="133" rx="9" ry="4.5" fill="rgba(255,182,193,0.11)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.4">
+          <path d="M5,14 Q9,9 17,15 T26,11" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M78,10 Q84,6 92,13" stroke="#f0a8b8" stroke-width="0.48"/>
+        </g>
+        <path d="M88,22 L89.5,25 L93,25 L90,27 L91.5,31 L88,29 L84.5,31 L86,27 L83,25 L87,25 Z" fill="#29b5a8" opacity="0.28"/>
+        <circle cx="12" cy="26" r="1.8" fill="none" stroke="#1ba8e0" stroke-width="0.45" opacity="0.45"/>
+      </svg>
+    `
+  },
+  {
+    id: 22,
+    name: "Çift Kat Gelgit",
+    desc: "Üst üste üç dalga bandı + sayfa ortasına doğru hafif çizgisel fısıltılar.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p22",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,112 Q25,100 50,110 T100,106 L100,141.4 L0,141.4 Z" fill="rgba(255,200,190,0.1)"/>
+        <path d="M0,118 Q30,108 55,118 T100,112 L100,141.4 L0,141.4 Z" fill="rgba(41,181,168,0.07)"/>
+        <path d="M0,125 Q28,118 52,124 T100,119 L100,141.4 L0,141.4 Z" fill="rgba(200,230,240,0.12)"/>
+        <path d="M0,115 Q50,108 100,114" fill="none" stroke="rgba(41,181,168,0.28)" stroke-width="0.45"/>
+        <path d="M0,121 Q50,115 100,120" fill="none" stroke="rgba(27,168,224,0.26)" stroke-width="0.4"/>
+        <g fill="none" opacity="0.36" stroke-linecap="round">
+          <path d="M18,48 Q22,44 28,50" stroke="#29b5a8" stroke-width="0.45"/>
+          <path d="M72,52 Q78,46 88,54" stroke="#1ba8e0" stroke-width="0.42"/>
+          <path d="M42,68 Q48,64 55,70 T68,66" stroke="#f0a8b8" stroke-width="0.4"/>
+        </g>
+        <circle cx="8" cy="58" r="1.3" fill="rgba(41,181,168,0.22)"/>
+        <circle cx="92" cy="62" r="1.1" fill="rgba(255,182,193,0.28)"/>
+      </svg>
+    `
+  },
+  {
+    id: 23,
+    name: "Mercan Kıvrımı",
+    desc: "Altta geniş pembe mercan yıkaması; üstte teal spiraller ve minik kalp çizgisi.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p23",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,108 Q35,98 70,112 T100,108 L100,141.4 L0,141.4 Z" fill="rgba(255,190,200,0.14)"/>
+        <path d="M0,118 Q40,110 75,122 T100,116 L100,141.4 L0,141.4 Z" fill="rgba(255,210,215,0.1)"/>
+        <path d="M0,124 Q32,119 58,126 T100,122" fill="none" stroke="rgba(41,181,168,0.3)" stroke-width="0.5"/>
+        <ellipse cx="82" cy="132" rx="12" ry="5" fill="rgba(41,181,168,0.07)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.38">
+          <path d="M8,8 C12,4 16,4 20,8 S28,12 32,8" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M68,6 Q74,2 82,8 Q88,14 94,10" stroke="#1ba8e0" stroke-width="0.48"/>
+        </g>
+        <path d="M48,14 C50,12 52,12 54,14 C52,16 50,16 48,14 Z" fill="none" stroke="#f0a8b8" stroke-width="0.45" opacity="0.5"/>
+      </svg>
+    `
+  },
+  {
+    id: 24,
+    name: "Spiral Sahil",
+    desc: "Alt kısımda S-dalga + köpük elipsleri; üst sol/spiral çizgi ve sağda küçük yıldız.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p24",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,120 Q15,108 35,118 Q55,128 75,115 Q90,105 100,118 L100,141.4 L0,141.4 Z" fill="rgba(200,235,245,0.14)"/>
+        <path d="M0,126 Q40,118 60,128 Q80,118 100,124 L100,141.4 L0,141.4 Z" fill="rgba(255,200,190,0.11)"/>
+        <path d="M0,128 Q50,120 100,126" fill="none" stroke="rgba(41,181,168,0.32)" stroke-width="0.5"/>
+        <ellipse cx="14" cy="134" rx="7" ry="3.5" fill="rgba(255,255,255,0.4)" stroke="rgba(27,168,224,0.2)" stroke-width="0.35"/>
+        <ellipse cx="88" cy="133" rx="6" ry="3" fill="rgba(255,182,193,0.1)"/>
+        <path d="M6,18 Q10,12 14,18 Q10,24 6,18" fill="none" stroke="#29b5a8" stroke-width="0.48" opacity="0.42"/>
+        <path d="M86,20 L87.5,23.5 L91.5,23.5 L88.5,26 L90,30 L86,28 L82,30 L83.5,26 L80,23.5 L84.5,23.5 Z" fill="#29b5a8" opacity="0.26"/>
+        <path d="M22,36 Q28,30 34,38" fill="none" stroke="#1ba8e0" stroke-width="0.42" opacity="0.35"/>
+      </svg>
+    `
+  },
+  {
+    id: 25,
+    name: "Yıldızlı Gelgit",
+    desc: "Alt dalga katmanları + üst ve orta bölgede outline yıldızlar ve kısa çizgiler (yağmur hissi).",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p25",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,114 Q30,104 55,116 T100,110 L100,141.4 L0,141.4 Z" fill="rgba(255,205,195,0.13)"/>
+        <path d="M0,121 Q35,112 65,122 T100,117 L100,141.4 L0,141.4 Z" fill="rgba(200,230,240,0.12)"/>
+        <path d="M0,127 Q45,120 100,125" fill="none" stroke="rgba(41,181,168,0.28)" stroke-width="0.48"/>
+        <g fill="none" stroke="#29b5a8" stroke-width="0.42" opacity="0.38">
+          <path d="M10,10 L11.3,13 L15,13 L12,15 L13.2,18.5 L10,16.5 L6.8,18.5 L8,15 L5,13 L8.7,13 Z"/>
+          <path d="M88,8 L89,10.5 L92,10.5 L89.5,12.2 L90.5,15 L88,13.8 L85.5,15 L86.5,12.2 L84,10.5 L87,10.5 Z"/>
+          <path d="M12,52 L13,54.5 L16,54.5 L13.8,56.2 L14.6,59 L12,57.5 L9.4,59 L10.2,56.2 L8,54.5 L11,54.5 Z"/>
+        </g>
+        <g stroke="#1ba8e0" stroke-width="0.38" opacity="0.3" fill="none" stroke-linecap="round">
+          <line x1="4" y1="38" x2="12" y2="41"/>
+          <line x1="86" y1="42" x2="94" y2="39"/>
+          <line x1="20" y1="72" x2="28" y2="69"/>
+        </g>
+        <path d="M76,24 Q82,18 90,26" fill="none" stroke="#f0a8b8" stroke-width="0.45" opacity="0.36"/>
+      </svg>
+    `
+  },
+  {
+    id: 26,
+    name: "Pamuk Bulut Kıyı",
+    desc: "Altta geniş yumuşak ‘bulut’ dolgu; üstte minimal squiggle ve üç minik nokta.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p26",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,108 Q20,95 40,102 Q60,88 80,100 Q95,92 100,105 L100,141.4 L0,141.4 Z" fill="rgba(240,248,252,0.35)"/>
+        <path d="M0,118 Q45,108 100,115 L100,141.4 L0,141.4 Z" fill="rgba(255,220,210,0.1)"/>
+        <path d="M0,124 Q50,118 100,122" fill="none" stroke="rgba(41,181,168,0.22)" stroke-width="0.55"/>
+        <g fill="none" stroke-linecap="round" opacity="0.37">
+          <path d="M12,12 Q18,7 26,14" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M70,16 Q76,10 88,18" stroke="#1ba8e0" stroke-width="0.45"/>
+        </g>
+        <circle cx="48" cy="10" r="1" fill="rgba(41,181,168,0.3)"/>
+        <circle cx="54" cy="12" r="0.8" fill="rgba(27,168,224,0.28)"/>
+        <circle cx="50" cy="15" r="0.7" fill="rgba(255,182,193,0.35)"/>
+      </svg>
+    `
+  },
+  {
+    id: 27,
+    name: "Neon Şerit Kıyı",
+    desc: "Altta tek güçlü (ama hâlâ hafif) dalga çizgisi + üst köşelerde enerjik kıvrımlar.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p27",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,122 Q50,108 100,118 L100,141.4 L0,141.4 Z" fill="rgba(200,240,245,0.12)"/>
+        <path d="M0,128 Q25,124 50,130 T100,126" fill="none" stroke="rgba(41,181,168,0.45)" stroke-width="0.7"/>
+        <path d="M0,132 Q50,127 100,131" fill="none" stroke="rgba(27,168,224,0.32)" stroke-width="0.5"/>
+        <g fill="none" stroke-linecap="round" stroke-width="0.52" opacity="0.42">
+          <path d="M4,8 Q12,2 22,10 Q18,18 8,14" stroke="#29b5a8"/>
+          <path d="M72,6 Q82,-2 96,8 Q88,20 76,14" stroke="#1ba8e0"/>
+        </g>
+        <circle cx="16" cy="28" r="2" fill="none" stroke="#f0a8b8" stroke-width="0.45" opacity="0.45"/>
+        <path d="M90,22 L91,24.5 L94,24.5 L91.8,26.2 L92.6,29 L90,27.5 L87.4,29 L88.2,26.2 L86,24.5 L89,24.5 Z" fill="#29b5a8" opacity="0.22"/>
+      </svg>
+    `
+  },
+  {
+    id: 28,
+    name: "Sakin Liman",
+    desc: "Geniş düz alt yıkama + ince yatay dalga çizgisi; köşelerde halka ve kısa squiggle.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p28",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <rect x="0" y="118" width="100" height="23.4" fill="rgba(245,250,252,0.55)"/>
+        <path d="M0,118 Q50,114 100,118" fill="none" stroke="rgba(41,181,168,0.3)" stroke-width="0.55"/>
+        <path d="M0,124 Q50,120 100,124" fill="none" stroke="rgba(27,168,224,0.22)" stroke-width="0.42"/>
+        <ellipse cx="50" cy="132" rx="25" ry="6" fill="rgba(255,200,190,0.08)"/>
+        <g fill="none" opacity="0.4" stroke-linecap="round">
+          <path d="M8,14 Q12,10 18,16" stroke="#29b5a8" stroke-width="0.48"/>
+          <path d="M82,18 Q88,12 94,20" stroke="#f0a8b8" stroke-width="0.45"/>
+        </g>
+        <circle cx="6" cy="22" r="3.5" stroke="rgba(41,181,168,0.35)" stroke-width="0.5" fill="none"/>
+        <circle cx="94" cy="26" r="2.8" stroke="rgba(27,168,224,0.32)" stroke-width="0.45" fill="none"/>
+      </svg>
+    `
+  },
+  {
+    id: 29,
+    name: "Köpük Macerası",
+    desc: "Altta köpük gibi küçük üst üste daireler + üstte ‘macera’ kıvrımları ve noktalar.",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p29",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,108 Q30,100 55,112 T100,106 L100,141.4 L0,141.4 Z" fill="rgba(230,248,250,0.2)"/>
+        <circle cx="18" cy="128" r="14" fill="rgba(255,255,255,0.5)" stroke="rgba(41,181,168,0.15)" stroke-width="0.4"/>
+        <circle cx="42" cy="132" r="11" fill="rgba(255,220,215,0.12)"/>
+        <circle cx="68" cy="129" r="13" fill="rgba(200,235,245,0.14)"/>
+        <circle cx="88" cy="131" r="9" fill="rgba(255,240,235,0.15)"/>
+        <path d="M0,118 Q50,112 100,116" fill="none" stroke="rgba(41,181,168,0.26)" stroke-width="0.45"/>
+        <g fill="none" stroke-linecap="round" opacity="0.38">
+          <path d="M10,10 Q16,4 24,12 Q18,22 10,16" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M70,8 Q78,2 90,12" stroke="#1ba8e0" stroke-width="0.48"/>
+          <path d="M38,22 Q44,18 52,26" stroke="#f0a8b8" stroke-width="0.42"/>
+        </g>
+        <circle cx="78" cy="20" r="1.2" fill="rgba(41,181,168,0.28)"/>
+        <circle cx="86" cy="24" r="0.9" fill="rgba(27,168,224,0.25)"/>
+      </svg>
+    `
+  },
+  {
+    id: 30,
+    name: "Alacakaranlık Sahil",
+    desc: "Altta hafif gri-mavi gölge dalga; üstte daha fazla yıldız outline ve uzun squiggle (gece kıyısı).",
+    tag: "ink", tagLabel: "el+dalga",
+    bgClass: "p30",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,115 Q40,105 70,118 T100,112 L100,141.4 L0,141.4 Z" fill="rgba(200,215,230,0.14)"/>
+        <path d="M0,122 Q35,114 65,124 T100,118 L100,141.4 L0,141.4 Z" fill="rgba(180,200,220,0.1)"/>
+        <path d="M0,128 Q50,122 100,127" fill="none" stroke="rgba(100,130,160,0.25)" stroke-width="0.5"/>
+        <g fill="none" stroke="rgba(41,181,168,0.45)" stroke-width="0.4" opacity="0.42">
+          <path d="M8,8 L9.5,11.5 L13.5,11.5 L10.5,14 L12,18 L8,15.5 L4,18 L5.5,14 L2.5,11.5 L6.5,11.5 Z"/>
+          <path d="M88,6 L89.2,9 L93,9 L90,11.2 L91.2,15 L88,13 L84.8,15 L86,11.2 L83,9 L86.8,9 Z"/>
+          <path d="M18,28 L19,30.5 L22.5,30.5 L19.8,32.2 L20.8,35.5 L18,34 L15.2,35.5 L16.2,32.2 L13.5,30.5 L17,30.5 Z"/>
+          <path d="M78,32 L79,34.5 L82.5,34.5 L80,36.2 L81,39.5 L78,38.2 L75,39.5 L76,36.2 L73.5,34.5 L77,34.5 Z"/>
+        </g>
+        <path d="M4,48 Q12,40 22,52 Q14,62 4,54" fill="none" stroke="#1ba8e0" stroke-width="0.42" opacity="0.32"/>
+        <path d="M60,42 Q72,34 88,46" fill="none" stroke="#29b5a8" stroke-width="0.4" opacity="0.34"/>
+        <path d="M32,88 Q42,80 52,92" fill="none" stroke="#f0a8b8" stroke-width="0.38" opacity="0.3"/>
+      </svg>
+    `
+  },
+
+  /* ─── Yumuşak AI / dijital hissi (31–40) ─── */
+  {
+    id: 31,
+    name: "Sinaps Ağı",
+    desc: "Nokta-düğümler ve ince eğrilerle hafif ‘sinir ağı’ izlenimi; çocuk kitabına uygun yumuşak çizgiler.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p31",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="none" stroke-linecap="round" opacity="0.38">
+          <path d="M12,18 Q30,25 48,18 T82,22" stroke="#29b5a8" stroke-width="0.4"/>
+          <path d="M18,32 L42,48 L68,38" stroke="#1ba8e0" stroke-width="0.35"/>
+          <path d="M22,58 Q40,52 55,65 Q72,58 88,68" stroke="#a78bfa" stroke-width="0.32"/>
+          <path d="M14,95 L38,88 L62,102 L86,94" stroke="#29b5a8" stroke-width="0.3"/>
+        </g>
+        <circle cx="12" cy="18" r="2" fill="rgba(41,181,168,0.35)"/>
+        <circle cx="48" cy="18" r="1.6" fill="rgba(27,168,224,0.32)"/>
+        <circle cx="82" cy="22" r="1.8" fill="rgba(167,139,250,0.28)"/>
+        <circle cx="42" cy="48" r="2.2" fill="rgba(41,181,168,0.3)"/>
+        <circle cx="68" cy="38" r="1.5" fill="rgba(27,168,224,0.28)"/>
+        <circle cx="22" cy="58" r="1.4" fill="rgba(167,139,250,0.25)"/>
+        <circle cx="55" cy="65" r="1.7" fill="rgba(41,181,168,0.26)"/>
+        <circle cx="88" cy="68" r="1.3" fill="rgba(200,200,220,0.35)"/>
+        <circle cx="38" cy="88" r="1.6" fill="rgba(27,168,224,0.27)"/>
+        <circle cx="62" cy="102" r="1.5" fill="rgba(41,181,168,0.24)"/>
+      </svg>
+    `
+  },
+  {
+    id: 32,
+    name: "Dijital Sis",
+    desc: "Çok küçük nokta ızgarası + birkaç ‘parlak’ piksel — bulanık ekran / üretim hissi, düşük opaklık.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p32",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <pattern id="pix32" width="4" height="4" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.45" fill="rgba(41,181,168,0.12)"/>
+          </pattern>
+        </defs>
+        <rect width="100" height="141.4" fill="url(#pix32)" opacity="0.85"/>
+        <rect x="28" y="40" width="44" height="55" fill="none" stroke="rgba(167,139,250,0.15)" stroke-width="0.35" rx="2"/>
+        <circle cx="35" cy="52" r="1.2" fill="rgba(27,168,224,0.35)"/>
+        <circle cx="50" cy="48" r="0.9" fill="rgba(41,181,168,0.4)"/>
+        <circle cx="62" cy="58" r="1" fill="rgba(167,139,250,0.32)"/>
+        <circle cx="48" cy="72" r="0.85" fill="rgba(27,168,224,0.28)"/>
+      </svg>
+    `
+  },
+  {
+    id: 33,
+    name: "Holojen Bantlar",
+    desc: "Üst ve altta çok hafif renk geçişi şeritleri — spektrum / model çıktısı çağrışımı, mürekkep minimum.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p33",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="hg33a" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(167,139,250,0)" />
+            <stop offset="50%" stop-color="rgba(41,181,168,0.08)" />
+            <stop offset="100%" stop-color="rgba(27,168,224,0.06)" />
+          </linearGradient>
+          <linearGradient id="hg33b" x1="0%" y1="100%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(27,168,224,0.05)" />
+            <stop offset="50%" stop-color="rgba(167,139,250,0.07)" />
+            <stop offset="100%" stop-color="rgba(41,181,168,0)" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="100" height="22" fill="url(#hg33a)"/>
+        <rect x="0" y="119.4" width="100" height="22" fill="url(#hg33b)"/>
+        <line x1="10" y1="32" x2="90" y2="32" stroke="rgba(167,139,250,0.12)" stroke-width="0.35" stroke-dasharray="2 3"/>
+        <line x1="10" y1="108" x2="90" y2="108" stroke="rgba(41,181,168,0.1)" stroke-width="0.35" stroke-dasharray="2 3"/>
+      </svg>
+    `
+  },
+  {
+    id: 34,
+    name: "Veri Takımyıldızı",
+    desc: "Grafiğe benzer noktalar ve ince bağlar — ‘öğrenme uzayı’ metaforu, pastel tonlar.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p34",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g stroke="rgba(41,181,168,0.28)" stroke-width="0.35" fill="none" opacity="0.45">
+          <line x1="15" y1="25" x2="35" y2="42"/>
+          <line x1="35" y1="42" x2="58" y2="30"/>
+          <line x1="58" y1="30" x2="78" y2="48"/>
+          <line x1="22" y1="55" x2="48" y2="72"/>
+          <line x1="48" y1="72" x2="72" y2="62"/>
+        </g>
+        <circle cx="15" cy="25" r="2" fill="rgba(27,168,224,0.35)"/>
+        <circle cx="35" cy="42" r="1.8" fill="rgba(41,181,168,0.38)"/>
+        <circle cx="58" cy="30" r="1.6" fill="rgba(167,139,250,0.32)"/>
+        <circle cx="78" cy="48" r="1.7" fill="rgba(41,181,168,0.3)"/>
+        <circle cx="22" cy="55" r="1.4" fill="rgba(167,139,250,0.28)"/>
+        <circle cx="48" cy="72" r="2" fill="rgba(27,168,224,0.34)"/>
+        <circle cx="72" cy="62" r="1.5" fill="rgba(41,181,168,0.28)"/>
+        <circle cx="88" cy="28" r="1.2" fill="rgba(200,200,230,0.4)"/>
+        <circle cx="12" cy="88" r="1.3" fill="rgba(41,181,168,0.22)"/>
+      </svg>
+    `
+  },
+  {
+    id: 35,
+    name: "Yumuşak Devre",
+    desc: "Köşelerde yuvarlatılmış ‘yol’ çizgileri ve küçük düğümler — devre kartı değil, oyuncak AI estetiği.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p35",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M8,12 H28 Q38,12 38,22 V38" fill="none" stroke="rgba(41,181,168,0.4)" stroke-width="0.55" stroke-linecap="round"/>
+        <path d="M92,16 V32 Q92,42 82,42 H65" fill="none" stroke="rgba(27,168,224,0.36)" stroke-width="0.5" stroke-linecap="round"/>
+        <path d="M10,128 H30 Q40,128 40,118 V102" fill="none" stroke="rgba(167,139,250,0.32)" stroke-width="0.48" stroke-linecap="round"/>
+        <path d="M90,125 V108 Q90,98 80,98 H62" fill="none" stroke="rgba(41,181,168,0.3)" stroke-width="0.45" stroke-linecap="round"/>
+        <rect x="34" y="36" width="8" height="8" rx="2" fill="none" stroke="rgba(41,181,168,0.35)" stroke-width="0.4"/>
+        <circle cx="38" cy="40" r="2" fill="rgba(27,168,224,0.28)"/>
+        <circle cx="62" cy="42" r="1.8" fill="rgba(41,181,168,0.3)"/>
+        <circle cx="40" cy="102" r="1.6" fill="rgba(167,139,250,0.26)"/>
+        <circle cx="62" cy="98" r="1.5" fill="rgba(41,181,168,0.25)"/>
+      </svg>
+    `
+  },
+  {
+    id: 36,
+    name: "Nabız Halkaları",
+    desc: "Köşeden yayılan iç içe halkalar — sinyal / üretim nabzı; çok düşük opaklık.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p36",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="none" opacity="0.4">
+          <circle cx="12" cy="18" r="8" stroke="rgba(41,181,168,0.35)" stroke-width="0.45"/>
+          <circle cx="12" cy="18" r="14" stroke="rgba(41,181,168,0.22)" stroke-width="0.4"/>
+          <circle cx="12" cy="18" r="20" stroke="rgba(27,168,224,0.15)" stroke-width="0.35"/>
+        </g>
+        <g fill="none" opacity="0.35">
+          <circle cx="88" cy="124" r="7" stroke="rgba(167,139,250,0.38)" stroke-width="0.42"/>
+          <circle cx="88" cy="124" r="12" stroke="rgba(167,139,250,0.2)" stroke-width="0.38"/>
+        </g>
+        <circle cx="12" cy="18" r="2.5" fill="rgba(41,181,168,0.25)"/>
+        <circle cx="88" cy="124" r="2" fill="rgba(167,139,250,0.22)"/>
+      </svg>
+    `
+  },
+  {
+    id: 37,
+    name: "İkili Kod Fısıltısı",
+    desc: "Çok silik 0/1 dizileri ve ince çizgiler — ‘makine diline’ gönderme, okunabilir metin alanı boş.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p37",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <text x="4" y="12" font-size="3.2" fill="rgba(41,181,168,0.14)" font-family="monospace">01001 11010 00111</text>
+        <text x="4" y="18" font-size="3.2" fill="rgba(27,168,224,0.12)" font-family="monospace">10010 01101 10100</text>
+        <text x="38" y="128" font-size="3.2" fill="rgba(167,139,250,0.13)" font-family="monospace">011 100 101 011</text>
+        <text x="38" y="134" font-size="3.2" fill="rgba(41,181,168,0.11)" font-family="monospace">00111 01010 11100</text>
+        <line x1="6" y1="28" x2="94" y2="28" stroke="rgba(41,181,168,0.1)" stroke-width="0.3" stroke-dasharray="1 2"/>
+        <line x1="6" y1="112" x2="94" y2="112" stroke="rgba(27,168,224,0.09)" stroke-width="0.3" stroke-dasharray="1 2"/>
+      </svg>
+    `
+  },
+  {
+    id: 38,
+    name: "Nöral Bulut",
+    desc: "Merkeze doğru solan yumuşak mor-teal leke — ‘görsel üretim’ bulanıklığı, düşük yoğunluk.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p38",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <radialGradient id="nc38" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stop-color="rgba(167,139,250,0.09)"/>
+            <stop offset="45%" stop-color="rgba(41,181,168,0.05)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </radialGradient>
+        </defs>
+        <rect width="100" height="141.4" fill="url(#nc38)"/>
+        <ellipse cx="50" cy="55" rx="28" ry="22" fill="rgba(27,168,224,0.04)"/>
+        <g fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="0.35" opacity="0.5">
+          <path d="M30,48 Q50,38 70,48"/>
+          <path d="M32,62 Q50,72 68,62"/>
+        </g>
+      </svg>
+    `
+  },
+  {
+    id: 39,
+    name: "Parçacık Alanı",
+    desc: "Küçük artılar, noktalar ve kısa çizgiler — latent uzay / toz taneleri; hafif ve dağınık.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p39",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g fill="rgba(41,181,168,0.35)" opacity="0.5">
+          <path d="M10,20 h2 v2 h-2 z M11,19 v4 M9,21 h4"/>
+          <path d="M82,14 h2 v2 h-2 z M83,13 v4 M81,15 h4"/>
+          <path d="M24,88 h2 v2 h-2 z M25,87 v4 M23,89 h4"/>
+          <path d="M76,96 h2 v2 h-2 z M77,95 v4 M75,97 h4"/>
+        </g>
+        <circle cx="18" cy="42" r="0.9" fill="rgba(27,168,224,0.4)"/>
+        <circle cx="44" cy="28" r="0.7" fill="rgba(167,139,250,0.35)"/>
+        <circle cx="68" cy="38" r="0.85" fill="rgba(41,181,168,0.38)"/>
+        <circle cx="32" cy="72" r="0.75" fill="rgba(27,168,224,0.32)"/>
+        <circle cx="58" cy="82" r="0.8" fill="rgba(167,139,250,0.3)"/>
+        <circle cx="88" cy="68" r="0.7" fill="rgba(41,181,168,0.28)"/>
+        <line x1="14" y1="58" x2="22" y2="62" stroke="rgba(41,181,168,0.2)" stroke-width="0.35"/>
+        <line x1="72" y1="52" x2="80" y2="48" stroke="rgba(167,139,250,0.18)" stroke-width="0.32"/>
+      </svg>
+    `
+  },
+  {
+    id: 40,
+    name: "Sinyal Dalgası",
+    desc: "Sinüs benzeri çizgi + üzerinde örnek noktalar — ses/görüntü işleme çağrışımı; orta alan sade.",
+    tag: "ai", tagLabel: "AI hissi",
+    bgClass: "p40",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,72 Q12.5,58 25,72 T50,72 T75,72 T100,72" fill="none" stroke="rgba(41,181,168,0.35)" stroke-width="0.55"/>
+        <path d="M0,88 Q12.5,102 25,88 T50,88 T75,88 T100,88" fill="none" stroke="rgba(27,168,224,0.22)" stroke-width="0.4"/>
+        <circle cx="0" cy="72" r="1.2" fill="rgba(167,139,250,0.35)"/>
+        <circle cx="25" cy="72" r="1.1" fill="rgba(41,181,168,0.38)"/>
+        <circle cx="50" cy="72" r="1.2" fill="rgba(27,168,224,0.35)"/>
+        <circle cx="75" cy="72" r="1.1" fill="rgba(167,139,250,0.32)"/>
+        <circle cx="100" cy="72" r="1.2" fill="rgba(41,181,168,0.3)"/>
+        <g opacity="0.35">
+          <circle cx="12" cy="22" r="1.5" fill="none" stroke="rgba(41,181,168,0.4)" stroke-width="0.35"/>
+          <circle cx="88" cy="118" r="1.8" fill="none" stroke="rgba(27,168,224,0.35)" stroke-width="0.35"/>
+        </g>
+      </svg>
+    `
+  },
+
+  /* ─── Sabah Kıyısı (#21) türevleri: alt dalga + üst squiggle ─── */
+  {
+    id: 41,
+    name: "Şafak Mercanı",
+    desc: "Daha sıcak mercan-pembe yıkama + lavanta-mavi ikinci band; üstte morumsu ve mercan squiggle. Sabah kıyısı ritmi.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p41",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,115 Q24,104 50,117 T100,112 L100,141.4 L0,141.4 Z" fill="rgba(255,175,165,0.17)"/>
+        <path d="M0,122 Q30,112 56,124 T100,118 L100,141.4 L0,141.4 Z" fill="rgba(220,210,245,0.12)"/>
+        <path d="M0,127 Q26,121 54,128 T100,124" fill="none" stroke="rgba(180,140,200,0.32)" stroke-width="0.52"/>
+        <ellipse cx="72" cy="133" rx="10" ry="4.5" fill="rgba(255,160,150,0.1)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.42">
+          <path d="M6,16 Q11,10 20,17 T30,12" stroke="#b8a0d4" stroke-width="0.5"/>
+          <path d="M76,8 Q82,4 90,12" stroke="#e89890" stroke-width="0.48"/>
+        </g>
+        <path d="M10,24 L11.5,27 L15,27 L12,29 L13.5,33 L10,31 L6.5,33 L8,29 L5,27 L8.5,27 Z" fill="#c4a8e0" opacity="0.26"/>
+        <circle cx="88" cy="26" r="1.7" fill="none" stroke="#29b5a8" stroke-width="0.42" opacity="0.4"/>
+      </svg>
+    `
+  },
+  {
+    id: 42,
+    name: "Sisli İskele",
+    desc: "Gri-mavi sisli dalga; soğuk teal üst çizgiler. Sabah kıyısı ama daha puslu, sakin tonlar.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p42",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,117 Q26,105 52,118 T100,113 L100,141.4 L0,141.4 Z" fill="rgba(190,210,225,0.16)"/>
+        <path d="M0,124 Q32,114 58,125 T100,120 L100,141.4 L0,141.4 Z" fill="rgba(210,230,240,0.14)"/>
+        <path d="M0,128 Q28,122 56,129 T100,125" fill="none" stroke="rgba(100,140,160,0.38)" stroke-width="0.5"/>
+        <ellipse cx="24" cy="132" rx="8" ry="4" fill="rgba(255,255,255,0.35)" stroke="rgba(120,160,180,0.18)" stroke-width="0.35"/>
+        <g fill="none" stroke-linecap="round" opacity="0.38">
+          <path d="M8,18 Q12,12 22,19" stroke="#5a9aaa" stroke-width="0.48"/>
+          <path d="M70,14 Q78,8 88,16" stroke="#7ab8c8" stroke-width="0.45"/>
+        </g>
+        <circle cx="14" cy="28" r="1.5" fill="rgba(90,130,150,0.2)"/>
+      </svg>
+    `
+  },
+  {
+    id: 43,
+    name: "Altın Ufuk",
+    desc: "Altta bal-kum ve şeftali yıkaması; üstte sıcak sarı-turuncu fısıltılar. Gün doğumu altın çizgisi.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p43",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,116 Q22,105 48,118 T100,114 L100,141.4 L0,141.4 Z" fill="rgba(255,220,175,0.2)"/>
+        <path d="M0,123 Q32,115 58,126 T100,121 L100,141.4 L0,141.4 Z" fill="rgba(255,200,165,0.12)"/>
+        <path d="M0,127 Q28,122 55,129 T100,125" fill="none" stroke="rgba(230,160,90,0.35)" stroke-width="0.52"/>
+        <ellipse cx="50" cy="134" rx="11" ry="5" fill="rgba(255,210,140,0.1)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.44">
+          <path d="M5,12 Q10,7 18,14 T28,10" stroke="#e8b060" stroke-width="0.5"/>
+          <path d="M78,10 Q84,5 92,13" stroke="#29b5a8" stroke-width="0.46"/>
+        </g>
+        <path d="M86,22 L87.3,25 L91,25 L88.2,27 L89.4,31 L86,29 L82.6,31 L84,27 L81,25 L84.7,25 Z" fill="#f0b85c" opacity="0.28"/>
+        <circle cx="12" cy="26" r="1.8" fill="none" stroke="#29b5a8" stroke-width="0.42" opacity="0.42"/>
+      </svg>
+    `
+  },
+  {
+    id: 44,
+    name: "Deniz Camı",
+    desc: "Berrak camgöbeği + buz mavisi katmanlar; ince beyaz köpük çizgisi. Ferah ‘sabah denizi’.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p44",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,114 Q25,102 52,116 T100,111 L100,141.4 L0,141.4 Z" fill="rgba(175,230,240,0.16)"/>
+        <path d="M0,121 Q30,112 56,123 T100,117 L100,141.4 L0,141.4 Z" fill="rgba(200,245,250,0.13)"/>
+        <path d="M0,126 Q27,120 54,127 T100,123" fill="none" stroke="rgba(41,181,168,0.4)" stroke-width="0.48"/>
+        <path d="M0,130 Q50,125 100,129" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="0.35"/>
+        <ellipse cx="18" cy="133" rx="9" ry="4" fill="rgba(255,255,255,0.45)" stroke="rgba(27,168,224,0.22)" stroke-width="0.3"/>
+        <g fill="none" stroke-linecap="round" opacity="0.4">
+          <path d="M6,14 Q11,8 20,15" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M74,9 Q80,4 90,12" stroke="#7ec8e8" stroke-width="0.47"/>
+        </g>
+        <circle cx="90" cy="24" r="1.5" fill="rgba(27,168,224,0.25)"/>
+      </svg>
+    `
+  },
+  {
+    id: 45,
+    name: "Gül Şafağı",
+    desc: "Gül-pembe baskın dalgalar; üstte pembe ve teal squiggle. Romantik ama hâlâ çocuk kitabı yumuşaklığında.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p45",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,115 Q28,103 54,117 T100,112 L100,141.4 L0,141.4 Z" fill="rgba(255,195,205,0.16)"/>
+        <path d="M0,122 Q30,113 58,124 T100,119 L100,141.4 L0,141.4 Z" fill="rgba(255,215,225,0.12)"/>
+        <path d="M0,127 Q26,121 52,128 T100,124" fill="none" stroke="rgba(230,130,150,0.3)" stroke-width="0.5"/>
+        <ellipse cx="82" cy="131" rx="10" ry="4.5" fill="rgba(255,182,193,0.12)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.42">
+          <path d="M8,15 Q12,9 20,16 T30,11" stroke="#f0a8b8" stroke-width="0.52"/>
+          <path d="M68,8 Q74,4 82,11" stroke="#29b5a8" stroke-width="0.48"/>
+        </g>
+        <path d="M44,18 C46,16 48,16 50,18 C48,20 46,20 44,18 Z" fill="none" stroke="#e888a0" stroke-width="0.45" opacity="0.45"/>
+        <circle cx="88" cy="28" r="1.6" fill="none" stroke="#1ba8e0" stroke-width="0.4" opacity="0.4"/>
+      </svg>
+    `
+  },
+  {
+    id: 46,
+    name: "Köpük Üçlüsü",
+    desc: "Üç üst üste yumuşak dalga bandı + birkaç köpük elipsi; #21’e yakın ama daha katmanlı kıyı.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p46",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,110 Q25,100 50,112 T100,107 L100,141.4 L0,141.4 Z" fill="rgba(255,205,190,0.1)"/>
+        <path d="M0,117 Q28,108 54,119 T100,114 L100,141.4 L0,141.4 Z" fill="rgba(41,181,168,0.06)"/>
+        <path d="M0,124 Q30,116 58,126 T100,121 L100,141.4 L0,141.4 Z" fill="rgba(200,235,245,0.12)"/>
+        <path d="M0,115 Q50,108 100,114" fill="none" stroke="rgba(41,181,168,0.26)" stroke-width="0.42"/>
+        <path d="M0,121 Q50,115 100,120" fill="none" stroke="rgba(27,168,224,0.24)" stroke-width="0.38"/>
+        <ellipse cx="16" cy="134" rx="7" ry="3.5" fill="rgba(255,255,255,0.42)" stroke="rgba(27,168,224,0.15)" stroke-width="0.3"/>
+        <ellipse cx="64" cy="132" rx="6" ry="3" fill="rgba(255,182,193,0.1)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.4">
+          <path d="M5,14 Q9,9 17,15 T26,11" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M78,10 Q84,6 92,13" stroke="#f0a8b8" stroke-width="0.48"/>
+        </g>
+        <path d="M88,22 L89.5,25 L93,25 L90,27 L91.5,31 L88,29 L84.5,31 L86,27 L83,25 L87,25 Z" fill="#29b5a8" opacity="0.26"/>
+      </svg>
+    `
+  },
+  {
+    id: 47,
+    name: "Leylak Ufuk",
+    desc: "Hafif leylak ve mürekkep mavisi dalgalar; gün doğumundan önceki yumuşak gökyüzü, düşük kontrast.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p47",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,116 Q24,105 50,118 T100,113 L100,141.4 L0,141.4 Z" fill="rgba(200,190,220,0.14)"/>
+        <path d="M0,123 Q32,114 58,125 T100,119 L100,141.4 L0,141.4 Z" fill="rgba(180,210,230,0.13)"/>
+        <path d="M0,127 Q28,122 55,129 T100,125" fill="none" stroke="rgba(120,100,160,0.28)" stroke-width="0.48"/>
+        <ellipse cx="44" cy="133" rx="9" ry="4" fill="rgba(255,200,210,0.09)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.38">
+          <path d="M10,16 Q14,10 24,17" stroke="#9a8ab8" stroke-width="0.48"/>
+          <path d="M72,12 Q78,7 88,15" stroke="#6a9aaa" stroke-width="0.45"/>
+        </g>
+        <circle cx="12" cy="26" r="1.6" fill="none" stroke="#29b5a8" stroke-width="0.4" opacity="0.38"/>
+        <path d="M84,20 L85.3,23 L88.5,23 L86,25 L87.2,28.5 L84,26.5 L80.8,28.5 L82,25 L79.5,23 L82.7,23 Z" fill="#8a7aa8" opacity="0.22"/>
+      </svg>
+    `
+  },
+  {
+    id: 48,
+    name: "Yıldızlı Kıyı",
+    desc: "Aynı iki dalga yıkaması; üst sol yıldız + sağda teal squiggle — #21 düzenine yakın alternatif.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p48",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,116 Q22,106 48,118 T100,114 L100,141.4 L0,141.4 Z" fill="rgba(255,208,195,0.15)"/>
+        <path d="M0,123 Q32,115 58,126 T100,121 L100,141.4 L0,141.4 Z" fill="rgba(195,238,248,0.13)"/>
+        <path d="M0,127 Q28,122 55,129 T100,125" fill="none" stroke="rgba(41,181,168,0.34)" stroke-width="0.52"/>
+        <ellipse cx="28" cy="132" rx="8" ry="4" fill="rgba(255,182,193,0.1)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.4">
+          <path d="M5,14 Q9,9 17,15 T26,11" stroke="#29b5a8" stroke-width="0.5"/>
+          <path d="M78,10 Q84,6 92,13" stroke="#f0a8b8" stroke-width="0.48"/>
+        </g>
+        <path d="M12,20 L13.5,24 L18,24 L14.5,26.5 L16,31 L12,28.5 L8,31 L9.5,26.5 L6,24 L10.5,24 Z" fill="#29b5a8" opacity="0.3"/>
+        <path d="M86,22 L87.5,25 L91,25 L88,27 L89.5,31 L86,29 L82.5,31 L84,27 L81,25 L85,25 Z" fill="#1ba8e0" opacity="0.24"/>
+        <circle cx="72" cy="18" r="1.8" fill="none" stroke="#f0a8b8" stroke-width="0.42" opacity="0.42"/>
+      </svg>
+    `
+  },
+  {
+    id: 49,
+    name: "Nane Sis",
+    desc: "Çok açık nane + gök mavisi katmanlar; üst süsler minimal — sakin, ferah sabah.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p49",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,118 Q26,107 52,119 T100,114 L100,141.4 L0,141.4 Z" fill="rgba(210,245,235,0.14)"/>
+        <path d="M0,124 Q30,116 56,125 T100,120 L100,141.4 L0,141.4 Z" fill="rgba(220,240,255,0.12)"/>
+        <path d="M0,128 Q28,123 54,129 T100,125" fill="none" stroke="rgba(120,200,190,0.32)" stroke-width="0.46"/>
+        <ellipse cx="76" cy="133" rx="8" ry="3.8" fill="rgba(255,255,255,0.38)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.36">
+          <path d="M14,18 Q18,13 26,19" stroke="#7ec4b8" stroke-width="0.46"/>
+          <path d="M62,12 Q68,8 76,14" stroke="#9ec8e8" stroke-width="0.44"/>
+        </g>
+        <circle cx="88" cy="24" r="1.4" fill="rgba(41,181,168,0.22)"/>
+      </svg>
+    `
+  },
+  {
+    id: 50,
+    name: "İkiz Fısıltı",
+    desc: "Üstte simetrik iki kısa squiggle; altta biraz daha geniş dalga ovalliği. Oyunlu sabah kıyısı varyantı.",
+    tag: "shore", tagLabel: "kıyı+",
+    bgClass: "p50",
+    svgContent: `
+      <svg viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,114 Q30,102 60,116 T100,110 L100,141.4 L0,141.4 Z" fill="rgba(255,215,200,0.14)"/>
+        <path d="M0,121 Q28,112 54,123 T100,117 L100,141.4 L0,141.4 Z" fill="rgba(190,235,245,0.14)"/>
+        <path d="M0,126 Q32,119 58,127 T100,122" fill="none" stroke="rgba(41,181,168,0.33)" stroke-width="0.5"/>
+        <ellipse cx="50" cy="134" rx="14" ry="5" fill="rgba(255,200,190,0.08)"/>
+        <g fill="none" stroke-linecap="round" opacity="0.42">
+          <path d="M12,16 Q16,11 22,17" stroke="#29b5a8" stroke-width="0.48"/>
+          <path d="M78,16 Q82,11 88,17" stroke="#f0a8b8" stroke-width="0.48"/>
+        </g>
+        <path d="M36,22 Q50,18 64,22" fill="none" stroke="rgba(27,168,224,0.28)" stroke-width="0.38"/>
+        <circle cx="8" cy="28" r="1.3" fill="rgba(41,181,168,0.28)"/>
+        <circle cx="92" cy="28" r="1.3" fill="rgba(255,182,193,0.3)"/>
+      </svg>
+    `
+  }
+];
+
+/* ============================================================
+   İÇ METİN (tüm önizlemelerde aynı)
+   ============================================================ */
+const sampleText = `
+  <p>Arya, eski kütüphanenin içinde sessizce yürüyordu.</p>
+  <p>Kitap rafları tavana kadar uzanıyordu.</p>
+  <p>Bir an durdu ve derin bir nefes aldı.</p>
+  <p>"Bu benim dünyam," diye fısıldadı.</p>
+`;
+
+/* ============================================================
+   KART RENDER
+   ============================================================ */
+let selectedId = null;
+
+function buildPageHTML(pattern, isModal = false) {
+  const cls = isModal
+    ? `page-preview ${pattern.bgClass} modal-page-preview`
+    : `page-preview ${pattern.bgClass}`;
+  return `
+    <div class="${cls}">
+      ${pattern.svgContent
+        ? `<svg class="bg-svg" viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+             ${extractSvgInner(pattern.svgContent)}
+           </svg>`
+        : ''}
+      <div class="preview-text">${sampleText}</div>
+      <span class="preview-pagenum">3</span>
+    </div>
+  `;
+}
+
+function extractSvgInner(svgStr) {
+  /* SVG string zaten içerik; dış <svg> tag'ını soyuyoruz */
+  const match = svgStr.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i);
+  return match ? match[1] : svgStr;
+}
+
+function renderGrid() {
+  const grid = document.getElementById('patternGrid');
+  grid.innerHTML = patterns.map(p => `
+    <div class="card" id="card-${p.id}" onclick="openModal(${p.id})">
+      <div class="preview-wrap">
+        ${buildPageHTML(p, false)}
+      </div>
+      <div class="card-info">
+        <div class="card-number">#${String(p.id).padStart(2,'0')}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-tag tag-${p.tag}">${p.tagLabel}</div>
+        <div class="card-desc">${p.desc}</div>
+        <button class="select-btn" onclick="selectPattern(${p.id}, event)">
+          ${selectedId === p.id ? '✓ Seçildi' : 'Seç'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   SEÇİM
+   ============================================================ */
+function selectPattern(id, event) {
+  if (event) event.stopPropagation();
+  selectedId = id;
+  const p = patterns.find(x => x.id === id);
+  document.getElementById('selectionText').textContent = `#${id} — ${p.name}`;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('card-' + id);
+  if (card) card.classList.add('selected');
+  renderGrid();
+  card && card.classList.add('selected');
+}
+
+function selectCurrent() {
+  if (!currentModalId) return;
+  selectPattern(currentModalId, null);
+  closeModalBtn();
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+let currentModalId = null;
+
+function openModal(id) {
+  currentModalId = id;
+  const p = patterns.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('modalNum').textContent   = `#${String(id).padStart(2,'0')}`;
+  document.getElementById('modalTitle').textContent = p.name;
+  document.getElementById('modalDesc').textContent  = p.desc;
+
+  const preview = document.getElementById('modalPagePreview');
+  preview.className = `modal-page-preview ${p.bgClass}`;
+  if (p.svgContent) {
+    preview.innerHTML = `
+      <svg class="bg-svg" viewBox="0 0 100 141.4" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        ${extractSvgInner(p.svgContent)}
+      </svg>
+      <div class="preview-text">${sampleText}</div>
+      <span class="preview-pagenum">3</span>
+    `;
+  } else {
+    preview.innerHTML = `
+      <div class="preview-text">${sampleText}</div>
+      <span class="preview-pagenum">3</span>
+    `;
+  }
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+  if (event && event.target !== document.getElementById('modalOverlay')) return;
+  closeModalBtn();
+}
+
+function closeModalBtn() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModalId = null;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalBtn();
+});
+
+/* ============================================================
+   BAŞLAT
+   ============================================================ */
+renderGrid();
+</script>
+
+</body>
+</html>

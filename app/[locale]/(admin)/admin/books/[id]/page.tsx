@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AdminBookEditForm } from '@/components/admin/book-edit-form'
 import { AdminClearPdfButton } from '@/components/admin/admin-clear-pdf-button'
+import { AdminSpreadPdfButton } from '@/components/admin/admin-spread-pdf-button'
 import {
   ArrowLeft,
   BookOpen,
@@ -321,11 +322,12 @@ export default async function AdminBookDetailPage({ params }: PageProps) {
                   href={book.pdf_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-primary hover:underline pt-1"
+                  className="flex items-center gap-1 text-primary hover:underline pt-1 text-xs"
                 >
-                  <FileText className="h-3.5 w-3.5" /> {t('downloadPdf')}
+                  <FileText className="h-3.5 w-3.5" /> {t('downloadPdfStored')}
                 </a>
               )}
+              {pages.length > 0 && <AdminSpreadPdfButton bookId={book.id} />}
               {(book.pdf_url || book.pdf_path) && (
                 <div className="pt-2">
                   <AdminClearPdfButton

@@ -1,7 +1,7 @@
 # PDF Generation Guide
 
-**Versiyon:** 3.1 (Puppeteer + HTML/CSS + 4 Köşe Pattern)  
-**Tarih:** 25 Ocak 2026  
+**Versiyon:** 3.2 (Puppeteer + HTML/CSS + metin sayfası SVG arka plan)  
+**Tarih:** 22 Mart 2026  
 **Durum:** Aktif  
 **Teknoloji:** Puppeteer + HTML/CSS Template
 
@@ -15,7 +15,8 @@
 4. [Template Yapısı](#template-yapısı)
 5. [API Kullanımı](#api-kullanımı)
 6. [Geliştirme ve Test](#geliştirme-ve-test)
-7. [Gelecek İyileştirmeler](#gelecek-i̇yileştirmeler)
+7. [Spiral Cilt Baskı Düzeni](#spiral-cilt-baskı-düzeni)
+8. [Gelecek İyileştirmeler](#gelecek-i̇yileştirmeler)
 
 ---
 
@@ -34,9 +35,9 @@ KidStoryBook PDF generation sistemi, çocuk kitaplarını profesyonel bir format
 ✅ Çocuklara uygun font ve tipografi (18pt, 1.8 line height)  
 ✅ **Fontlar:** Başlık: Fredoka (Bold), Metin: Alegreya (Regular)  
 ✅ Metinler sol yaslı ve dikey ortalı  
-✅ Text sayfalarında 4 köşede SVG pattern (rotate edilmiş)  
-✅ Arka plan rengi: #fef9f3 (açık krem/bej)  
-✅ Sayfa ayırıcı: kesik çizgi (dashed)  
+✅ **Metin yarım sayfalarında** SVG arka plan (#48 “Yıldızlı Kıyı”): `yildizli-kiyi-p48.svg` dosyası **`lib/pdf/generator.ts` içinde HTML’e gömülür** (`.text-page-bg-layer`); Puppeteer’da CSS `background-image` ile data URI dosya yolu güvenilir olmadığı için bu yöntem kullanılır — dashboard ve admin print aynı  
+✅ Spread zemin: #ffffff; görsel yarımlar düz beyaz  
+✅ Sayfa ortası ayırıcı: kaldırıldı (`spread-container::after` yok)  
 ✅ Sayfa numaraları sağ altta (sadece metin sayfalarında)  
 ✅ HTML/CSS ile tam layout kontrolü  
 ✅ Web font desteği (Google Fonts: Fredoka, Alegreya)  
@@ -94,9 +95,9 @@ PDF Sayfası: A4 Landscape
 İçerik Sayfası (Her yarı): A5 Dikey (148.5mm x 210mm)
 - Genişlik: 148.5mm (50% of A4 landscape)
 - Yükseklik: 210mm (A5 dikey yükseklik)
-- Arka plan: #fef9f3 (açık krem/bej)
-- Görsel sayfalar: padding 0 (tam köşelere yaslı)
-- Metin sayfaları: padding 10mm
+- Arka plan (spread sayfa zemin): #ffffff
+- Görsel yarımlar: padding 0 (tam köşelere yaslı), düz beyaz
+- Metin yarımlar: padding 10mm; **arka plan** tam yarım için inline SVG katmanı (`generator.ts` + `yildizli-kiyi-p48.svg`)
 ```
 
 ### Görsel Yerleştirme
@@ -127,6 +128,11 @@ PDF Sayfa 5 (Spread 3): [Text | Image]  ← Sayfa 6 ve 7
 - **Spread index 1, 3, 5...** (tek sayılar): Sol = Metin, Sağ = Görsel
 
 Bu pattern, kitap açıldığında her zaman bir tarafta görsel, diğer tarafta metin olmasını sağlar.
+
+### `pdfLayout`: dashboard vs print
+
+- **`dashboard` (varsayılan):** `POST /api/books/[id]/generate-pdf` — A5 ön kapak → A4 içerik spread’leri → A5 arka kapak. Çıktı S3’e yazılır / `pdf_url` önbelleği.
+- **`print`:** `POST /api/admin/books/[id]/generate-pdf` (yalnızca `role: admin`) — Yalnızca **A4 landscape** sayfalar; spiral cilt + **duplex kısa kenar** + kesim için imposizyon (ön yüz normal sıra, arka yüzde sol/sağ ters). Kod: `lib/pdf/generator.ts` (`buildPrintSheets`). PDF doğrudan indirilir (`*_admin-spiral-print.pdf`), önbelleği değiştirmez. Operasyonel rehber: [Spiral Cilt Baskı Düzeni](#spiral-cilt-baskı-düzeni), görsel: `/dev/print-layout-guide.html`.
 
 ---
 
@@ -189,39 +195,21 @@ PDF generator, sayfa verilerinden dinamik HTML oluşturur:
 **Arka Plan:**
 ```css
 .spread-page {
-  background: #fef9f3; /* Açık krem/bej tonu */
+  background: #ffffff;
 }
 
 .text-page {
-  background: #fef9f3;
+  background-color: #ffffff;
+  position: relative;
+  /* Desen: generator, metin yarımına .text-page-bg-layer + inline <svg> ekler */
 }
 ```
 
-**4 Köşe Pattern (Sadece Text Sayfalarında):**
-```css
-.corner-pattern {
-  position: absolute;
-  width: 40mm;
-  height: 40mm;
-  background-image: url('/pdf-backgrounds/children-pattern.svg');
-  background-size: 100% 100%;
-  opacity: 0.4;
-}
+**Not:** Metin deseni **CSS `url()` ile değil**, `generator.ts` → `getTextPageBackgroundSvgInline()` ile okunup HTML’e yazılır. İsteğe bağlı diğer SVG’ler için `embedPdfBackgroundSvgs()` hâlâ `book-styles.css` içindeki `/pdf-backgrounds/*.svg` yollarını base64’e çevirir.
 
-/* Her köşe farklı açıda rotate edilmiş */
-.corner-top-left { top: 0; left: 0; transform: rotate(0deg); }
-.corner-top-right { top: 0; right: 0; transform: rotate(90deg); }
-.corner-bottom-left { bottom: 0; left: 0; transform: rotate(-90deg); }
-.corner-bottom-right { bottom: 0; right: 0; transform: rotate(180deg); }
-```
+**Köşe pattern:** Kaldırıldı (`.corner-pattern { display: none }`).
 
-**Sayfa Ayırıcı:**
-```css
-.spread-container::after {
-  border-left: 1px dashed rgba(232, 213, 192, 0.4);
-  /* Kesik çizgi, arka plan renginin koyusu */
-}
-```
+**Sayfa ayırıcı:** Orta kesik çizgi kaldırıldı (`.spread-container::after { display: none }`).
 
 **Typography:**
 ```css
@@ -405,9 +393,9 @@ const pdfBuffer = await page.pdf({
    - Kullanıcı template seçimi
    - Tema bazlı template'ler
    - **Arka Plan Deseni Seçenekleri:**
-     - Farklı SVG pattern'ler (`public/pdf-backgrounds/` klasörüne eklenebilir)
-     - Pattern seçimi (yıldızlar, kalpler, bulutlar, vb.)
-     - Pattern yoğunluğu ayarı
+     - ✅ **Varsayılan (22 Mart 2026):** Metin sayfaları `yildizli-kiyi-p48.svg` (`bg-alternatives` #48); `generator.ts` HTML’e inline SVG olarak gömer
+     - ⏳ Kullanıcı / kitap bazlı pattern seçimi (UI)
+     - ⏳ Pattern yoğunluğu ayarı
    - **Arka Plan Rengi Seçenekleri:**
      - Hikaye temasına göre otomatik renk seçimi
      - Kullanıcı arka plan rengi seçimi
@@ -512,6 +500,86 @@ Sorun: Fontlar doğru render olmuyor
 
 ---
 
+---
+
+## Spiral Cilt Baskı Düzeni
+
+> **Görsel rehber:** `public/dev/print-layout-guide.html` → `/dev/print-layout-guide.html`
+>
+> HTML rehberde **mor sol şerit / A4 #1 rozeti** = tek bir fiziksel A4’ün **ön + arka** yüzü (aynı kutuda üst-alt); **pembe / A4 #2** = ikinci fiziksel A4. İçteki sarı-yeşil-mavi kutular yalnızca **içerik türünü** (kapak / metin / görsel) gösterir.
+
+Bu bölüm, üretilen PDF'i A4 kâğıda arkalı önlü (duplex) basıp ortadan kesmek ve sol kenara spiral takmak suretiyle fiziksel bir çocuk kitabı oluşturmak için gereken baskı düzenini açıklar.
+
+### Hedef: A5 Yaprak + Spiral Cilt
+
+- Her **A4 landscape** kâğıt, ortadan dikey kesilince iki **A5 portrait** yaprak verir.
+- Yapraklar soldan spirale takılır; sayfalar sağa doğru çevrilir (normal kitap gibi).
+- Bir yaprağı çevirdiğinde: **sol = o yaprağın arkası**, **sağ = bir sonraki yaprağın önü** görünür.
+
+### Yaprak Düzeni (3 hikâye sayfası örneği)
+
+Toplam 8 içerik pozisyonu → 4 A5 yaprak → 2 A4 kâğıt.
+
+| Yaprak | Ön yüz (görünen) | Arka yüz (çevirince sol) | Kaynağı |
+|--------|-------------------|--------------------------|---------|
+| 1 | Ön Kapak | 1. Hikâye Görsel | Sheet 1, Sol kesim |
+| 2 | 1. Hikâye Metin | 2. Hikâye Görsel | Sheet 1, Sağ kesim |
+| 3 | 2. Hikâye Metin | 3. Hikâye Görsel | Sheet 2, Sol kesim |
+| 4 | 3. Hikâye Metin | Arka Kapak | Sheet 2, Sağ kesim |
+
+### A4 PDF Sayfa Düzeni
+
+**⚠️ Kritik kural:** Kısa kenar (short-edge) duplex baskıda kâğıdı çevirince sol ↔ sağ yer değiştirir. Bu nedenle arka yüz PDF sayfalarında sol ve sağ konum **ters sırada** yerleştirilmelidir.
+
+| PDF Sayfası | Sol Konum | Sağ Konum | Not |
+|-------------|-----------|-----------|-----|
+| Sheet 1 — Ön | Ön Kapak | 1. Metin | Normal sıra |
+| Sheet 1 — Arka | **2. Görsel** | **1. Görsel** | ⚠️ Ters sıra |
+| Sheet 2 — Ön | 2. Metin | 3. Metin | Normal sıra |
+| Sheet 2 — Arka | **Arka Kapak** | **3. Görsel** | ⚠️ Ters sıra |
+
+### Okuma Akışı
+
+```
+Kitap kapalı → Ön Kapak
+──────────────────────────────────
+1. yaprağı çevir:   [1.Görsel] | [1.Metin]
+2. yaprağı çevir:   [2.Görsel] | [2.Metin]
+3. yaprağı çevir:   [3.Görsel] | [3.Metin]
+Son yaprağı çevir:  [Arka Kapak]
+```
+
+### Genel Formüller (N hikâye sayfası)
+
+| Değer | Formül | N=3 |
+|-------|--------|-----|
+| Toplam içerik pozisyonu | `1 + N×2 + 1` | 8 |
+| A5 yaprak sayısı | `N + 1` | 4 |
+| A4 kâğıt sayısı | `⌈(N+1)/2⌉` | 2 |
+| PDF sayfa sayısı | `A4 × 2` | 4 |
+
+### Epson L8180 Baskı Ayarları
+
+1. PDF'i **Adobe Acrobat Reader** ile aç (tarayıcı duplex ayarları güvenilmez).
+2. `Ctrl+P` → Yazıcı: **EPSON L8180**
+3. Özellikler → Kâğıt: **A4**, Yön: **Yatay (Landscape)**
+4. **⭐ 2-Taraflı Baskı** etkinleştir → Ciltleme: **Kısa Kenar (Short-Edge Binding)**
+   - _Uzun Kenar seçersen içerik baş aşağı basılır!_
+5. Medya türü: Fotoğraf kâğıdı, Kalite: Yüksek
+6. Yazdır — yazıcı otomatik duplex yapar, kâğıda dokunma.
+7. Çıkan her A4'ü **148,5 mm** noktasından dikey kes (cetvel + maket bıçağı önerilir).
+8. Yaprakları sırala (Yaprak 1→4) ve sol kenardan spiral tak.
+
+> **Kontrol baskısı:** İlk denemede normal kâğıt kullan. Sheet 1'i kes, Yaprak 1 ön=Kapak / arka=1.Görsel olduğunu doğrula.
+
+### Kod: `pdfLayout: 'print'` (uygulandı)
+
+- `generateBookPDF({ ..., pdfLayout: 'print' })` yalnızca A4 `@page spread` üretir (ayrı A5 kapak sayfası yok).
+- `buildPrintSheets()` her fiziksel kâğıt için önce **ön yüz** (sol yaprak önü \| sağ yaprak önü), sonra **arka yüz** (short-edge kuralına göre ters sıra).
+- İndirme: admin API → `filename`*`_admin-spiral-print.pdf`*.
+
+---
+
 ## Referanslar
 
 - **Puppeteer Dokümantasyonu:** https://pptr.dev/
@@ -520,25 +588,29 @@ Sorun: Fontlar doğru render olmuyor
 
 ---
 
-**Son Güncelleme:** 25 Ocak 2026  
+**Son Güncelleme:** 22 Mart 2026  
 **Geliştirici:** KidStoryBook Team  
-**Versiyon:** 3.1 (Puppeteer + HTML/CSS Template + 4 Köşe Pattern)
+**Versiyon:** 3.2 (Puppeteer + HTML/CSS + metin sayfası SVG arka plan)
+
+## Son Güncellemeler (22 Mart 2026)
+
+### Yeni Özellikler
+- ✅ **Metin sayfası arka planı:** `yildizli-kiyi-p48.svg` → `generator.ts` HTML’e inline SVG (`.text-page-bg-layer`); **dashboard** ve **admin print**
+- ✅ **`embedPdfBackgroundSvgs()`:** İsteğe bağlı; CSS’te kalan `/pdf-backgrounds/*.svg` referansları için
 
 ## Son Güncellemeler (25 Ocak 2026)
 
 ### Yeni Özellikler
 - ✅ **A5 Dikey Sayfa Düzeni:** Her yarı sayfa A5 dikey boyutunda (148.5mm x 210mm)
 - ✅ **Görsel Hizalama:** Sol sayfada sola, sağ sayfada sağa hizalı
-- ✅ **Metin Hizalama:** Sol yaslı ve dikey ortalı
-- ✅ **4 Köşe Pattern:** Text sayfalarında 4 köşede SVG pattern (her köşe farklı açıda rotate)
-- ✅ **Kesik Çizgi Ayırıcı:** Sayfa ortasında kesik çizgi (dashed) ayırıcı
-- ✅ **Arka Plan Rengi:** #fef9f3 (açık krem/bej tonu)
+- ✅ **Metin Hizalama:** Ortalanmış paragraflar (`max-width: 38ch`), dikey ortalı
+- ✅ **Spread arka planı:** #ffffff
 - ✅ **Cover Page Layout:** Double-page spread (sol: görsel tam köşelere yaslı, sağ: başlık ortalanmış)
 - ✅ **Cover Metadata Temizleme:** "adventure • collage" gibi metadata kaldırıldı, sadece başlık ve görsel
 - ✅ **Font Güncellemeleri:** Başlık: Fredoka (Bold), Metin: Alegreya (Regular) - Google Fonts entegrasyonu
 
 ### Gelecek Özellikler
-- ⏳ **Farklı Pattern Seçenekleri:** `public/pdf-backgrounds/` klasörüne yeni SVG pattern'ler eklenebilir
+- ⏳ **Kullanıcı / kitap bazlı arka plan deseni:** `public/pdf-backgrounds/` içinde alternatif SVG’ler
 - ⏳ **Tema Bazlı Arka Plan Renkleri:** Hikaye temasına göre otomatik renk seçimi
 - ⏳ **Kullanıcı Özelleştirme:** Pattern ve renk seçimi için UI
 - ⏳ **Şirket Bilgisi:** "KidStoryBook ile tasarlanmıştır" gibi branding bilgisi eklenecek
