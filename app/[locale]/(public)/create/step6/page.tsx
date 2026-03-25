@@ -31,9 +31,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { CurrencyConfig } from "@/lib/currency"
 import { useCurrency } from "@/contexts/CurrencyContext"
-import { DebugQualityPanel } from "@/components/debug/DebugQualityPanel"
-import { TraceViewerModal, type DebugTraceEntry } from "@/components/debug/TraceViewerModal"
-import { Checkbox } from "@/components/ui/checkbox"
 import { routing } from "@/i18n/routing"
 import type { Locale } from "@/i18n/routing"
 import {
@@ -43,6 +40,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { readWizardLocal } from "@/lib/herokid-wizard-storage"
+import { StepRunnerPanel } from "@/components/debug/StepRunnerPanel"
 
 const DEFAULT_PAGE_COUNT = 12
 
@@ -151,13 +149,6 @@ export default function Step6Page() {
   // Debug / skip payment: only from API (admin role in DB or DEBUG_SKIP_PAYMENT server env)
   const [canSkipPayment, setCanSkipPayment] = useState(false)
 
-  // Debug quality buttons: only for admin + feature flag
-  const [canShowDebugQuality, setCanShowDebugQuality] = useState(false)
-
-  // Debug trace: collect full request/response for every step when creating book
-  const [debugTraceRequested, setDebugTraceRequested] = useState(false)
-  const [traceModalOpen, setTraceModalOpen] = useState(false)
-  const [traceData, setTraceData] = useState<DebugTraceEntry[] | null>(null)
 
   /** Create without payment / örnek kitap / debug panel — body'de storyModel olarak gider. Ücretli satın alma bu alanı göndermez → API varsayılanı. */
   const [debugStoryModel, setDebugStoryModel] = useState<DebugStoryModel>('gpt-4.1-mini')
@@ -212,23 +203,6 @@ export default function Step6Page() {
     check()
   }, [user])
 
-  // Can show debug quality buttons (admin + feature flag)
-  useEffect(() => {
-    if (!user) {
-      setCanShowDebugQuality(false)
-      return
-    }
-    const check = async () => {
-      try {
-        const res = await fetch("/api/debug/quality/can-show")
-        const data = await res.json()
-        setCanShowDebugQuality(!!data.canShow)
-      } catch {
-        setCanShowDebugQuality(false)
-      }
-    }
-    check()
-  }, [user])
 
   useEffect(() => {
     router.prefetch("/create/step5")
@@ -558,7 +532,6 @@ export default function Step6Page() {
       pageCount,
       language,
       skipPayment: true,
-      ...(canShowDebugQuality && debugTraceRequested && { debugTrace: true }),
       storyModel: debugStoryModel,
     }
     if (!(payload as { characterIds?: string[]; characterId?: string | null }).characterIds?.length && !(payload as any).characterId) {
@@ -582,14 +555,7 @@ export default function Step6Page() {
         throw new Error(result.error || result.message || "Create book failed")
       }
       const bookId = result.data?.id ?? result.data?.bookId ?? result.id
-      if (result.data?.debugTrace?.length) {
-        setTraceData(result.data.debugTrace)
-        setTraceModalOpen(true)
-        toast({
-          title: t("toasts.bookCreatedDebugTitle"),
-          description: t("toasts.bookCreatedDebugDesc"),
-        })
-      } else if (bookId) {
+      if (bookId) {
         willNavigate = true
         navigate(`/create/generating/${bookId}`)
       } else {
@@ -1423,15 +1389,6 @@ export default function Step6Page() {
                   <p className="text-xs text-amber-700/80 dark:text-amber-300/80 -mt-1">
                     {t("debug.modelHint")}
                   </p>
-                  {canShowDebugQuality && (
-                    <label className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-200 cursor-pointer">
-                      <Checkbox
-                        checked={debugTraceRequested}
-                        onCheckedChange={(v) => setDebugTraceRequested(!!v)}
-                      />
-                      <span>{t("debug.traceCheckbox")}</span>
-                    </label>
-                  )}
                   <Button
                     type="button"
                     variant="outline"
@@ -1495,19 +1452,17 @@ export default function Step6Page() {
                 </motion.div>
               )}
 
-              {/* Debug Quality Panel (Admin only) */}
-              {canShowDebugQuality && wizardData && (
+              {/* Debug Step-Runner Panel (Admin only) */}
+              {canSkipPayment && wizardData && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.45, duration: 0.4 }}
+                  transition={{ delay: 1.5, duration: 0.4 }}
                   className="w-full"
                 >
-                  <DebugQualityPanel
+                  <StepRunnerPanel
                     wizardData={wizardData}
                     characterIds={getCharacterIdsForApi(getCharactersData())}
-                    canShow={canShowDebugQuality}
-                    storyModel={debugStoryModel}
                   />
                 </motion.div>
               )}
@@ -1545,18 +1500,6 @@ export default function Step6Page() {
 
         </motion.div>
       </div>
-
-      {/* Trace viewer modal (after create with debugTrace) */}
-      {traceData && (
-        <TraceViewerModal
-          open={traceModalOpen}
-          onOpenChange={(open) => {
-            setTraceModalOpen(open)
-            if (!open) navigate("/dashboard")
-          }}
-          trace={traceData}
-        />
-      )}
 
       {/* Illustration Style image enlarge modal */}
       <Dialog open={showStyleImageModal} onOpenChange={setShowStyleImageModal}>

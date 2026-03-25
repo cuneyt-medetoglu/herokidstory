@@ -65,6 +65,27 @@ export interface PipelineContext {
   storyModel?: string
   /** İstenen sayfa sayısı (storyData null ise hikaye üretimi için kullanılır) */
   pageCount?: number
+  /**
+   * Debug step-runner: önceden üretilmiş master URL'leri (varsa master generation atlanır).
+   * Key: characterId, value: master image URL
+   */
+  preComputedMasterIllustrations?: Record<string, string>
+  /**
+   * Debug step-runner: önceden üretilmiş entity master URL'leri (varsa entity master generation atlanır).
+   * Key: entityId, value: entity master image URL
+   */
+  preComputedEntityMasterIllustrations?: Record<string, string>
+  /**
+   * Debug step-runner: pipeline'ı belirli bir adımda durdur.
+   * 'masters' = master generation sonrası dur
+   * 'cover' = cover generation sonrası dur
+   * 'pages' = page generation sonrası dur (tts atlanır)
+   */
+  debugStopAfterStep?: 'masters' | 'cover' | 'pages'
+  /**
+   * Debug step-runner: önceden üretilmiş cover URL (varsa cover generation atlanır).
+   */
+  preComputedCoverUrl?: string
 }
 
 // ============================================================================
@@ -758,8 +779,12 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
   // ----------------------------------------------------------------
   // 1. MASTER ILLUSTRATIONS
   // ----------------------------------------------------------------
-  const masterIllustrations: Record<string, string> = {}
-  const entityMasterIllustrations: Record<string, string> = {}
+  const masterIllustrations: Record<string, string> = { ...(ctx.preComputedMasterIllustrations || {}) }
+  const entityMasterIllustrations: Record<string, string> = { ...(ctx.preComputedEntityMasterIllustrations || {}) }
+
+  if (ctx.debugStopAfterStep === 'masters' && Object.keys(masterIllustrations).length > 0) {
+    console.log('[Pipeline] ⏸️ debugStopAfterStep=masters (pre-computed masters provided) — skipping master generation')
+  }
 
   const themeClothingForMaster: Record<string, string> = {
     adventure: 'comfortable outdoor clothing, hiking clothes, sneakers (adventure outfit)',
@@ -771,7 +796,9 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
     custom: 'age-appropriate casual clothing',
   }
 
-  if (isFromExampleMode && exampleBook) {
+  if (ctx.preComputedMasterIllustrations) {
+    console.log('[Pipeline] ⏩ Skipping master generation — pre-computed masters provided:', Object.keys(masterIllustrations))
+  } else if (isFromExampleMode && exampleBook) {
     // From-example: master her karaktere ayrı üretilir
     const exThemeKey = (exampleBook.theme || themeKey).toLowerCase().trim()
     const themeClothing = themeClothingForMaster[exThemeKey] || 'age-appropriate casual clothing'
@@ -950,19 +977,30 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
     console.log(`[Pipeline] ⏱️  Master illustrations total: ${masterMs}ms`)
   }
 
+  if (ctx.debugStopAfterStep === 'masters') {
+    console.log('[Pipeline] ⏸️ debugStopAfterStep=masters — stopping after master generation')
+    await updateBook(bookId, { progress_step: 'master_done_debug' })
+    return
+  }
+
   await reportProgress(30, 'cover_generating')
 
   // ----------------------------------------------------------------
   // 2. COVER IMAGE
   // ----------------------------------------------------------------
-  let generatedCoverImageUrl: string | null = null
+  let generatedCoverImageUrl: string | null = ctx.preComputedCoverUrl || null
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) throw new Error('OPENAI_API_KEY is not configured')
 
-  const coverStartTime = Date.now()
-  console.log('[Pipeline] 🎨 Starting cover generation...')
+  if (ctx.preComputedCoverUrl) {
+    console.log('[Pipeline] ⏩ Skipping cover generation — pre-computed cover URL provided:', ctx.preComputedCoverUrl)
+    await updateBook(bookId, { cover_image_url: ctx.preComputedCoverUrl, status: 'generating' })
+  }
 
-  try {
+  const coverStartTime = Date.now()
+  if (!ctx.preComputedCoverUrl) console.log('[Pipeline] 🎨 Starting cover generation...')
+
+  if (!ctx.preComputedCoverUrl) try {
     // Build cover scene description
     let coverSceneDescription: string
     if (storyData?.pages?.length) {
@@ -1271,6 +1309,12 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
   if (isCoverOnlyMode) {
     console.log('[Pipeline] ✅ Cover only mode complete')
     await updateBook(bookId, { status: 'completed', progress_percent: 100, progress_step: 'completed' })
+    return
+  }
+
+  if (ctx.debugStopAfterStep === 'cover') {
+    console.log('[Pipeline] ⏸️ debugStopAfterStep=cover — stopping after cover generation')
+    await updateBook(bookId, { progress_step: 'cover_done_debug' })
     return
   }
 
@@ -1657,6 +1701,12 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
       await updateBook(bookId, { status: 'failed', progress_step: 'failed' })
       throw imagesError
     }
+  }
+
+  if (ctx.debugStopAfterStep === 'pages') {
+    console.log('[Pipeline] ⏸️ debugStopAfterStep=pages — stopping after page generation')
+    await updateBook(bookId, { progress_step: 'pages_done_debug' })
+    return
   }
 
   await reportProgress(90, 'tts_generating')
