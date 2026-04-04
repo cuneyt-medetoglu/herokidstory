@@ -42,7 +42,7 @@ Plan konusuna göre daralt:
 
 - **Görsel / illustration / cover / sahne:** `lib/book-generation/` (ör. `image-pipeline`), `lib/prompts/image/`, ilgili `app/api/**` route’ları
 - **Hikaye metni / AI story:** `lib/prompts/story/`, `lib/ai/`, `app/api/ai/`, `lib/ai/story-response-validator.ts` vb.
-- **Kitap oluşturma sihirbazı UI:** `components/` altında ilgili bileşenler + `lib/wizard-state.ts`
+- **Kitap oluşturma sihirbazı UI:** `components/` altında ilgili bileşenler + `lib/herokid-wizard-storage.ts`
 - **Admin / debug:** `app/api/admin/`, `components/debug/`
 - **i18n:** `messages/`, `i18n/`, ilgili `contexts/`
 

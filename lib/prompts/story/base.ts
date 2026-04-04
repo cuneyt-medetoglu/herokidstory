@@ -17,7 +17,7 @@ import {
  */
 
 export const VERSION: PromptVersion = {
-  version: '3.2.0',
+  version: '3.2.2',
   releaseDate: new Date('2026-04-04'),
   status: 'active',
   changelog: [
@@ -71,6 +71,8 @@ export const VERSION: PromptVersion = {
     'v3.1.0: [Faz 1.1] Story anti-pattern kuralları — (1) buildIllustrationSection: "Visual safety: hands at sides" kaldırıldı (GPT Image 1.5 4.47/5 el skoru, kısıtlama gereksiz); aktif sahne direktifi eklendi: her imagePrompt spesifik fiil+nesne içermeli. (2) buildVisualDiversitySection: ardışık aynı fiil yasağı (sit/stand/walk/look 2 art arda yasak); checklist ritmi yasağı açık kurala dönüştürüldü. (3) buildStoryStructureSection: Sayfa 1 vs Kapak farkı güçlendirildi — kapak = zirve dramatik an, sayfa 1 = başlangıç; farklı yer+aksiyon+kamera zorunlu. (4) buildStorySystemPrompt/#COVER IMAGE: cover direktifi güçlendirildi — "en dramatik an" zorunluluğu, karakterler aksiyon içinde, kapak+sayfa1 farklı sahne garantisi. (4 Nisan 2026)',
     'v3.0.2: Okuma yaşı bantları (0-1, 1-3, 3-5, 6+) — lib/config/reading-age-brackets.ts tek kaynak; Step 1 seçim; characters API + tüm generateStoryPrompt çağrıları readingAgeBracket; getWordCountMinForStoryInput. (28 Mart 2026)',
     'v3.0.3: Hikaye akışı ve entity disiplini güçlendirildi — itinerary/checklist anlatımı yasaklandı; sayfalar arası sebep-sonuç akışı vurgulandı. supportingEntities için tekrarlayan/merkezi nesneler (örn. teddy bear, ball, map) zorunlu hale getirildi. (28 Mart 2026)',
+    'v3.2.1: Hiç import edilmeyen `export default baseStoryPrompts` kaldırıldı (yalnızca named export kullanımı). (4 Nisan 2026)',
+    'v3.2.2: getWordCountMinForStoryInput kaldırıldı — hiç çağrılmıyordu; kelime tablosu için getReadingAgeBracketConfig doğrudan kullanılabilir. (4 Nisan 2026)',
   ],
   author: '@prompt-manager',
 }
@@ -243,13 +245,6 @@ function resolveStoryPageCount(override?: number): number {
     return override
   }
   return 12
-}
-
-/** `readingAgeBracket` + karakter yaşı ile prompt'taki kelime tablosuyla aynı minimum (doğrulama / repair için). */
-export function getWordCountMinForStoryInput(
-  input: Pick<StoryGenerationInput, 'readingAgeBracket' | 'characterAge'>
-): number {
-  return getReadingAgeBracketConfig(input.readingAgeBracket, input.characterAge).wordsPerPageMin
 }
 
 /**
@@ -915,12 +910,3 @@ The cover is a MOVIE POSTER for this book. Ask yourself: "What single moment fro
 - No typography or written words anywhere in the scene
 - 4-8 sentences, English only`
 }
-
-const baseStoryPrompts = {
-  VERSION,
-  generateStoryPrompt,
-  buildStorySystemPrompt,
-  buildStoryResponseSchema,
-}
-export default baseStoryPrompts
-

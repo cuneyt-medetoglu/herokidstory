@@ -53,7 +53,7 @@ Story kalitesi Faz 0 ile ölçülebilir şekilde iyileşti (pasif sahne %67 -> %
 | **Önerilen sıra** | Tüm planlı fazlar ✅ (2.2b-B dahil). Kalan: dokümandaki **V1/V2** backlog (isteğe bağlı story/repair). |
 | **Bir sonraki iş** | **V1/V2** backlog veya ürün önceliğinize göre yeni iş kalemleri. |
 | **Dosya / kapsam** | **2.2b-B:** ✅ `scene.ts` — iç sayfa `[7] AVOID` + kapak `buildAvoidShort` (parmak/ekstremite/messy anatomy kaldırıldı). |
-| **Test** | **T2c:** ✅. **T1.3:** ✅ kullanıcı koşusu (4 Nisan 2026, `ac69bd68`) — sinematik ışık/aksiyon güçlü; staging JSON’da P1–P2 gaze cümleleri mevcut; saç uzunluğu bazen referanstan sapıyor (negatif prompt ile düzeltme önerilmez). |
+| **Test** | **T2c:** ✅. **T1.3:** ✅ kullanıcı koşusu (4 Nisan 2026, Step Runner export) — sinematik ışık/aksiyon güçlü; staging JSON’da P1–P2 gaze cümleleri mevcut; saç uzunluğu bazen referanstan sapıyor (negatif prompt ile düzeltme önerilmez). |
 
 ---
 
@@ -213,7 +213,7 @@ Aynı iş için **geliştirme** ile **test + sonuç analizi** farklı model sevi
 
 **T2c ölçümü (iki Step Runner export karşılaştırması, farklı kitap oturumu — metrik yine de A etkisini gösterir):**
 
-| Metrik | Önce (v1.24, `61498fd1`…) | Sonra (v1.25, `b41ad22e`…) |
+| Metrik | Önce (v1.24, Step Runner export — önce) | Sonra (v1.25, Step Runner export — sonra) |
 |--------|---------------------------|----------------------------|
 | `page_1` `prompt` karakter | ~4637 | ~4094 |
 | `image_page` API `text_tokens` (input) | ~1028 | ~933 |
@@ -316,7 +316,7 @@ Aynı iş için **geliştirme** ile **test + sonuç analizi** farklı model sevi
 | # | Sorun | Çözüm | Dosya |
 |---|-------|-------|-------|
 | S1 | `clay_animation`: "stop-motion" kelimesi → model sahneyi dondurulmuş / hareketsiz kare olarak yorumlayabilir; dinamik aksiyon azalır | "stop-motion aesthetic" → "claymation handcrafted look" (hem `STYLE_DESCRIPTIONS` hem `getStyleSpecificDirectives`) | `style-descriptions.ts` + `scene.ts` |
-| S2 | `get3DAnimationNotes` import edilmiş ama hiçbir yerde kullanılmıyor (dead import) | Import satırı kaldırıldı | `scene.ts` |
+| S2 | `get3DAnimationNotes` kullanılmıyordu | Önce `scene.ts` import temizlendi; P2’de `style-descriptions.ts` içindeki fonksiyon da kaldırıldı | `style-descriptions.ts` |
 
 **3d_animation ve watercolor:** Stil direktiflerinde sahne aksiyonunu, pozu veya kompozisyonu kısıtlayan ifade yok. İzolasyon sağlanmış.
 

@@ -43,6 +43,7 @@ import { chatWithLog } from '@/lib/ai/chat'
 import { prepareStoryResponseForUse } from '@/lib/ai/story-response-validator'
 import { appendAiDebugLog, sanitizeForDebugLog, summarizeFormData } from '@/lib/debug/ai-debug-log'
 import { formDataToDebugRecord, sanitizeForStepRunnerDebug } from '@/lib/debug/step-runner-sanitize'
+import { getCoverReferenceImageUrls } from '@/lib/book-generation/cover-reference-images'
 import {
   buildCharacterActionForPage,
   buildPrimaryVisualBrief,
@@ -120,6 +121,7 @@ const IMAGE_QUALITY = DEFAULT_IMAGE_QUALITY
 // Yardımcı fonksiyonlar (route.ts'den taşındı)
 // ============================================================================
 
+/** Yerel geliştirme / hata ayıklama — `STOP_AFTER` üretimde boş olmalı; aksi halde pipeline kasıtlı kesilir. */
 export function stopAfter(step: string): void {
   if (process.env.STOP_AFTER === step) {
     console.log(`[Pipeline] ⏸️ STOP_AFTER=${step}`)
@@ -1238,16 +1240,8 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
 
     console.log('[Pipeline] 📤 COVER IMAGE REQUEST: prompt length=', textPrompt.length)
 
-    // Faz 4: Entity master'lar kapak referanslarına dahil edilmez.
-    // Kapak için model yalnızca karakter kimliğine ihtiyaç duyar; entity görselleri
-    // (arı, kavanoz vb.) referans listesine eklenince model kapak sahnesini
-    // entity etrafında kurgulayabilir veya kimlik karışıklığı yaşar.
-    const coverMasterUrls = Object.values(masterIllustrations).filter((url): url is string => Boolean(url))
-
-    const referenceImageUrls =
-      coverMasterUrls.length > 0
-        ? coverMasterUrls
-        : characters.map((char) => char.reference_photo_url).filter((url): url is string => Boolean(url))
+    // Kapak referansları — tek politika: getCoverReferenceImageUrls (entity master yok; Faz 4).
+    const referenceImageUrls = getCoverReferenceImageUrls(masterIllustrations, characters)
 
     let coverImageUrl: string | null = null
     let coverImageB64: string | null = null

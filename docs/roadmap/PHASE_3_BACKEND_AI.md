@@ -282,7 +282,7 @@
     - `buildStyleDirectives()` fonksiyonu oluşturuldu - tüm style direktiflerini birleştiriyor
     - `generateScenePrompt` ve `generateFullPagePrompt` içindeki tekrar eden direktifler birleştirildi
   - **Faz 3: Prompt Bölümlerini Organize Et ✅**
-    - 12 Section Builder Fonksiyonu oluşturuldu (buildAnatomicalAndSafetySection, buildCompositionAndDepthSection, vb.)
+    - 12 Section Builder Fonksiyonu oluşturuldu (ör. buildCompositionAndDepthSection, buildStyleSection; sonradan iç sayfa 7-blok ile bazıları kullanım dışı — P2’de `buildAnatomicalAndSafetySection` kaldırıldı)
     - `generateFullPagePrompt()` refactor edildi - builder fonksiyonlarıyla yeniden yapılandırıldı
     - Prompt sırası korundu (mevcut prompt çıktısı aynı kaldı)
   - **Versiyon:** v1.6.0 → v1.7.0

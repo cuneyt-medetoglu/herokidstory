@@ -12,7 +12,7 @@ import { uploadFile, getPublicUrl } from '@/lib/storage/s3'
 import { getBookById, updateBook } from '@/lib/db/books'
 import { insertEditHistory, getLatestPageVersion, getEditHistory } from '@/lib/db/edit-history'
 import { successResponse, errorResponse, handleAPIError } from '@/lib/api/response'
-import { getNegativePrompt, getAnatomicalCorrectnessDirectives } from '@/lib/prompts/image/negative'
+import { getMaskEditAvoid, getAnatomicalCorrectnessDirectives } from '@/lib/prompts/image/negative'
 import { imageEditWithLog } from '@/lib/ai/images'
 import { DEFAULT_IMAGE_MODEL, DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_QUALITY } from '@/lib/ai/openai-models'
 
@@ -86,15 +86,11 @@ export async function POST(request: NextRequest) {
     // ====================================================================
     // BUILD SAFE EDIT PROMPT WITH POSITIVE AND NEGATIVE CONSTRAINTS
     // ====================================================================
-    // Get book metadata for prompt context
-    const ageGroup = book.story_data?.ageGroup || 'preschool'
-    const illustrationStyle = book.story_data?.illustrationStyle || 'watercolor'
-    const theme = book.story_data?.theme || 'adventure'
-
-    // Get negative prompts for safety (prevent unwanted content)
-    const negativeItems = getNegativePrompt(ageGroup, illustrationStyle, theme).split(', ')
-    
-    // Build comprehensive positive prompt with safety directives
+    // Build comprehensive positive prompt with safety directives.
+    // Negative politikası: iç sayfa felsefesiyle uyumlu (P1).
+    // - Anatomi: getAnatomicalCorrectnessDirectives() pozitif direktif olarak prefix'e eklenir.
+    // - Güvenlik: proz "DO NOT" kuralları yeterli; COMPOSITION_NEGATIVE yok (kompozisyon sabit).
+    // - Kısa AVOID: getMaskEditAvoid() — getNegativePrompt + slice(0,10) yerine.
     const promptPrefix = [
       'CRITICAL EDITING RULES:',
       '1. Only modify the masked area. Keep the rest of the image completely unchanged.',
@@ -103,7 +99,6 @@ export async function POST(request: NextRequest) {
       getAnatomicalCorrectnessDirectives(),
       '',
       'STRICT PROHIBITIONS (DO NOT):',
-      `DO NOT include: ${negativeItems.slice(0, 10).join(', ')} (and other inappropriate content).`,
       'DO NOT change anything outside the masked area.',
       'DO NOT alter character appearance or clothing unless specifically requested.',
       'DO NOT add or remove elements not mentioned in the edit request.',
@@ -112,10 +107,9 @@ export async function POST(request: NextRequest) {
       'EDIT REQUEST:',
     ].join('\n')
 
-    const finalPrompt = `${promptPrefix}\n${editPrompt}`.trim()
+    const finalPrompt = `${promptPrefix}\n${editPrompt}\n${getMaskEditAvoid()}`.trim()
     
     console.log(`[Image Edit] Prompt length: ${finalPrompt.length} characters`)
-    console.log(`[Image Edit] Negative items count: ${negativeItems.length}`)
 
     // ====================================================================
     // 4. CHECK EDIT QUOTA

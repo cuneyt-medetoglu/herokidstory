@@ -113,7 +113,7 @@ Prompt/version değişikliklerinde: **kod–doküman sync** — tek doğruluk ka
 - **Story:** `base.ts` → `VERSION.version` + `changelog`; `STORY_PROMPT_TEMPLATE.md` içerik çelişkisini gider (sürümü dosya başlığına yazmak zorunlu değil).
 - **Görsel:** `scene.ts` + `negative.ts` + `image-pipeline.ts` ↔ `IMAGE_PROMPT_TEMPLATE.md`.
 - **Validator / şema:** `lib/ai/story-response-validator.ts` değişince roadmap veya analiz dokümanında “repair / diversity” notu güncellenmiş mi kontrol et.
-- **Tipler:** `lib/prompts/types.ts`. Yardımcı: `lib/prompts/version-sync.ts`.
+- **Tipler:** `lib/prompts/types.ts`.
 
 ### 7. Eisenhower Matrisi Yönetimi
 ROADMAP.md'deki görevleri aciliyet ve önemine göre kategorize etme:

@@ -22,11 +22,3 @@ export function getLayoutSafeMasterDirectives(): string {
     LAYOUT_AVOID,
   ].join(' ')
 }
-
-/**
- * Optional: get only the scale part for custom prompt building (e.g. "25-30% of frame height").
- */
-export function getLayoutSafeMasterScaleText(): string {
-  const { characterScaleMin, characterScaleMax } = PROMPT_CONFIG.masterLayout
-  return `${characterScaleMin}-${characterScaleMax}% of frame height`
-}

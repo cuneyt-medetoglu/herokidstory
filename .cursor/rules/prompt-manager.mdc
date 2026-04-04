@@ -51,7 +51,7 @@ Prompt değişikliği yaparken: şema, validator, pipeline ve ilgili route’lar
 
 ### Çekirdek dosyalar
 - **`lib/prompts/image/scene.ts`** — `VERSION`, `SceneInput`, **`generateFullPagePrompt`** (kapak dalı `isCover === true` / iç sayfa **7 blok** `isCover === false`). İç sayfa için `generateScenePrompt` / `generateLayeredComposition` artık ana yol değil.
-- **`lib/prompts/image/negative.ts`** — `getAnatomicalCorrectnessDirectives`, negatif/changelog.
+- **`lib/prompts/image/negative.ts`** — `getAnatomicalCorrectnessDirectives` (pozitif anatomi), `getMaskEditAvoid` (mask-edit); tarihsel `getNegativePrompt` listeleri kaldırıldı (v1.6.0).
 - **`lib/prompts/image/style-descriptions.ts`** — `getGlobalArtDirection`, stil profilleri, sinematik vs grafik dallar.
 - **`lib/prompts/image/character.ts`**, **`master.ts`** — Karakter metni, master üretim prompt’ları.
 - **`lib/book-generation/image-pipeline.ts`** — Kapak ve sayfa görselleri, `resolveCoverEnvironment`, referans URL seçimi, **Faz 4:** kapakta yalnızca **karakter** master’ları (entity master kapak listesinde yok).
@@ -74,7 +74,7 @@ Prompt metninde `buildCoverReferenceConsistencyDirectives` yalnızca `useCoverRe
 
 - Her ana modülde **`export const VERSION: PromptVersion`** (semantic version + `changelog[]` + `releaseDate`).
 - Anlamlı davranış değişikliğinde: sürümü artır, changelog’a tek satırlık gerekçe ekle (tarih/PR bağlamı).
-- **`lib/prompts/version-sync.ts`** — Kod–doküman izleme yardımcısı; `@project-manager` ile iş akışında anılmış; prompt değişince doküman eşlemesini kontrol et.
+- Kod–doküman eşlemesi: `export const VERSION` + `docs/prompts/*_TEMPLATE.md` manuel kontrol (eski `version-sync.ts` kaldırıldı — hiç import edilmiyordu).
 
 ---
 

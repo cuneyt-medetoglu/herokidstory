@@ -3,11 +3,11 @@
  *
  * Provides detailed style descriptions for image generation prompts
  * Based on POC styleDescriptions structure
- * v1.19.0 [Sıra 16]: 3d_animation/3d + get3DAnimationNotes: vibrant saturated → rich appealing (controlled saturation) for consistency with getCinematicPack/GLOBAL_ART_DIRECTION.
+ * v1.19.0 [Sıra 16]: 3d_animation/3d: vibrant saturated → rich appealing (controlled saturation) for consistency with getCinematicPack/GLOBAL_ART_DIRECTION.
  * v1.20.0 [D3]: comic_book / geometric / sticker_art / block_world / collage — grafik düz profil: getGlobalArtDirection + getCinematicPack sinematik dil ile çakışmasın; usesCinematicImageLayers + getStyleQualityPhrase.
  */
 
-export const STYLE_DESCRIPTIONS: Record<string, string> = {
+const STYLE_DESCRIPTIONS: Record<string, string> = {
   // 3D Animation (Pixar Style) - Pixar-style 3D animation like Toy Story, Finding Nemo, Inside Out
   '3d_animation': '3D Animation (Pixar Style) - Pixar-style 3D animation (like Toy Story, Finding Nemo, Inside Out), cartoonish and stylized (NOT photorealistic), rich appealing colors (controlled saturation), rounded shapes, exaggerated features, soft shadows, realistic textures, children\'s animated movie aesthetic, Pixar animation quality',
   '3d': '3D Animation (Pixar Style) - Pixar-style 3D animation (like Toy Story, Finding Nemo, Inside Out), cartoonish and stylized (NOT photorealistic), rich appealing colors (controlled saturation), rounded shapes, exaggerated features, soft shadows, realistic textures, children\'s animated movie aesthetic, Pixar animation quality',
@@ -63,14 +63,6 @@ export function getStyleDescription(styleKey: string): string {
   return styleKey
 }
 
-/**
- * Check if style is 3D Animation style
- */
-export function is3DAnimationStyle(styleKey: string): boolean {
-  const normalizedKey = styleKey.toLowerCase().replace(/[-\s]/g, '_')
-  return normalizedKey === '3d_animation' || normalizedKey === '3d'
-}
-
 /** D3: Flat/graphic styles — sinematik volumetric/filmic katmanları istemez; stil DNA’sı ile uyumlu grafik yönergeleri kullanılır. */
 const GRAPHIC_FLAT_STYLE_KEYS = new Set([
   'comic_book',
@@ -80,7 +72,7 @@ const GRAPHIC_FLAT_STYLE_KEYS = new Set([
   'collage',
 ])
 
-export function normalizeIllustrationStyleKey(styleKey: string): string {
+function normalizeIllustrationStyleKey(styleKey: string): string {
   return styleKey.toLowerCase().replace(/[-\s]/g, '_')
 }
 
@@ -94,13 +86,6 @@ export function getStyleQualityPhrase(illustrationStyle: string): string {
   return usesCinematicImageLayers(illustrationStyle)
     ? 'cinematic quality'
     : 'bold graphic illustration quality, print-ready'
-}
-
-/**
- * Get 3D Animation special notes (if applicable)
- */
-export function get3DAnimationNotes(): string {
-  return 'CRITICAL FOR 3D ANIMATION (PIXAR STYLE): The illustration must be cartoonish and stylized like Pixar animated movies (Toy Story, Finding Nemo, Inside Out) - NOT photorealistic, NOT realistic photography. Use rounded shapes, exaggerated features, rich appealing colors (controlled saturation), soft shadows, realistic textures, and a playful animated movie aesthetic. The character should look like a 3D animated cartoon character from a Pixar children\'s movie, not a real photograph or realistic 3D render. Pixar animation quality and visual style.'
 }
 
 /**

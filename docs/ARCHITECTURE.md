@@ -194,7 +194,7 @@ herokidstory/
 │   ├── prompts/                # Prompt Management (config, story, image, tts v1.0.0 dil dosyaları)
 │   ├── queue/                  # image-generation-queue
 │   ├── │   ├── utils.ts                # cn, helpers
-│   └── wizard-state.ts         # Wizard state
+│   ├── herokid-wizard-storage.ts  # Sihirbaz localStorage (aktif)
 ├── migrations/                 # PostgreSQL migrations (AWS)
 ├── middleware.ts                # Next.js middleware (auth)
 ├── docs/                       # Dokümantasyon (roadmap, PRD, guides, database, api, vb.)
@@ -296,7 +296,7 @@ Detaylı liste: [docs/api/API_DOCUMENTATION.md](api/API_DOCUMENTATION.md).
 
 ### Tamamlananlar (Faz 2–4 – Mimari Bileşenler)
 
-1. ✅ **Prompt Management System** – `lib/prompts/` (config, story, image, tts dil dosyaları, version-sync)
+1. ✅ **Prompt Management System** – `lib/prompts/` (config, story, image, tts dil dosyaları); sürüm bilgisi modül içi `VERSION` + şablon dokümanlar
 2. ✅ **TTS Architecture** – `/api/tts/generate`, 8 dil, Google Cloud TTS
 3. ✅ **Currency Detection** – `lib/currency.ts`, `/api/currency`, IP → TRY/USD/EUR/GBP
 4. ✅ **Cart System** – `/api/cart`, `/cart`, checkout components, My Library bulk selection
@@ -338,15 +338,13 @@ Detaylı liste: [docs/api/API_DOCUMENTATION.md](api/API_DOCUMENTATION.md).
 **Amaç:** Hikaye ve görsel üretimi için prompt versiyonları, dil dosyaları ve konfigürasyon.
 
 ### Yapı
-- **config.ts** – Aktif versiyonlar (story v1.4.0, image v1.8.0, cover v1.8.0), A/B test ve feature flag’ler.
+- **config.ts** – Yalnızca kodda kullanılan ayarlar (ör. layout-safe master ölçeği `masterLayout`); story/görsel model ve limitler `lib/ai/` + route’lar.
 - **story/** – Hikaye prompt base.
-- **image/** – Görsel prompt’ları (character, scene, style-descriptions, negative).
+- **image/** – Görsel prompt’ları (character, scene, style-descriptions, negative, master).
 - **tts/v1.0.0/** – TTS için 8 dil (tr, en, de, fr, es, zh, pt, ru).
-- **version-sync.ts** – Kod–dokümantasyon senkronizasyonu.
 
 ### Gerekçe
-- Tek yerden prompt yönetimi; versiyon değişikliği tek dosyadan.
-- A/B test ve feature flag ile deney yapılabilir.
+- Tek yerden prompt metni; anlamlı değişikliklerde ilgili dosyada `VERSION` + changelog.
 
 ---
 

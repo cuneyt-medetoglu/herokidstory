@@ -45,12 +45,16 @@ import {
   mapSceneMapTimeToSceneInput,
 } from '@/lib/book-generation/page-scene-contract'
 import { entityAppearsOnPage } from '@/lib/book-generation/supporting-entities'
+import { getCoverReferenceImageUrls } from '@/lib/book-generation/cover-reference-images'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-/** STOP_AFTER: .env'de STOP_AFTER=story_request | story_response | master_request | master_response yaz. O adım loglandıktan sonra istek durur. */
+/**
+ * Yerel geliştirme / hata ayıklama: `.env` içinde `STOP_AFTER=story_request | story_response | master_request | master_response`
+ * yazıldığında ilgili adım loglandıktan sonra istek kasıtlı olarak durur. Üretim ortamında boş bırakın.
+ */
 function stopAfter(step: string) {
   if (process.env.STOP_AFTER === step) {
     console.log(`[Create Book] ⏸️ STOP_AFTER=${step}`)
@@ -1712,14 +1716,8 @@ export async function POST(request: NextRequest) {
         throw new Error('OPENAI_API_KEY is not configured')
       }
 
-      // A10: Reference image order = [0] character masters, [1..] entity masters (OpenAI: first image preserved best). PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md
-      const coverMasterUrls = Object.values(masterIllustrations).filter((url): url is string => Boolean(url))
-      const entityMasterUrls = Object.values(entityMasterIllustrations).filter((url): url is string => Boolean(url))
-      const allCoverMasters = [...coverMasterUrls, ...entityMasterUrls]
-
-      const referenceImageUrls = allCoverMasters.length > 0
-        ? allCoverMasters
-        : characters.map((char) => char.reference_photo_url).filter((url): url is string => Boolean(url))
+      // Kapak referansları — tek politika: getCoverReferenceImageUrls (entity master yok; Faz 4).
+      const referenceImageUrls = getCoverReferenceImageUrls(masterIllustrations, characters)
       
       let coverImageUrl: string | null = null
       let coverImageB64: string | null = null

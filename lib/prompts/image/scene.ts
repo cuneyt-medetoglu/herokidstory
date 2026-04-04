@@ -1,12 +1,5 @@
 import type { PromptVersion, ShotPlan } from '../types'
-import {
-  getStyleDescription,
-  is3DAnimationStyle,
-  getCinematicPack,
-  getGlobalArtDirection,
-  getStyleQualityPhrase,
-  usesCinematicImageLayers,
-} from './style-descriptions'
+import { getGlobalArtDirection, usesCinematicImageLayers } from './style-descriptions'
 import { getAnatomicalCorrectnessDirectives } from './negative'
 
 /**
@@ -23,7 +16,7 @@ import { getAnatomicalCorrectnessDirectives } from './negative'
  */
 
 export const VERSION: PromptVersion = {
-  version: '1.29.0',
+  version: '1.34.0',
   releaseDate: new Date('2026-04-04'),
   status: 'active',
   changelog: [
@@ -89,6 +82,11 @@ export const VERSION: PromptVersion = {
     'v1.27.0: [Faz 3] Stil izolasyon düzeltmesi — clay_animation: "stop-motion" kelimesi kaldırıldı (model sahneyi dondurulmuş / hareketsiz kare olarak yorumlayabiliyordu); "claymation handcrafted look" ile değiştirildi. Hem STYLE_DESCRIPTIONS hem getStyleSpecificDirectives güncellendi. get3DAnimationNotes dead import temizlendi. (4 Nisan 2026)',
     'v1.26.0: [Faz 1.3] Story staging + pozitif gaze — (1) getCinematicNaturalDirectives: "do NOT look at camera" yerine pozitif sahne hedefi ("look toward scene elements"); (2) [4] SCENE bloğu: "Do NOT look at camera" yerine "look toward the scene: at each other, at the object they interact with, toward the path"; (3) [7] AVOID: "looking directly at camera" kaldırıldı (pozitif yönlendirme ile gereksizleşti). base.ts\'te ILLUSTRATION / STAGING direktifi: her sceneDescription\'a 1 cümle gaze hedefi ekleme zorunluluğu getirildi. (4 Nisan 2026)',
     'v1.24.0: [Faz 2.2] 7-blok prompt yapısı — İç sayfa prompt\'u ~14 dağınık bloktan 7 odaklı bloğa indirildi: [1] PRIORITY, [2] STYLE, [3] SHOT PLAN, [4] SCENE, [5] CHARACTER IDENTITY, [6] EXPRESSIONS, [7] AVOID. Ortam×3→×1, Aydınlatma×2→×1, Stil×3→×1, Tutarlılık×4→×1, Kompozisyon×2→SHOT PLAN\'a birleştirildi. generateScenePrompt() / generateLayeredComposition() iç sayfa için artık çağrılmıyor (benzersiz içerik [4] SCENE\'e taşındı). [ANATOMY] bloğu kaldırıldı, anahtar kelimeler [7] AVOID\'a eklendi. Kalite dolgu satırları (professional children\'s book, high quality, print-ready) tamamen kaldırıldı. Tahmini prompt uzunluğu ~4000→~1800 karakter (~%55 azalma), sahne içeriğinin token oranı artırıldı. (4 Nisan 2026)',
+    'v1.30.0: [P2] buildAnatomicalAndSafetySection kaldırıldı — hiç çağrılmıyordu (v1.24+ iç sayfa 7-blok; kapakta getAnatomicalCorrectnessDirectives doğrudan generateFullPagePrompt içinde). (4 Nisan 2026)',
+    'v1.31.0: [P3 öncesi] Ölü kod temizliği — generateScenePrompt, generateLayeredComposition, kullanılmayan section builder\'lar ve yalnızca bunlara bağlı getCinematicElements / getCompositionRules zinciri, DoF/atmosfer/entegrasyon export\'ları, getAgeAppropriateSceneRules, getClothingConsistencyNote kaldırıldı. Aktif yol: generateFullPagePrompt (7-blok + kapak). (4 Nisan 2026)',
+    'v1.32.0: [P3 öncesi] getCinematicNaturalDirectives kaldırıldı (hiç çağrılmıyordu; gaze/poz içeriği getGazeDirectionForPage + POSE_VARIATIONS ile). Kullanılmayan style-descriptions import\'ları temizlendi; getPoseVariationForPage yalnızca modül içi. (4 Nisan 2026)',
+    'v1.33.0: [P3 öncesi] Yalnızca scene.ts içinde kullanılan yardımcılar artık named export değil: getCameraAngleDirectives, getPerspectiveForPage, getCompositionForPage, getSceneDiversityDirectives. (4 Nisan 2026)',
+    'v1.34.0: [P3 öncesi] Hiç import edilmeyen `export default scenePrompts` kaldırıldı; `RiskySceneAnalysis` modül dışına export edilmiyor (yalnızca detectRiskySceneElements dönüş tipi). (4 Nisan 2026)',
   ],
   author: '@prompt-manager',
 }
@@ -144,82 +142,6 @@ export interface SceneDiversityAnalysis {
  * Combines cinematic and descriptive elements for high-quality illustrations
  * Inspired by Magical Children's Book quality standards
  */
-export function generateScenePrompt(
-  scene: SceneInput,
-  characterPrompt: string,
-  illustrationStyle: string,
-  isCover: boolean = false
-): string {
-  const parts: string[] = []
-
-  // NOTE v1.23.0 (Faz 2.1): Style directive removed from here — it is already provided by
-  // getGlobalArtDirection() + buildStyleSection() in generateFullPagePrompt.
-  // Repeating the full styleDesc (~150 chars) a third time was diluting scene content.
-  // generateScenePrompt is only called from generateFullPagePrompt (interior pages).
-
-  // 1. CINEMATIC ELEMENTS — D3: grafik stillerde filmic god rays / mist azaltılır
-  const cinematicElements = getCinematicElements(scene.pageNumber, scene.mood, scene.timeOfDay, illustrationStyle)
-  parts.push(cinematicElements)
-  
-  // 3. CHARACTER - With emphasis on consistency - v1.7.0: Using buildCharacterConsistencyDirectives
-  parts.push(`${characterPrompt}`)
-  parts.push(buildCharacterConsistencyDirectives()[0]) // First consistency directive
-  
-  // 4. CHARACTER ACTION
-  parts.push(`${scene.characterAction}`)
-
-  // 5. ENVIRONMENT - Detailed (cinematic level). Cover: use short env to avoid repeating long scene (A2).
-  const useFullSceneDesc = !isCover
-  const environment = getEnvironmentDescription(
-    scene.theme,
-    scene.sceneDescription,
-    useFullSceneDesc,
-    isCover ? scene.coverEnvironment : undefined,
-    !isCover ? scene.environmentDescription : undefined
-  )
-  parts.push(`in ${environment}`)
-
-  // 6. LIGHTING - Based on time of day
-  if (scene.timeOfDay) {
-    const lighting = getLightingDescription(scene.timeOfDay, scene.mood)
-    parts.push(`${lighting}`)
-  }
-
-  // 7. WEATHER - If applicable
-  if (scene.weather && scene.weather !== 'sunny') {
-    parts.push(getWeatherDescription(scene.weather))
-  }
-
-  // 8. MOOD AND ATMOSPHERE
-  parts.push(getMoodDescription(scene.mood))
-
-  // 9. STYLE-SPECIFIC DIRECTIVES (NEW: Illustration Style İyileştirmesi)
-  const styleSpecificDirectives = getStyleSpecificDirectives(illustrationStyle)
-  if (styleSpecificDirectives) {
-    parts.push(styleSpecificDirectives)
-  }
-
-  // 10. COMPOSITION RULES
-  // Note: previousScenes not available in generateScenePrompt, will be handled in generateFullPagePrompt
-  // Composition rules are now handled in generateFullPagePrompt with full context
-  // Keeping basic composition here for backward compatibility
-  const baseComposition = scene.focusPoint === 'character' ? 'clear face when visible, character off-center (rule of thirds)' :
-                         scene.focusPoint === 'environment' ? 'wide environmental shot' :
-                         'balanced composition'
-  parts.push(baseComposition)
-
-  // 11. QUALITY AND CONSISTENCY
-  parts.push('professional children\'s book illustration')
-  parts.push('high quality, print-ready')
-  parts.push('detailed but age-appropriate')
-  parts.push('warm and inviting atmosphere')
-  
-  // 12. CHARACTER CONSISTENCY EMPHASIS - v1.7.0: Using buildCharacterConsistencyDirectives
-  parts.push(buildCharacterConsistencyDirectives()[1]) // Second consistency directive
-
-  return parts.join(', ')
-}
-
 // ============================================================================
 // Environment Descriptions (ENHANCED: 15 Ocak 2026 - 3 Levels of Detail)
 // ============================================================================
@@ -356,179 +278,6 @@ function getMoodDescription(mood: string): string {
 }
 
 // ============================================================================
-// Cinematic Elements (NEW: 15 Ocak 2026)
-// ============================================================================
-
-/**
- * Generates cinematic composition elements (ENHANCED: 25 Ocak 2026)
- * Based on 2026 best practices: specific lighting techniques, golden hour, backlighting, god rays
- */
-export function getCinematicElements(
-  pageNumber: number,
-  mood: string,
-  timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'night',
-  illustrationStyle?: string
-): string {
-  const elements: string[] = []
-  const graphic = illustrationStyle !== undefined && !usesCinematicImageLayers(illustrationStyle)
-
-  // Lighting based on time of day and mood
-  if (timeOfDay === 'evening') {
-    elements.push('golden hour lighting')
-    elements.push('warm amber tones, golden glow')
-    if (graphic) {
-      elements.push('bold warm color fields and graphic rim read (style-appropriate, not photoreal god rays)')
-    } else {
-      elements.push('backlighting with rim light around character')
-      elements.push('volumetric god rays through atmosphere')
-    }
-  } else if (timeOfDay === 'morning') {
-    elements.push('soft morning light')
-    if (!graphic) {
-      elements.push('gentle backlighting')
-    }
-    elements.push('warm diffused light')
-  } else if (timeOfDay === 'night') {
-    elements.push('moonlight')
-    elements.push('cool ambient light')
-    elements.push('clear contrast between moonlight and shadow')
-  } else {
-    // Afternoon or default
-    if (mood === 'exciting') {
-      elements.push(graphic ? 'clear defined shadows in graphic style' : 'dynamic lighting with defined shadows')
-    } else if (mood === 'calm') {
-      elements.push('soft ambient light, even diffusion')
-    } else {
-      elements.push('warm natural light')
-    }
-  }
-
-  if (!graphic && (timeOfDay === 'morning' || timeOfDay === 'evening')) {
-    elements.push('sunlight through trees into morning mist (source → obstacle → medium)')
-  }
-
-  elements.push(graphic ? 'clear foreground/background planes (graphic readability)' : 'layered depth')
-  elements.push('rule of thirds composition')
-
-  const angle = pageNumber === 1 ? 'hero shot' : 'varied perspective'
-  elements.push(angle)
-
-  elements.push(graphic ? 'bold graphic illustration quality' : 'cinematic quality')
-
-  return elements.join(', ')
-}
-
-// ============================================================================
-// Composition Rules (Faz 3.4: Advanced Composition – karakter ortada değil)
-// ============================================================================
-
-/** Character position in frame – avoid "always centered". Rotates by page. */
-function getCharacterPlacementForPage(
-  pageNumber: number,
-  previousScenes?: SceneDiversityAnalysis[]
-): string {
-  const placements = [
-    'character on left third of frame, rule of thirds intersection',
-    'character on right third of frame, rule of thirds intersection',
-    'character at lower third, environment dominant above',
-    'character on left, leading lines (path or trail) guide eye',
-    'character on right, balanced with environment on left',
-    'character off-center, dynamic negative space',
-  ]
-  const lastComp = previousScenes?.[previousScenes.length - 1]?.composition
-  const index = lastComp && lastComp !== 'unknown'
-    ? (pageNumber - 1) % (placements.length - 1)
-    : (pageNumber - 1) % placements.length
-  return placements[index] ?? placements[0]
-}
-
-/** Advanced composition – cinematic framing, no "character centered" default. */
-function getAdvancedCompositionRules(
-  pageNumber: number,
-  previousScenes?: SceneDiversityAnalysis[]
-): string {
-  const options = [
-    'rule of thirds composition, character at intersection points',
-    'leading lines (path, fence, tree line) guide eye to character',
-    'natural frame (tree branches, doorway) framing character',
-    'diagonal composition, dynamic energy',
-    'symmetrical balance with character off-center',
-    'layered depth, character in foreground third',
-  ]
-  const lastComp = previousScenes?.[previousScenes.length - 1]?.composition
-  const avoidIndex = lastComp === 'diagonal' ? 3 : lastComp === 'symmetrical' ? 4 : -1
-  const available = avoidIndex >= 0 ? options.filter((_, i) => i !== avoidIndex) : options
-  const index = (pageNumber - 1) % available.length
-  return available[index] ?? options[0]
-}
-
-function getCompositionRules(
-  focus: string,
-  pageNumber: number,
-  previousScenes?: SceneDiversityAnalysis[],
-  isCover?: boolean
-): string {
-  const rules: string[] = []
-
-  // Faz 3.4: Interior pages – character NOT centered; use placement + advanced composition
-  if (!isCover) {
-    rules.push(getCharacterPlacementForPage(pageNumber, previousScenes))
-    rules.push(getAdvancedCompositionRules(pageNumber, previousScenes))
-    rules.push('clear face when visible, character NOT centered in frame')
-  } else {
-    if (focus === 'environment') rules.push('wide environmental shot')
-    else rules.push('balanced composition')
-  }
-
-  const cameraAngle = getCameraAngleDirectives(pageNumber, previousScenes)
-  rules.push(cameraAngle)
-
-  const compositions = ['rule of thirds', 'leading lines (path, trail)', 'symmetrical', 'diagonal composition']
-  const lastComposition = previousScenes?.[previousScenes.length - 1]?.composition
-  if (lastComposition && lastComposition !== 'unknown') {
-    const availableCompositions = compositions.filter(c => {
-      if (lastComposition === 'balanced' && c.includes('balanced')) return false
-      if (lastComposition === 'symmetrical' && c.includes('symmetrical')) return false
-      if (lastComposition === 'diagonal' && c.includes('diagonal')) return false
-      return true
-    })
-    if (availableCompositions.length > 0) {
-      const index = (pageNumber - 1) % availableCompositions.length
-      rules.push(availableCompositions[index])
-    }
-  } else {
-    const index = (pageNumber - 1) % compositions.length
-    rules.push(compositions[index])
-  }
-
-  rules.push('character 25-35% of frame, environment 65-75%')
-
-  if (pageNumber === 1) rules.push('inviting opening')
-  else if (pageNumber >= 10) rules.push('conclusion')
-
-  return rules.join(', ')
-}
-
-// ============================================================================
-// Age-Appropriate Scene Rules (v1.5.0: age-agnostic for images)
-// ============================================================================
-
-/**
- * Returns scene rules for image prompts.
- * v1.5.0: Age-agnostic – all ages use same "rich environment" rules (elementary-like).
- * Removes "simple background" / "clear focal point" that made character dominant.
- */
-export function getAgeAppropriateSceneRules(_ageGroup: string): string[] {
-  return [
-    'rich background',
-    'detailed environment',
-    'visually interesting',
-    'bright colors',
-    'no scary elements',
-  ]
-}
-
-// ============================================================================
 // Theme-Appropriate Clothing (NEW: 15 Ocak 2026)
 // ============================================================================
 
@@ -544,147 +293,6 @@ function getThemeAppropriateClothing(theme: string): string {
     underwater: 'swimwear or beach wear',
   }
   return styles[normalized] || 'casual'
-}
-
-// ============================================================================
-// CHARACTER CLOTHING CONSISTENCY (NEW: 15 Ocak 2026)
-// ============================================================================
-
-/**
- * Ensures character wears same clothing unless story explicitly mentions change
- * Critical for visual consistency across pages
- */
-export function getClothingConsistencyNote(
-  pageNumber: number,
-  storyText: string,
-  previousClothing?: string
-): string {
-  // Keywords that indicate clothing change in story
-  const changeKeywords = [
-    'changed into',
-    'put on',
-    'wore',
-    'dressed in',
-    'wearing',
-    'changed clothes',
-    'pajamas',
-    'costume',
-    'outfit',
-    'jacket',
-    'coat',
-    'swimsuit',
-    'uniform'
-  ]
-  
-  // Check if story mentions clothing change
-  const hasClothingChange = changeKeywords.some(keyword => 
-    storyText.toLowerCase().includes(keyword)
-  )
-  
-  // If no clothing change mentioned and not first page
-  if (!hasClothingChange && pageNumber > 1) {
-    if (previousClothing) {
-      return `wearing the same ${previousClothing} as in previous pages`
-    } else {
-      return 'wearing the same clothing as in previous pages, maintain clothing consistency throughout story'
-    }
-  }
-  
-  // If clothing change mentioned or first page, let AI generate appropriate clothing
-  return ''
-}
-
-// ============================================================================
-// Depth of Field Directives (NEW: 25 Ocak 2026)
-// ============================================================================
-
-/**
- * Generates depth of field directives for cinematic composition
- * Based on 2026 best practices: camera parameters, focus planes, bokeh effects
- */
-export function getDepthOfFieldDirectives(pageNumber: number, focusPoint: string): string {
-  const directives: string[] = []
-  
-  // Camera parameters based on focus point
-  if (focusPoint === 'character') {
-    // Shallow DoF for cover only (portrait style); background softened but readable
-    directives.push('50mm prime lens, f/1.4 aperture')
-    directives.push('shallow depth of field')
-    directives.push('sharp focus on character\'s eyes and face')
-    directives.push('background with subtle atmospheric haze, environment still readable')
-    directives.push('foreground elements may have slight blur for depth')
-    directives.push('middle ground in sharp detail')
-    directives.push('background elements fade into atmospheric haze')
-  } else if (focusPoint === 'environment') {
-    // Deep focus for environmental shots
-    directives.push('24mm wide-angle lens, f/11 aperture')
-    directives.push('deep focus throughout frame')
-    directives.push('foreground, midground, and background all in sharp detail')
-    directives.push('background sharp and detailed, rich environment')
-    directives.push('distant background elements fade into atmospheric haze')
-  } else {
-    // Balanced: deep/medium DoF, sharp detailed background (no blur)
-    directives.push('35mm lens, f/5.6 aperture')
-    directives.push('deep focus throughout frame')
-    directives.push('foreground, midground, and background all in sharp detail')
-    directives.push('background sharp and detailed, rich environment')
-    directives.push('character in sharp focus, environment sharp and detailed')
-    directives.push('distant background elements fade into atmospheric haze')
-  }
-  
-  // Page-specific variations
-  if (pageNumber === 1) {
-    directives.push('hero shot with clear depth separation')
-  } else {
-    directives.push('varied depth of field for visual interest')
-  }
-  
-  // Focus plane: balanced/environment – explicit no-blur
-  if (focusPoint !== 'character') {
-    directives.push('no background blur, environment in sharp detail')
-  }
-  
-  return directives.join(', ')
-}
-
-// ============================================================================
-// Atmospheric Perspective Directives (NEW: 25 Ocak 2026)
-// ============================================================================
-
-/**
- * Generates atmospheric perspective directives for depth
- * Based on 2026 best practices: color desaturation, contrast reduction, haze
- */
-export function getAtmosphericPerspectiveDirectives(): string {
-  return [
-    'atmospheric perspective: distant elements fade into soft mist',
-    'background colors become lighter and less saturated with distance',
-    'background contrast decreases gradually',
-    'foreground sharp and detailed, midground moderately detailed, background atmospheric',
-    'atmospheric haze in distant background',
-    'horizon line visible with soft transition to sky'
-  ].join(', ')
-}
-
-// ============================================================================
-// Enhanced Atmospheric Depth (Faz 2.4: Görsel Kalite İyileştirme)
-// ============================================================================
-
-/**
- * Enhanced atmospheric depth for cinematic layering
- * Foreground sharp → midground detailed → background soft/hazy
- */
-export function getEnhancedAtmosphericDepth(): string {
-  return [
-    'foreground: sharp focus, rich textures, clear detail, moderate saturation',
-    'midground: detailed and clear, moderate saturation, visible textures',
-    'background: soft atmospheric haze, colors 30-40% less saturated',
-    'distant elements fade into warm golden mist or soft blue haze',
-    'background contrast reduced gradually, lighter tones',
-    'horizon line visible with soft transition to sky',
-    'clear separation between foreground, midground, and background layers',
-    'aerial perspective: far objects appear lighter, softer'
-  ].join(', ')
 }
 
 // ============================================================================
@@ -705,48 +313,9 @@ const POSE_VARIATIONS = [
 /**
  * Returns pose variation for page to encourage variety across pages
  */
-export function getPoseVariationForPage(pageNumber: number, totalPages: number = 12): string {
+function getPoseVariationForPage(pageNumber: number, totalPages: number = 12): string {
   const poseIndex = Math.floor((pageNumber - 1) / Math.max(1, totalPages / POSE_VARIATIONS.length))
   return POSE_VARIATIONS[Math.min(poseIndex, POSE_VARIATIONS.length - 1)]
-}
-
-// ============================================================================
-// Character Integration Directives (Faz 2.5: Görsel Kalite İyileştirme)
-// ============================================================================
-
-/**
- * Directives so character feels part of scene, not pasted on top
- */
-export function getCharacterIntegrationDirectives(): string {
-  return [
-    'character naturally integrated into scene',
-    'character is part of the environment, not pasted on top',
-    'character lighting matches scene lighting (same color temperature, same shadow direction)',
-    'character receives same ambient light as environment',
-    'character clearly positioned in 3D space (not floating), feet touch ground naturally',
-    'character scale appropriate for distance from viewer'
-  ].join(', ')
-}
-
-/**
- * Cinematic, natural storybook moment – characters engaged with scene, not posing for viewer.
- * Use for interior pages to avoid "looking at camera" and achieve immersive, natural composition.
- * Reference: campfire/sunset style – characters looking at scene, each other, or objects (fire, sky, path).
- */
-export function getCinematicNaturalDirectives(illustrationStyle?: string): string {
-  const graphic = illustrationStyle !== undefined && !usesCinematicImageLayers(illustrationStyle)
-  if (graphic) {
-    return [
-      'illustrated story moment — characters act within the scene, not posing for a photo',
-      'characters look toward scene elements (path, object, companion, horizon) — eyes follow the story action',
-      'natural composition for a children\'s book spread; clear graphic readability',
-    ].join(', ')
-  }
-  return [
-    'cinematic storybook moment — capture a live instant in the story, not a posed photo',
-    'characters look toward the scene: at each other, at the object they are interacting with, toward the path, or at something in the environment',
-    'natural composition, immersive atmosphere, natural lighting and depth',
-  ].join(', ')
 }
 
 /**
@@ -776,23 +345,6 @@ function buildCharacterExpressionsSection(
 }
 
 // ============================================================================
-// Enhanced Golden Hour Directives (Faz 2.2: Görsel Kalite İyileştirme)
-// ============================================================================
-
-/**
- * Soft natural lighting for evening or warm mood.
- * Avoid forcing Pixar/golden-hour look – reference images (test/1.png, test/2.png) use a distinct, non-daylight tone.
- */
-export function getEnhancedGoldenHourDirectives(): string {
-  return [
-    'soft natural lighting, subtle warm tones where appropriate',
-    'gentle ambient light, no harsh contrast',
-    'soft shadows with warm undertones, no harsh blacks',
-    'atmospheric depth, cohesive color mood'
-  ].join(', ')
-}
-
-// ============================================================================
 // Camera Angle Directives (NEW: 25 Ocak 2026)
 // ============================================================================
 
@@ -800,7 +352,7 @@ export function getEnhancedGoldenHourDirectives(): string {
  * Generates camera angle directives for visual variety
  * Based on 2026 best practices: perspective diversity, child's viewpoint
  */
-export function getCameraAngleDirectives(
+function getCameraAngleDirectives(
   pageNumber: number,
   previousScenes?: SceneDiversityAnalysis[]
 ): string {
@@ -845,69 +397,6 @@ export function getCameraAngleDirectives(
 }
 
 // ============================================================================
-// Character-Environment Ratio Directives (NEW: 25 Ocak 2026)
-// ============================================================================
-
-/**
- * Generates character-environment ratio directives for balanced composition
- * Based on 2026 best practices: 25-35% character, 65-75% environment (v1.4.0)
- */
-export function getCharacterEnvironmentRatio(): string {
-  return [
-    'character occupies 25-35% of frame, environment 65-75%',
-    'character must NOT exceed 35% of frame',
-    'wider shot, character smaller in frame',
-    'character must not occupy more than half the frame',
-    'wide environmental context, character integrated into scene',
-    'expansive background with sky, trees, landscape visible',
-    'character not dominating frame, balanced with surroundings',
-    'environment sharp and detailed, not blurred',
-    'environment provides depth and atmosphere, character is part of the scene'
-  ].join(', ')
-}
-
-// ============================================================================
-// FOREGROUND/MIDGROUND/BACKGROUND LAYER SYSTEM (NEW: 15 Ocak 2026)
-// ============================================================================
-
-/**
- * Generates layered composition instructions (ENHANCED: 25 Ocak 2026)
- * Ensures proper depth and visual hierarchy with depth of field and atmospheric perspective
- */
-/**
- * @param midgroundOverride When provided (e.g. for cover), use this instead of full sceneDescription to avoid repetition. A2 PROMPT_LENGTH_AND_REPETITION_ANALYSIS.md
- */
-export function generateLayeredComposition(
-  sceneInput: SceneInput,
-  characterAction: string,
-  environment: string,
-  midgroundOverride?: string
-): string {
-  const layers: string[] = []
-  
-  // FOREGROUND - Character and immediate elements with depth of field
-  layers.push(`FOREGROUND: ${characterAction}, main character in sharp focus with detailed features visible`)
-  layers.push('foreground elements may have slight blur (foreground bokeh) for depth')
-  
-  // MIDGROUND - Story elements and context. Cover: use short override so full description appears only once (A2).
-  if (midgroundOverride) {
-    layers.push(`MIDGROUND: ${midgroundOverride}, in sharp detail`)
-  } else if (sceneInput.sceneDescription && sceneInput.sceneDescription.length > 20) {
-    layers.push(`MIDGROUND: ${sceneInput.sceneDescription}, in sharp detail`)
-  } else {
-    layers.push(`MIDGROUND: story elements and contextual objects related to the scene, in sharp detail`)
-  }
-  
-  // BACKGROUND - Environment and atmosphere; sharp detail, rich environment
-  layers.push(`BACKGROUND: ${environment}, providing depth and atmosphere`)
-  layers.push('midground and near background in sharp detail, rich environment')
-  layers.push('distant background elements fade into soft mist with atmospheric perspective')
-  layers.push('background colors become lighter and less saturated with distance')
-  
-  return layers.join('. ')
-}
-
-// ============================================================================
 // Style-Specific Directives (NEW: Illustration Style İyileştirmesi)
 // ============================================================================
 
@@ -935,38 +424,8 @@ export function getStyleSpecificDirectives(illustrationStyle: string): string {
 }
 
 // ============================================================================
-// Builder Functions for Prompt Sections (v1.7.0: Refactor - Modülerleştirme)
+// Builder helpers (generateFullPagePrompt — kapak / iç sayfa)
 // ============================================================================
-
-/**
- * Build cover directives for book cover generation
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildCoverDirectives(additionalCharactersCount: number): string[] {
-  const charCount = additionalCharactersCount + 1
-  return [
-    `COVER: Use reference images ONLY for character identity (face, hair, eyes, skin, body, outfit). Do NOT copy pose or expression from reference. Pose, expression, and composition must come from THIS cover scene description. All ${charCount} characters prominent. Professional, print-ready. Adults have adult proportions.`,
-    'Cover = poster for the entire book; suggest key locations, theme, and journey in one image.',
-    'Epic wide or panoramic composition; character(s) as guides into the world, environment shows the world of the story.',
-    'Eye-catching, poster-like, movie-poster quality. Reserve clear space for title at top.',
-    'Atmospheric lighting that fits the theme (cohesive mood, no forced style).',
-    'Cover: epic wide; character max 30-35% of frame; environment-dominant.',
-    'Cover composition and camera must be distinctly different from the first interior page.'
-  ]
-}
-
-/**
- * Build first interior page directives
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildFirstInteriorPageDirectives(additionalCharactersCount: number): string[] {
-  const charNote = additionalCharactersCount > 0 ? `All ${additionalCharactersCount + 1} characters prominent` : 'Character integrated into scene'
-  return [
-    'FIRST INTERIOR PAGE: Must be distinctly different from the book cover. Use a different camera angle (e.g. cover = medium/portrait, page 1 = wide or low-angle), different composition, and/or expanded scene detail. Do not repeat the same framing as the cover.',
-    'Character smaller in frame; rule of thirds or leading lines (e.g. path) — composition distinct from cover.',
-    `Book interior illustration (flat, standalone, NOT 3D mockup). ${charNote}. No text/writing.`
-  ]
-}
 
 /**
  * Build clothing directives based on context
@@ -994,19 +453,6 @@ function buildClothingDirectives(
 }
 
 /**
- * Build multiple characters directives
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildMultipleCharactersDirectives(additionalCharactersCount: number): string[] {
-  const totalCharacters = additionalCharactersCount + 1
-  return [
-    `${totalCharacters} characters in the scene: main character and ${additionalCharactersCount} companion(s)`,
-    `all ${totalCharacters} characters should be visible and clearly identifiable`,
-    'group composition, balanced arrangement of characters'
-  ]
-}
-
-/**
  * Build cover reference consistency directives
  * v1.7.0: Extracted from generateFullPagePrompt for modularity
  */
@@ -1015,168 +461,8 @@ function buildCoverReferenceConsistencyDirectives(additionalCharactersCount: num
   return `${charNote} match cover image exactly (hair/eyes/skin/features). Only clothing/pose vary.`
 }
 
-/**
- * Build character consistency directives
- * v1.7.0: Consolidates all character consistency directives from multiple locations
- */
-function buildCharacterConsistencyDirectives(): string[] {
-  return [
-    'consistent character design, same character as previous pages',
-    'character must match reference photo exactly, same features on every page',
-    'Illustration style (NOT photorealistic). Match reference features.'
-  ]
-}
-
-/**
- * Build style directives
- * v1.7.0: Consolidates all style directives from multiple locations
- */
-function buildStyleDirectives(illustrationStyle: string): string[] {
-  const styleDesc = getStyleDescription(illustrationStyle)
-  const qualityPhrase = getStyleQualityPhrase(illustrationStyle)
-  return [
-    `${styleDesc} illustration, ${qualityPhrase}`,
-    `ILLUSTRATION STYLE: ${styleDesc}`,
-    'Illustration style (NOT photorealistic). Match reference features.'
-  ]
-}
-
-// ============================================================================
-// Section Builder Functions (v1.7.0: Faz 3 - Prompt Bölümlerini Organize Et)
-// ============================================================================
-
-/**
- * Build anatomical and safety section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-/** @deprecated v1.24.0: No longer called from interior path (7-block); anatomy moved to [7] AVOID. Kept for cover path compatibility. */
-function buildAnatomicalAndSafetySection(_ageGroup: string): string[] {
-  return [getAnatomicalCorrectnessDirectives(), '']
-}
-
-/**
- * Build composition and depth section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- * v1.8.0: Enhanced atmospheric depth (Faz 2.4)
- */
-function buildCompositionAndDepthSection(pageNumber: number, focusPoint: string): string[] {
-  const parts: string[] = []
-  
-  const depthOfField = getDepthOfFieldDirectives(pageNumber, focusPoint)
-  parts.push('[COMPOSITION_DEPTH]')
-  parts.push(depthOfField)
-  parts.push(getAtmosphericPerspectiveDirectives())
-  parts.push(getEnhancedAtmosphericDepth())
-  parts.push('[/COMPOSITION_DEPTH]')
-  parts.push('') // Empty line for separation
-  
-  return parts
-}
-
-/**
- * Build lighting and atmosphere section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- * v1.8.0: Golden hour boost (Faz 2.2) – evening/warm mood gets enhanced golden hour directives
- */
-function buildLightingAndAtmosphereSection(timeOfDay: string | undefined, mood: string): string[] {
-  const parts: string[] = []
-  
-  if (timeOfDay) {
-    const enhancedLighting = getLightingDescription(timeOfDay, mood)
-    parts.push('[LIGHTING_ATMOSPHERE]')
-    parts.push(enhancedLighting)
-    if (timeOfDay === 'evening' || timeOfDay === 'sunset' || mood === 'warm' || mood === 'happy') {
-      parts.push(getEnhancedGoldenHourDirectives())
-    }
-    parts.push('[/LIGHTING_ATMOSPHERE]')
-    parts.push('') // Empty line for separation
-  }
-  
-  return parts
-}
-
-/**
- * Build camera and perspective section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildCameraAndPerspectiveSection(
-  pageNumber: number,
-  focusPoint: string,
-  previousScenes?: SceneDiversityAnalysis[]
-): string[] {
-  const parts: string[] = []
-  
-  const cameraAngle = getCameraAngleDirectives(pageNumber, previousScenes)
-  parts.push('[CAMERA_PERSPECTIVE]')
-  parts.push(cameraAngle)
-  const compositionRules = getCompositionRules(focusPoint, pageNumber, previousScenes)
-  parts.push(compositionRules)
-  parts.push('[/CAMERA_PERSPECTIVE]')
-  parts.push('') // Empty line for separation
-  
-  return parts
-}
-
-/**
- * Build character-environment ratio section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildCharacterEnvironmentRatioSection(): string[] {
-  const parts: string[] = []
-  
-  const characterRatio = getCharacterEnvironmentRatio()
-  parts.push('[CHARACTER_ENVIRONMENT_RATIO]')
-  parts.push(characterRatio)
-  parts.push('[/CHARACTER_ENVIRONMENT_RATIO]')
-  parts.push('') // Empty line for separation
-  
-  return parts
-}
-
-/**
- * Build style section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildStyleSection(illustrationStyle: string): string[] {
-  const parts: string[] = []
-  
-  const styleDirectives = buildStyleDirectives(illustrationStyle)
-  parts.push(styleDirectives[1]) // Second style directive: `ILLUSTRATION STYLE: ${styleDesc}`
-  
-  return parts
-}
-
-/**
- * Build scene establishment section (Faz 2.1: Scene-First)
- * @param hasStoryEnvironment - When true (story-provided environmentDescription present),
- *   the outdoor atmospheric depth block (sky, horizon, aerial perspective) is skipped.
- *   This prevents the model from adding outdoor vegetation/nature to indoor scenes.
- */
-function buildSceneEstablishmentSection(environment: string, hasStoryEnvironment: boolean = false): string[] {
-  const parts: string[] = []
-  parts.push('[SCENE_ESTABLISHMENT]')
-  parts.push(environment)
-  parts.push('rich details, layered depth')
-  if (!hasStoryEnvironment) {
-    // Only add outdoor atmospheric depth when story hasn't defined the environment.
-    // When environmentDescription is set by story (e.g. "indoor arena"), this block
-    // would inject sky/horizon/aerial perspective and break the scene.
-    parts.push(getEnhancedAtmosphericDepth())
-  }
-  parts.push('[/SCENE_ESTABLISHMENT]')
-  parts.push('')
-  return parts
-}
-
-/**
- * Build character integration section (Faz 2.5)
- */
-function buildCharacterIntegrationSection(): string[] {
-  return [getCharacterIntegrationDirectives()]
-}
-
-/** Faz 3.4: Gaze direction variety – character NEVER looks at viewer (see getCinematicNaturalDirectives). */
-function getGazeDirectionForPage(pageNumber: number, totalPages: number): string {
+/** Faz 3.4: Gaze direction — interior [4] SCENE. */
+function getGazeDirectionForPage(pageNumber: number, _totalPages: number): string {
   const gazes = [
     'character looking ahead into the scene, wide-eyed wonder or curiosity',
     'character looking into scene (path, horizon, or object), engaged with environment',
@@ -1189,142 +475,13 @@ function getGazeDirectionForPage(pageNumber: number, totalPages: number): string
   return gazes[index] ?? gazes[0]
 }
 
-/**
- * Build pose variation for page (Faz 2.3); Faz 3.4: adds gaze direction variety
- */
-function buildPoseVariationSection(pageNumber: number, totalPages: number): string[] {
-  const pose = getPoseVariationForPage(pageNumber, totalPages)
-  const gaze = getGazeDirectionForPage(pageNumber, totalPages)
-  return [
-    pose,
-    gaze,
-    'natural pose variation, NOT the same pose as other pages',
-    'head angle and gaze direction vary by page (not always same direction)',
-  ]
-}
-
-/**
- * Build scene content section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- * v1.8.0: Pose variation (Faz 2.3) appended
- * A2: For cover, full scene description appears only here (once); layeredComp/scenePrompt use short text.
- */
-function buildSceneContentSection(
-  scenePrompt: string,
-  layeredComp: string,
-  ageRules: string[],
-  pageNumber: number,
-  totalPages: number,
-  sceneInput?: SceneInput,
-  isCover?: boolean
-): string[] {
-  const parts: string[] = []
-  
-  if (isCover && sceneInput?.sceneDescription) {
-    parts.push(`COVER SCENE: ${sceneInput.sceneDescription}`)
-  }
-  parts.push(layeredComp)
-  parts.push(scenePrompt)
-  parts.push(...buildPoseVariationSection(pageNumber, totalPages))
-  parts.push(ageRules.join(', '))
-  
-  return parts
-}
-
-/**
- * Build special page directives section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildSpecialPageDirectives(
-  pageNumber: number,
-  isCover: boolean,
-  useCoverReference: boolean,
-  additionalCharactersCount: number,
-  sceneInput: SceneInput
-): string[] {
-  const parts: string[] = []
-  
-  // Multiple characters note
-  if (additionalCharactersCount > 0) {
-    parts.push(...buildMultipleCharactersDirectives(additionalCharactersCount))
-  }
-  
-  // Cover generation
-  if (isCover) {
-    parts.push(...buildCoverDirectives(additionalCharactersCount))
-  }
-  
-  // Cover reference consistency
-  if (useCoverReference) {
-    parts.push(buildCoverReferenceConsistencyDirectives(additionalCharactersCount))
-  }
-  
-  // First interior page
-  if (sceneInput.pageNumber === 1 && !isCover) {
-    parts.push(...buildFirstInteriorPageDirectives(additionalCharactersCount))
-  }
-  
-  return parts
-}
-
-/**
- * Build character consistency section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- * v1.23.0: Faz 2.1 — removed exact-duplicate style string (both buildStyleDirectives[2] and
- *   buildCharacterConsistencyDirectives[2] were pushing the same literal string twice).
- *   Style is already covered by getGlobalArtDirection() + buildStyleSection().
- *   Only actual character consistency directives remain here.
- */
-function buildCharacterConsistencySection(_illustrationStyle: string): string[] {
-  const charConsistency = buildCharacterConsistencyDirectives()
-  return [
-    charConsistency[0], // 'consistent character design, same character as previous pages'
-    charConsistency[1], // 'character must match reference photo exactly, same features on every page'
-  ]
-}
-
-/**
- * Build scene diversity section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildSceneDiversitySection(isCover: boolean, previousScenes?: SceneDiversityAnalysis[]): string[] {
-  const parts: string[] = []
-  
-  if (!isCover && previousScenes && previousScenes.length > 0) {
-    const lastScene = previousScenes[previousScenes.length - 1]
-    const diversityDirectives = getSceneDiversityDirectives(lastScene)
-    if (diversityDirectives) {
-      parts.push('')
-      parts.push(diversityDirectives)
-    }
-  }
-  
-  return parts
-}
-
-/**
- * Build clothing section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
 function buildClothingSection(
   clothing: string | undefined,
   theme: string,
   isCover: boolean,
   useCoverReference: boolean
 ): string[] {
-  const parts: string[] = []
-  
-  parts.push(buildClothingDirectives(clothing, theme, isCover, useCoverReference))
-  
-  return parts
-}
-
-/**
- * Build final directives section
- * v1.7.0: Extracted from generateFullPagePrompt for modularity
- */
-function buildFinalDirectives(): string[] {
-  return ['No text/writing in image.']
+  return [buildClothingDirectives(clothing, theme, isCover, useCoverReference)]
 }
 
 // ============================================================================
@@ -1381,7 +538,7 @@ function buildCompositionRulesShort(): string {
 }
 
 // ============================================================================
-// [A1] AVOID – tek satır (buildFinalDirectives + ana negatifler)
+// [A1] AVOID – tek satır (kapak)
 // ============================================================================
 
 function buildAvoidShort(): string {
@@ -1701,7 +858,7 @@ export function analyzeSceneDiversity(
 /**
  * Get appropriate perspective for page, ensuring variety
  */
-export function getPerspectiveForPage(
+function getPerspectiveForPage(
   pageNumber: number,
   previousPerspectives: string[]
 ): SceneDiversityAnalysis['perspective'] {
@@ -1724,7 +881,7 @@ export function getPerspectiveForPage(
 /**
  * Get appropriate composition for page, ensuring variety
  */
-export function getCompositionForPage(
+function getCompositionForPage(
   pageNumber: number,
   previousCompositions: string[]
 ): SceneDiversityAnalysis['composition'] {
@@ -1747,7 +904,7 @@ export function getCompositionForPage(
  * Detect risky scene elements that may cause anatomical errors
  * NEW: 18 Ocak 2026 - GPT research-backed risk detection
  */
-export interface RiskySceneAnalysis {
+interface RiskySceneAnalysis {
   hasRisk: boolean
   riskyElements: string[]
   suggestions: string[]
@@ -1836,7 +993,7 @@ export function getSafeSceneAlternative(characterAction: string): string {
 /**
  * Generate scene diversity prompt directives (optimized)
  */
-export function getSceneDiversityDirectives(previousScene?: SceneDiversityAnalysis): string {
+function getSceneDiversityDirectives(previousScene?: SceneDiversityAnalysis): string {
   if (!previousScene) return ''
   
   const changes: string[] = []
@@ -1846,27 +1003,4 @@ export function getSceneDiversityDirectives(previousScene?: SceneDiversityAnalys
   
   return changes.length > 0 ? `DIVERSITY: Change ${changes.join(', ')}` : ''
 }
-
-const scenePrompts = {
-  VERSION,
-  generateScenePrompt,
-  generateFullPagePrompt,
-  getAgeAppropriateSceneRules,
-  getStyleSpecificDirectives,
-  // NEW: Scene diversity functions
-  extractSceneElements,
-  analyzeSceneDiversity,
-  getPerspectiveForPage,
-  getCompositionForPage,
-  getSceneDiversityDirectives,
-  // NEW: Risk detection functions (18 Ocak 2026)
-  detectRiskySceneElements,
-  getSafeSceneAlternative,
-  // NEW: Composition and depth functions (25 Ocak 2026)
-  getDepthOfFieldDirectives,
-  getAtmosphericPerspectiveDirectives,
-  getCameraAngleDirectives,
-  getCharacterEnvironmentRatio,
-}
-export default scenePrompts
 
