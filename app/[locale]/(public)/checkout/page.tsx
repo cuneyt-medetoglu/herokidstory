@@ -40,7 +40,6 @@ export default function CheckoutPage() {
   }
 
   const hasHardcopy = items.some((item) => item.type === "hardcopy")
-  const hasEbook = items.some((item) => item.type === "ebook_plan")
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-background dark:from-slate-900 dark:to-slate-950">
@@ -71,7 +70,7 @@ export default function CheckoutPage() {
             className="lg:col-span-2"
           >
             <div className="rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800 md:p-8">
-              <CheckoutForm hasHardcopy={hasHardcopy} hasEbook={hasEbook} />
+              <CheckoutForm hasHardcopy={hasHardcopy} />
             </div>
           </motion.div>
 

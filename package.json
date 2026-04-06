@@ -72,6 +72,7 @@
     "eslint-config-next": "14.2.35",
     "framer-motion": "^12.23.26",
     "ioredis": "^5.4.2",
+    "iyzipay": "^2.0.67",
     "jspdf": "^4.0.0",
     "lucide-react": "^0.562.0",
     "next": "^14.2.35",
@@ -96,6 +97,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/iyzipay": "^2.0.3",
     "@types/pg": "^8.16.0",
     "@types/qrcode": "^1.5.6",
     "eslint": "^8.57.1",

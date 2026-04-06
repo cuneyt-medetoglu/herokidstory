@@ -1,18 +1,28 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
+import type { Currency } from "@/lib/currency"
+import type { ProductId } from "@/lib/pricing/payment-products"
 
 export interface CartItem {
-  id: string // Unique cart item ID
-  type: "hardcopy" | "ebook_plan"
-  bookId?: string // Optional for ebook_plan
+  id: string            // Unique cart item ID (client-side)
+  type: "hardcopy" | "ebook_plan" | "ebook" | "bundle"
+  /** Sunucu tarafında fiyat hesabı için kullanılır (lib/pricing/payment-products.ts) */
+  productId?: ProductId
+  bookId?: string       // Hardcopy / ebook için
   bookTitle: string
-  coverImage?: string // Optional for ebook_plan
-  price: number
+  coverImage?: string
+  price: number         // Görüntüleme amaçlı; checkout'ta sunucu yeniden hesaplar
+  /**
+   * Para birimi — CurrencyContext'ten doldurulur.
+   * Opsiyonel: mevcut sepete ekleme noktaları henüz göndermiyorsa undefined kalabilir.
+   * Sunucu taraflı fiyat hesabı her zaman `productId` üzerinden yapılır.
+   */
+  currency?: Currency
   quantity: number
-  planType?: string // For ebook_plan: "10", "12", etc.
-  draftId?: string // For ebook_plan: draft ID if available
-  characterData?: any // For ebook_plan: character data for book creation
+  planType?: string     // ebook_plan: "10", "15", "20" sayfa
+  draftId?: string      // ebook_plan: draft ID
+  characterData?: unknown // ebook_plan: karakter verisi
 }
 
 interface CartContextType {

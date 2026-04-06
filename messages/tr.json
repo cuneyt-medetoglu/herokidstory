@@ -813,6 +813,7 @@
       "invalidEmail": "Lütfen geçerli bir e-posta adresi girin",
       "freeCoverCreditHint": "Ücretsiz kapak hakkınızla yalnızca kapağı (1. sayfa) oluşturun",
       "payCreate": "Öde ve kitabımı oluştur • {price}",
+      "cartEbookLine": "E-Kitap ({pages} sayfa) – {name}",
       "hardcoverDiscount": "Ciltli baskıda {price} indirim kazanırsınız!",
       "whatHappensNext": "Sırada ne var",
       "timeline": {
@@ -846,7 +847,10 @@
       "trustBadges": "🔒 Güvenli ödeme • 💯 30 gün para iadesi",
       "createButton": "Ücretsiz Kapak Oluştur",
       "exampleBookLanguage": "Örnek kitap dili",
-      "localeLabel": { "en": "İngilizce", "tr": "Türkçe" },
+      "localeLabel": {
+        "en": "İngilizce",
+        "tr": "Türkçe"
+      },
       "toasts": {
         "bookCreated": "Kitap oluşturuldu",
         "bookCreatedDebugTitle": "Kitap oluşturuldu",
@@ -907,6 +911,7 @@
       "createWithoutPaymentDebug": "Ödeme olmadan oluştur (Debug)",
       "adminDebugOnly": "Yalnızca admin / debug — ödeme yok",
       "payCreate": "Öde ve kitabımı oluştur • {price}",
+      "cartEbookLine": "E-Kitap ({pages} sayfa) – {name}",
       "hardcoverDiscount": "Ciltli baskıda {price} indirim kazanırsınız!",
       "toasts": {
         "errorTitle": "Hata",
@@ -996,7 +1001,9 @@
       "failedAddToCartTitle": "Sepete Eklenemedi",
       "failedAddToCartDesc": "Kitaplar sepete eklenemedi. Lütfen tekrar deneyin.",
       "cannotAddToCartTitle": "Sepete Eklenemiyor",
-      "cannotAddToCartDesc": "Yalnızca tamamlanmış (satın alınmış) E-Kitaplar basılıya dönüştürülebilir."
+      "cannotAddToCartDesc": "Yalnızca tamamlanmış (satın alınmış) E-Kitaplar basılıya dönüştürülebilir.",
+      "hardcopyUnavailableTitle": "Baskı bu para biriminde yok",
+      "hardcopyUnavailableDesc": "Sert kapak baskı şu an yalnızca Türkiye (TRY) için tanımlı. Bölgenize göre para birimi farklıysa bu seçenek kapalıdır."
     },
     "settings": {
       "title": "Profil Ayarları",
@@ -1229,7 +1236,7 @@
   },
   "cart": {
     "title": "Alışveriş Sepeti",
-    "subtitle": "Sert kapak kitap seçimlerinizi inceleyin",
+    "subtitle": "Sepetinizdeki ürünleri ve sipariş özetinizi inceleyin",
     "continueShopping": "Alışverişe Devam Et",
     "empty": {
       "title": "Sepetiniz boş",
@@ -1285,7 +1292,8 @@
       "zipLabel": "Posta Kodu",
       "zipPlaceholder": "34710",
       "phoneLabel": "Telefon Numarası",
-      "phonePlaceholder": "+90 555 123 4567"
+      "phonePlaceholder": "+90 555 123 4567",
+      "hardcopyNote": "Kargo adresi ödeme sonrasında sipariş detaylarından güncellenebilir."
     },
     "plan": {
       "title": "Kitap Planınızı Seçin",
@@ -1315,6 +1323,29 @@
         "feature2": "Detaylı hikaye",
         "feature3": "Zengin illüstrasyonlar"
       }
+    },
+    "billingAddress": {
+      "title": "Fatura Adresi",
+      "nameLabel": "Ad Soyad",
+      "namePlaceholder": "Ahmet Yılmaz",
+      "addressLabel": "Açık Adres",
+      "addressPlaceholder": "Atatürk Cad. No:1, Daire:5",
+      "cityLabel": "Şehir",
+      "cityPlaceholder": "İstanbul",
+      "countryLabel": "Ülke",
+      "zipLabel": "Posta Kodu",
+      "zipPlaceholder": "34000"
+    },
+    "iyzicoPayment": {
+      "formRegion": "Kart ile ödeme formu",
+      "startPayment": "Ödemeye Geç",
+      "loadingForm": "Ödeme formu hazırlanıyor...",
+      "loadingError": "Ödeme formu yüklenemedi. Lütfen sayfayı yenileyip tekrar deneyin.",
+      "secureNotice": "Kart bilgileriniz iyzico altyapısı üzerinde güvenle işlenir. Kartınız sitemizde saklanmaz.",
+      "cancelPayment": "Geri Dön",
+      "initError": "Ödeme başlatılamadı. Lütfen tekrar deneyin.",
+      "retryButton": "Tekrar Dene",
+      "poweredBy": "iyzico güvencesiyle"
     }
   },
   "draftPreview": {
@@ -1556,6 +1587,76 @@
     "viewExample": "Örneği Görüntüle",
     "ageYearsSuffix": "yaş",
     "ageYearsPlus": "10+ yaş"
+  },
+  "products": {
+    "ebook": {
+      "name": "E-Kitap",
+      "description": "Dijital kitap (PDF + web okuyucu)"
+    },
+    "hardcopy": {
+      "name": "Baskı Kitap",
+      "description": "Ciltli fiziksel kitap (şimdilik yalnızca Türkiye)"
+    },
+    "bundle": {
+      "name": "E-Kitap + Baskı Kitap",
+      "description": "Dijital ve fiziksel kopya birlikte"
+    }
+  },
+  "orders": {
+    "title": "Siparişlerim",
+    "empty": "Henüz siparişiniz yok.",
+    "orderNumber": "Sipariş #{id}",
+    "status": {
+      "pending": "Bekliyor",
+      "processing": "İşleniyor",
+      "paid": "Ödendi",
+      "failed": "Başarısız",
+      "cancelled": "İptal Edildi",
+      "refunded": "İade Edildi",
+      "partially_refunded": "Kısmen İade Edildi"
+    },
+    "itemType": {
+      "ebook": "E-Kitap",
+      "hardcopy": "Baskı Kitap",
+      "bundle": "Paket"
+    },
+    "fulfillment": {
+      "pending": "Gönderim bekleniyor",
+      "processing": "Hazırlanıyor",
+      "printed": "Basıldı",
+      "shipped": "Kargoya Verildi",
+      "delivered": "Teslim Edildi",
+      "cancelled": "İptal Edildi"
+    },
+    "provider": {
+      "iyzico": "iyzico",
+      "stripe": "Stripe"
+    },
+    "viewDetail": "Siparişi Görüntüle",
+    "downloadEbook": "E-Kitabı İndir",
+    "trackShipment": "Kargo Takibi"
+  },
+  "payment": {
+    "providerBadge": {
+      "iyzico": "iyzico ile güvenli ödeme",
+      "stripe": "Stripe ile güvenli ödeme"
+    },
+    "stripeComingSoon": "Uluslararası ödemeler yakında geliyor. Şu an yalnızca Türkiye'den ödeme alınmaktadır.",
+    "success": {
+      "title": "Ödeme Başarılı!",
+      "subtitle": "Siparişiniz alındı.",
+      "orderLabel": "Sipariş No",
+      "goToLibrary": "Kitaplığıma Git",
+      "viewOrder": "Siparişimi Görüntüle"
+    },
+    "failure": {
+      "title": "Ödeme Başarısız",
+      "subtitle": "Ödeme işleminiz tamamlanamadı. Lütfen tekrar deneyin.",
+      "tryAgain": "Tekrar Dene",
+      "backToCart": "Sepete Dön",
+      "reasonLabel": "Hata nedeni",
+      "unknownError": "Bilinmeyen hata oluştu"
+    }
   },
   "errors": {
     "unauthorized": "Yetkisiz erişim",

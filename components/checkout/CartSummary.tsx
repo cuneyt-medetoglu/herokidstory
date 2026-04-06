@@ -6,13 +6,19 @@ import { Check, Download, BookOpen } from "lucide-react"
 import { useCart } from "@/contexts/CartContext"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
+import { useCurrency } from "@/contexts/CurrencyContext"
 
 export function CartSummary() {
   const { items, getCartTotal } = useCart()
+  const { currencyConfig } = useCurrency()
   const total = getCartTotal()
   const hasHardcopy = items.some((item) => item.type === "hardcopy")
-  const hasEbook = items.some((item) => item.type === "ebook_plan")
+  const hasEbook = items.some(
+    (item) => item.type === "ebook_plan" || item.type === "ebook"
+  )
   const t = useTranslations("cart")
+
+  const fmt = (n: number) => `${currencyConfig.symbol}${n.toFixed(2)}`
 
   return (
     <div className="space-y-4">
@@ -59,7 +65,7 @@ export function CartSummary() {
                 {item.type === "ebook_plan" && t("ebookPlan", { n: item.planType ?? "10" })}
               </p>
               <p className="mt-1 text-sm font-bold text-primary">
-                ${item.price.toFixed(2)}
+                {fmt(item.price)}
               </p>
             </div>
           </motion.div>
@@ -71,7 +77,7 @@ export function CartSummary() {
         <CardContent className="p-4 space-y-3">
           <div className="flex justify-between text-slate-600 dark:text-slate-400">
             <span>{t("subtotal")}</span>
-            <span>${total.toFixed(2)}</span>
+            <span>{fmt(total)}</span>
           </div>
 
           <div className="flex justify-between text-green-600 dark:text-green-400">
@@ -86,7 +92,7 @@ export function CartSummary() {
             <div className="flex justify-between">
               <span className="text-lg font-bold text-slate-900 dark:text-white">{t("total")}</span>
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-brand-2 bg-clip-text text-transparent">
-                ${total.toFixed(2)}
+                {fmt(total)}
               </span>
             </div>
           </div>

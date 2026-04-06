@@ -32,7 +32,9 @@ import { Empty } from "@/components/ui/empty"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
 import { useCart } from "@/contexts/CartContext"
+import { useCurrency } from "@/contexts/CurrencyContext"
 import { getIllustrationStyleLabel } from "@/lib/illustration-styles"
+import { getProductPrice, isProductAvailableInCurrency } from "@/lib/pricing/payment-products"
 
 export type DashboardBook = {
   id: string
@@ -58,6 +60,9 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
   const router = useRouter()
   const { toast } = useToast()
   const { addToCart } = useCart()
+  const { currencyConfig } = useCurrency()
+  const hardcopyUnitPrice = getProductPrice("hardcopy", currencyConfig.currency)
+  const hardcopyAvailable = isProductAvailableInCurrency("hardcopy", currencyConfig.currency)
 
   const [books, setBooks] = useState<DashboardBook[]>(initialBooks)
   const [filter, setFilter] = useState<string>("all")
@@ -239,6 +244,15 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
       })
     }
 
+    if (!hardcopyAvailable) {
+      toast({
+        title: t("toasts.hardcopyUnavailableTitle"),
+        description: t("toasts.hardcopyUnavailableDesc"),
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       const response = await fetch("/api/cart", {
         method: "POST",
@@ -261,8 +275,10 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
           bookId: book.id,
           bookTitle: book.title,
           coverImage: book.coverImage,
-          price: 34.99,
+          price: hardcopyUnitPrice,
+          currency: currencyConfig.currency,
           quantity: 1,
+          productId: "hardcopy",
         })
       })
 
@@ -296,6 +312,15 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
       return
     }
 
+    if (!hardcopyAvailable) {
+      toast({
+        title: t("toasts.hardcopyUnavailableTitle"),
+        description: t("toasts.hardcopyUnavailableDesc"),
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       const response = await fetch("/api/cart", {
         method: "POST",
@@ -314,8 +339,10 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
         bookId: book.id,
         bookTitle: book.title,
         coverImage: book.coverImage,
-        price: 34.99,
+        price: hardcopyUnitPrice,
+        currency: currencyConfig.currency,
         quantity: 1,
+        productId: "hardcopy",
       })
 
       toast({
@@ -333,8 +360,7 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
     }
   }
 
-  const HARDCOPY_PRICE = 34.99
-  const selectedTotal = selectedBooks.length * HARDCOPY_PRICE
+  const selectedTotal = selectedBooks.length * hardcopyUnitPrice
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-background dark:from-slate-900 dark:to-slate-950">
@@ -374,7 +400,8 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                   )}
                   {selectedBooks.length > 0 && (
                     <span className="text-sm font-semibold text-primary">
-                      {t("total")} ${selectedTotal.toFixed(2)}
+                      {t("total")} {currencyConfig.symbol}
+                      {selectedTotal.toFixed(2)}
                     </span>
                   )}
                 </div>
@@ -392,7 +419,7 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                   <Button
                     size="sm"
                     onClick={handleAddSelectedToCart}
-                    disabled={selectedBooks.length === 0}
+                    disabled={selectedBooks.length === 0 || !hardcopyAvailable}
                     className="bg-gradient-to-r from-primary to-brand-2 text-white"
                   >
                     <ShoppingCart className="mr-2 h-4 w-4" />
@@ -638,6 +665,7 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                           size="sm"
                           variant="outline"
                           onClick={() => handleAddSingleToCart(book.id)}
+                          disabled={!hardcopyAvailable}
                           className="w-full border-primary/20 text-primary hover:bg-primary/5 dark:border-primary/20"
                         >
                           <ShoppingCart className="mr-2 h-4 w-4" />

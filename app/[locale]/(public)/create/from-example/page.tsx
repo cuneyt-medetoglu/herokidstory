@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/select"
 import type { CurrencyConfig } from "@/lib/currency"
 import { useCurrency } from "@/contexts/CurrencyContext"
+import { useCart } from "@/contexts/CartContext"
+import { getProductPrice } from "@/lib/pricing/payment-products"
+import type { Currency } from "@/lib/currency"
 
 const HAIR_COLOR_VALUES = ["light-blonde", "blonde", "dark-blonde", "black", "brown", "red"]
 const EYE_COLOR_VALUES = ["blue", "green", "brown", "black", "hazel"]
@@ -79,6 +82,13 @@ function getExampleCharacterCount(example: ExampleBook): number {
   return Math.max(ids.size, 1)
 }
 
+function pageCountToPlanType(count: number | undefined): "10" | "15" | "20" {
+  if (typeof count !== "number" || !Number.isFinite(count) || count <= 0) return "10"
+  if (count <= 10) return "10"
+  if (count <= 15) return "15"
+  return "20"
+}
+
 const floatingVariants = {
   animate: (i: number) => ({
     y: [0, -15, 0],
@@ -125,6 +135,7 @@ function FromExampleContent() {
   const user = session?.user ?? null
   const [canSkipPayment, setCanSkipPayment] = useState(false)
   const { currencyConfig, isLoading: isLoadingCurrency } = useCurrency()
+  const { addToCart } = useCart()
 
   const characterCount = useMemo(() => (example ? getExampleCharacterCount(example) : 0), [example])
   const isFormValid = characters.length > 0 && characters.every((c) => c.name.trim() && (c.gender === "boy" || c.gender === "girl") && c.photoFile && (c.hairColor ?? "").trim() !== "" && (c.eyeColor ?? "").trim() !== "")
@@ -597,9 +608,31 @@ function FromExampleContent() {
                       type="button"
                       loading={isLoadingCurrency || isNavPending}
                       disabled={isLoadingCurrency || isNavPending}
-                      onClick={() =>
+                      onClick={() => {
+                        if (!example) return
+                        const planType = pageCountToPlanType(example.total_pages)
+                        const cur = currencyConfig.currency as Currency
+                        const childName =
+                          characters[0]?.name?.trim() || example.title
+                        addToCart({
+                          type: "ebook_plan",
+                          bookTitle: t("cartEbookLine", {
+                            pages: planType,
+                            name: childName,
+                          }),
+                          price: getProductPrice("ebook", cur),
+                          quantity: 1,
+                          planType,
+                          characterData: {
+                            fromExampleId: example.id,
+                            characters,
+                          },
+                          coverImage: example.cover_image_url || undefined,
+                          productId: "ebook",
+                          currency: cur,
+                        })
                         navigate(`/cart?plan=ebook&fromExampleId=${exampleId}`)
-                      }
+                      }}
                       className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
                     >
                       {!isLoadingCurrency && !isNavPending && (

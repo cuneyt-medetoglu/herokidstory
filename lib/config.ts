@@ -44,6 +44,7 @@ export const appConfig = {
   },
 
   // Payment Providers
+  // Detaylı runtime config: lib/payment/config.ts → getPaymentConfig()
   payments: {
     stripe: {
       publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
@@ -54,6 +55,7 @@ export const appConfig = {
     iyzico: {
       apiKey: process.env.IYZICO_API_KEY || '',
       secretKey: process.env.IYZICO_SECRET_KEY || '',
+      baseUrl: process.env.IYZICO_BASE_URL || 'https://sandbox-api.iyzipay.com',
       enabled: !!process.env.IYZICO_API_KEY && !!process.env.IYZICO_SECRET_KEY,
     },
   },

@@ -813,6 +813,7 @@
       "invalidEmail": "Please enter a valid email address",
       "freeCoverCreditHint": "Use your free cover credit to create just the cover (Page 1)",
       "payCreate": "Pay & Create My Book • {price}",
+      "cartEbookLine": "E-Book ({pages} pp.) – {name}",
       "hardcoverDiscount": "You'll receive {price} as a discount on the hardcover!",
       "whatHappensNext": "What Happens Next",
       "timeline": {
@@ -846,7 +847,10 @@
       "trustBadges": "🔒 Secure payment • 💯 30-day money-back guarantee",
       "createButton": "Create Free Cover",
       "exampleBookLanguage": "Example book language",
-      "localeLabel": { "en": "English", "tr": "Turkish" },
+      "localeLabel": {
+        "en": "English",
+        "tr": "Turkish"
+      },
       "toasts": {
         "bookCreated": "Book created",
         "bookCreatedDebugTitle": "Book created",
@@ -907,6 +911,7 @@
       "createWithoutPaymentDebug": "Create without payment (Debug)",
       "adminDebugOnly": "Admin / debug only – no payment",
       "payCreate": "Pay & Create My Book • {price}",
+      "cartEbookLine": "E-Book ({pages} pp.) – {name}",
       "hardcoverDiscount": "You'll receive {price} as a discount on the hardcover!",
       "toasts": {
         "errorTitle": "Error",
@@ -996,7 +1001,9 @@
       "failedAddToCartTitle": "Failed to Add to Cart",
       "failedAddToCartDesc": "Failed to add books to cart. Please try again.",
       "cannotAddToCartTitle": "Cannot Add to Cart",
-      "cannotAddToCartDesc": "Only completed (purchased) E-Books can be converted to hardcopy."
+      "cannotAddToCartDesc": "Only completed (purchased) E-Books can be converted to hardcopy.",
+      "hardcopyUnavailableTitle": "Hardcopy not available in this currency",
+      "hardcopyUnavailableDesc": "Hardcover printing is only offered in Turkey (TRY) for now. If your region uses another currency, this option is disabled."
     },
     "settings": {
       "title": "Profile Settings",
@@ -1229,7 +1236,7 @@
   },
   "cart": {
     "title": "Shopping Cart",
-    "subtitle": "Review your hardcover book selections",
+    "subtitle": "Review your cart items and order summary",
     "continueShopping": "Continue Shopping",
     "empty": {
       "title": "Your cart is empty",
@@ -1285,7 +1292,8 @@
       "zipLabel": "ZIP/Postal Code",
       "zipPlaceholder": "34000",
       "phoneLabel": "Phone Number",
-      "phonePlaceholder": "+90 555 123 4567"
+      "phonePlaceholder": "+90 555 123 4567",
+      "hardcopyNote": "Shipping address can be updated from order details after payment."
     },
     "plan": {
       "title": "Choose Your Book Plan",
@@ -1315,6 +1323,29 @@
         "feature2": "Detailed story",
         "feature3": "Rich illustrations"
       }
+    },
+    "billingAddress": {
+      "title": "Billing Address",
+      "nameLabel": "Full Name",
+      "namePlaceholder": "John Doe",
+      "addressLabel": "Street Address",
+      "addressPlaceholder": "123 Main St, Apt 5",
+      "cityLabel": "City",
+      "cityPlaceholder": "Istanbul",
+      "countryLabel": "Country",
+      "zipLabel": "ZIP / Postal Code",
+      "zipPlaceholder": "34000"
+    },
+    "iyzicoPayment": {
+      "formRegion": "Card payment form",
+      "startPayment": "Proceed to Payment",
+      "loadingForm": "Preparing payment form...",
+      "loadingError": "Payment form could not be loaded. Please refresh and try again.",
+      "secureNotice": "Your card details are securely processed by iyzico. We never store your card information.",
+      "cancelPayment": "Go Back",
+      "initError": "Payment could not be initiated. Please try again.",
+      "retryButton": "Try Again",
+      "poweredBy": "Secured by iyzico"
     }
   },
   "draftPreview": {
@@ -1556,6 +1587,76 @@
     "viewExample": "View Example",
     "ageYearsSuffix": "years",
     "ageYearsPlus": "10+ years"
+  },
+  "products": {
+    "ebook": {
+      "name": "E-Book",
+      "description": "Digital book (PDF + web reader)"
+    },
+    "hardcopy": {
+      "name": "Printed Book",
+      "description": "Hardcover physical book (Turkey only for now)"
+    },
+    "bundle": {
+      "name": "E-Book + Printed Book",
+      "description": "Digital and physical copy together"
+    }
+  },
+  "orders": {
+    "title": "My Orders",
+    "empty": "You have no orders yet.",
+    "orderNumber": "Order #{id}",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "paid": "Paid",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "partially_refunded": "Partially Refunded"
+    },
+    "itemType": {
+      "ebook": "E-Book",
+      "hardcopy": "Printed Book",
+      "bundle": "Bundle"
+    },
+    "fulfillment": {
+      "pending": "Awaiting fulfillment",
+      "processing": "Processing",
+      "printed": "Printed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "provider": {
+      "iyzico": "iyzico",
+      "stripe": "Stripe"
+    },
+    "viewDetail": "View Order",
+    "downloadEbook": "Download E-Book",
+    "trackShipment": "Track Shipment"
+  },
+  "payment": {
+    "providerBadge": {
+      "iyzico": "Secure payment with iyzico",
+      "stripe": "Secure payment with Stripe"
+    },
+    "stripeComingSoon": "International payments coming soon. Currently available in Turkey only.",
+    "success": {
+      "title": "Payment Successful!",
+      "subtitle": "Your order has been received.",
+      "orderLabel": "Order No",
+      "goToLibrary": "Go to My Library",
+      "viewOrder": "View My Order"
+    },
+    "failure": {
+      "title": "Payment Failed",
+      "subtitle": "Your payment could not be completed. Please try again.",
+      "tryAgain": "Try Again",
+      "backToCart": "Back to Cart",
+      "reasonLabel": "Error reason",
+      "unknownError": "An unknown error occurred"
+    }
   },
   "errors": {
     "unauthorized": "Unauthorized",

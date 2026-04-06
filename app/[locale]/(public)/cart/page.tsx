@@ -10,14 +10,17 @@ import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useEffect } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import { useCurrency } from "@/contexts/CurrencyContext"
 
 export default function CartPage() {
   const router = useRouter()
   const { navigate, isPending } = useWizardNavigate()
   const { items, removeFromCart, getCartTotal, isLoading } = useCart()
+  const { currencyConfig } = useCurrency()
   const total = getCartTotal()
   const t = useTranslations("cart")
   const tcCreate = useTranslations("create.common")
+  const fmt = (n: number) => `${currencyConfig.symbol}${n.toFixed(2)}`
 
   useEffect(() => {
     router.prefetch("/checkout")
@@ -123,7 +126,7 @@ export default function CartPage() {
                               {t("hardcoverBook")}
                             </p>
                             <p className="mt-2 text-xl font-bold text-primary">
-                              ${item.price.toFixed(2)}
+                              {fmt(item.price)}
                             </p>
                             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                               {t("quantity")} {item.quantity}
@@ -158,7 +161,7 @@ export default function CartPage() {
                 <div className="mb-4 space-y-2">
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>{t("subtotal")}</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{fmt(total)}</span>
                   </div>
                   <div className="flex justify-between text-green-600 dark:text-green-400">
                     <span className="flex items-center gap-1">
@@ -173,7 +176,7 @@ export default function CartPage() {
                   <div className="flex justify-between">
                     <span className="text-lg font-bold text-slate-900 dark:text-white">{t("total")}</span>
                     <span className="text-2xl font-bold bg-gradient-to-r from-primary to-brand-2 bg-clip-text text-transparent">
-                      ${total.toFixed(2)}
+                      {fmt(total)}
                     </span>
                   </div>
                 </div>

@@ -31,6 +31,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { CurrencyConfig } from "@/lib/currency"
 import { useCurrency } from "@/contexts/CurrencyContext"
+import { useCart } from "@/contexts/CartContext"
+import { getProductPrice } from "@/lib/pricing/payment-products"
+import type { Currency } from "@/lib/currency"
 import { routing } from "@/i18n/routing"
 import type { Locale } from "@/i18n/routing"
 import {
@@ -48,6 +51,14 @@ import { StepRunnerPanel } from "@/components/debug/StepRunnerPanel"
 import { ALLOWED_STORY_MODELS, DEFAULT_STORY_MODEL } from "@/lib/ai/openai-models"
 
 const DEFAULT_PAGE_COUNT = 12
+
+/** Sepet / ödeme planı: sayfa sayısı → ürün bandı (10 / 15 / 20) */
+function pageCountToPlanType(count: number | undefined): "10" | "15" | "20" {
+  if (typeof count !== "number" || !Number.isFinite(count) || count <= 0) return "10"
+  if (count <= 10) return "10"
+  if (count <= 15) return "15"
+  return "20"
+}
 
 const HAIR_VALUE_TO_STEP1_KEY: Record<string, string> = {
   "light-blonde": "lightBlonde",
@@ -159,6 +170,7 @@ export default function Step6Page() {
 
   // Currency from context (tek seferlik fetch)
   const { currencyConfig, isLoading: isLoadingCurrency } = useCurrency()
+  const { addToCart } = useCart()
 
   // Hover state for timeline nodes
   const [hoveredStep, setHoveredStep] = useState<number | null>(null)
@@ -1356,7 +1368,26 @@ export default function Step6Page() {
                     type="button"
                     loading={isLoadingCurrency || isNavPending}
                     disabled={isCreating || isLoadingCurrency || isNavPending}
-                    onClick={() => navigate(`/cart?plan=ebook`)}
+                    onClick={() => {
+                      const planType = pageCountToPlanType(formData.pageCount)
+                      const cur = currencyConfig.currency as Currency
+                      const unitPrice = getProductPrice("ebook", cur)
+                      addToCart({
+                        type: "ebook_plan",
+                        bookTitle: t("cartEbookLine", {
+                          pages: planType,
+                          name: formData.character.name,
+                        }),
+                        price: unitPrice,
+                        quantity: 1,
+                        planType,
+                        characterData: formData,
+                        coverImage: formData.photo?.url || undefined,
+                        productId: "ebook",
+                        currency: cur,
+                      })
+                      navigate(`/cart?plan=ebook`)
+                    }}
                     className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {!isLoadingCurrency && !isNavPending && (
