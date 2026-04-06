@@ -229,17 +229,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       iyzicoResult = await initializeIyzicoCheckoutForm(iyzicoRequest)
     } catch (iyzicoErr) {
       // iyzico API'den hata geldi — siparişi ve ödemeyi başarısız işaretle
+      const detailText = _formatIyzicoInitError(iyzicoErr)
       await Promise.allSettled([
-        updateOrderStatus(order.id, { status: 'failed', failureReason: String(iyzicoErr) }),
+        updateOrderStatus(order.id, { status: 'failed', failureReason: detailText }),
         updatePaymentRecord(paymentRecord.id, { status: 'failed' }),
       ])
 
-      console.error('[iyzico/initialize] iyzico API hatası:', iyzicoErr)
+      console.error('[iyzico/initialize] iyzico API hatası:', detailText, iyzicoErr)
 
       return NextResponse.json(
         {
           success: false,
           error:   'Ödeme servisi şu anda yanıt vermiyor',
+          /** iyzico iş / doğrulama mesajı — UI ve log teşhisi için (anahtar içermez) */
+          details: detailText,
           code:    'IYZICO_SERVICE_ERROR',
         },
         { status: 503 }
@@ -269,6 +272,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // ============================================================================
 // İç yardımcılar
 // ============================================================================
+
+function _formatIyzicoInitError(err: unknown): string {
+  if (err instanceof Error) {
+    const e = err as Error & { errorCode?: string; errorGroup?: string }
+    const bits = [e.message]
+    if (e.errorCode) bits.push(`iyzicoErrorCode=${e.errorCode}`)
+    if (e.errorGroup) bits.push(`iyzicoErrorGroup=${e.errorGroup}`)
+    return bits.filter(Boolean).join(' · ')
+  }
+  return String(err)
+}
 
 function _getFirstName(fullName?: string | null): string {
   if (!fullName?.trim()) return 'Ad'

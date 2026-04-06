@@ -140,7 +140,7 @@ Kullanıcı → Sepet → Checkout Sayfası
 | `payments` | Ödeme girişimleri (`payment_provider`, `payment_currency`, sağlayıcı ID’leri) |
 | `payment_events` | Webhook/callback log (`payment_provider` + idempotency) |
 
-> Detay: [FAZ0_HAZIRLIK.md](FAZ0_HAZIRLIK.md) · Sıra: `025` → **`025b`** (indeks) → **`025c`** (trigger) → `026` → `027` → **`027c`** *(yalnızca eski `payments` tablosu 027 şemasından farklıysa)* → **`027b`** → `028` → **`028b`** → **`029`**. DBeaver: [ODEME_NOTLARI.md](ODEME_NOTLARI.md).
+> Detay: [FAZ0_HAZIRLIK.md](FAZ0_HAZIRLIK.md) · Sıra: `025` → **`025b`** (indeks) → **`025c`** (trigger) → `026` → `027` → **`027c`** *(yalnızca eski `payments` tablosu 027 şemasından farklıysa)* → **`027b`** → `028` → **`028b`** → **`029`** → **`030`**. DBeaver: [ODEME_NOTLARI.md](ODEME_NOTLARI.md).
 
 ---
 
