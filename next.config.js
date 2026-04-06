@@ -3,6 +3,14 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  /**
+   * iyzipay runtime'da __dirname + '/resources' ile lib/resources okur.
+   * Paketlenirse __dirname .next/server/app/api/... altına kayar → ENOENT.
+   */
+  experimental: {
+    serverComponentsExternalPackages: ['iyzipay'],
+  },
+
   // Static HTML under locale prefix: /tr/story-ideas-helper.html → /story-ideas-helper.html
   async rewrites() {
     return [
