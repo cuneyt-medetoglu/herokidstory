@@ -12,6 +12,20 @@
 import { getIyzicoClient } from './client'
 import type { IyzicoVerifyResult } from './types'
 
+/** iyzico bazen camelCase, bazen snake_case döner; sipariş eşlemesi için yalnızca dolu string kabul et. */
+function pickOrderCorrelationId(result: Record<string, unknown>): string | undefined {
+  const candidates = [
+    result.conversationId,
+    result.conversation_id,
+    result.basketId,
+    result.basket_id,
+  ]
+  for (const v of candidates) {
+    if (typeof v === 'string' && v.trim().length > 0) return v.trim()
+  }
+  return undefined
+}
+
 /**
  * iyzico Checkout Form sonucunu token üzerinden doğrular.
  *
@@ -43,10 +57,12 @@ export async function verifyIyzicoPayment(token: string): Promise<IyzicoVerifyRe
 
         const isSuccess = result.paymentStatus === 'SUCCESS'
 
+        const conversationId = pickOrderCorrelationId(result as unknown as Record<string, unknown>)
+
         resolve({
           success:       isSuccess,
           paymentId:     result.paymentId  || undefined,
-          conversationId: result.conversationId || undefined,
+          conversationId,
           basketId:      result.basketId   || undefined,
           paidPrice:     isSuccess
             ? (typeof result.paidPrice === 'string'

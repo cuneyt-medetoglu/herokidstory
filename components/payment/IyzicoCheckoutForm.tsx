@@ -146,7 +146,7 @@ export function IyzicoCheckoutForm({
             aria-hidden="true"
           />
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {t("secureNotice")}
+            {t("iyzicoPayment.secureNotice")}
           </p>
         </div>
       )}

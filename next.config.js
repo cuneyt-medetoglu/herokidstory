@@ -11,6 +11,14 @@ const nextConfig = {
     serverComponentsExternalPackages: ['iyzipay'],
   },
 
+  /** Route Handler hâlâ iyzipay'i paketlerse __dirname bozulur; sunucu webpack externals yedek. */
+  webpack: (config, { isServer }) => {
+    if (isServer && Array.isArray(config.externals)) {
+      config.externals.push('iyzipay')
+    }
+    return config
+  },
+
   // Static HTML under locale prefix: /tr/story-ideas-helper.html → /story-ideas-helper.html
   async rewrites() {
     return [
