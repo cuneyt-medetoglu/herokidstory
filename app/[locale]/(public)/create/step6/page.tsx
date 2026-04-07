@@ -29,10 +29,13 @@ import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { CurrencyConfig } from "@/lib/currency"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import { useCart } from "@/contexts/CartContext"
-import { getProductPrice } from "@/lib/pricing/payment-products"
+import {
+  getProductPrice,
+  HARDCOVER_PRINT_PROMO_DISCOUNT_TRY,
+} from "@/lib/pricing/payment-products"
+import { isUuid } from "@/lib/utils/uuid"
 import type { Currency } from "@/lib/currency"
 import { routing } from "@/i18n/routing"
 import type { Locale } from "@/i18n/routing"
@@ -143,6 +146,7 @@ export default function Step6Page() {
   const locale = useLocale()
   const { toast } = useToast()
   const [isCreating, setIsCreating] = useState(false)
+  const [isPayCheckout, setPayCheckout] = useState(false)
   const [wizardData, setWizardData] = useState<any>(null)
 
   // Example book language (admin block): defaults to current site locale if in list
@@ -271,16 +275,13 @@ export default function Step6Page() {
 
   // Get actual data from wizardData (localStorage)
   // NEW: Support both old characterPhoto and new characters array
-  const getCharactersData = () => {
+  const getCharactersData = useCallback(() => {
     if (wizardData?.step2?.characters && Array.isArray(wizardData.step2.characters)) {
-      // New format: characters array
-      // Filter out characters that don't have at least an id or characterType
-      return wizardData.step2.characters.filter((char: any) => 
+      return wizardData.step2.characters.filter((char: any) =>
         char && (char.id || char.characterType || char.photo)
       )
     }
     if (wizardData?.step2?.characterPhoto) {
-      // Old format: single characterPhoto (backward compatibility)
       return [
         {
           id: "1",
@@ -291,15 +292,14 @@ export default function Step6Page() {
       ]
     }
     return []
-  }
+  }, [wizardData])
 
   // Get character UUIDs for API: Step 2 stores real UUID in characterId, id can be local "1"
-  const getCharacterIdsForApi = (chars: any[]): string[] => {
-    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  const getCharacterIdsForApi = useCallback((chars: any[]): string[] => {
     return chars
       .map((c: any) => c.characterId || c.id)
-      .filter((id: unknown): id is string => typeof id === "string" && uuidRe.test(id))
-  }
+      .filter((id: unknown): id is string => typeof id === "string" && isUuid(id))
+  }, [])
 
   const charactersData = getCharactersData()
 
@@ -696,6 +696,76 @@ export default function Step6Page() {
       if (!willNavigate) setIsCreating(false)
     }
   }
+
+  // Ücretli ödeme: checkout-placeholder oluştur → sepete ekle → /cart'a yönlendir
+  const handlePayCheckout = useCallback(async () => {
+    const planType = pageCountToPlanType(formData.pageCount)
+    const cur = currencyConfig.currency as Currency
+    const unitPrice = getProductPrice("ebook", cur)
+    const chars = getCharactersData()
+    const characterIds = getCharacterIdsForApi(chars)
+    const characterId = characterIds[0]
+    const titleLine = t("cartEbookLine", {
+      pages: planType,
+      name: formData.character.name,
+    })
+
+    setPayCheckout(true)
+    try {
+      const res = await fetch("/api/books/checkout-placeholder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(characterId ? { characterId } : {}),
+          title: titleLine,
+          theme: String(formData.theme?.name || formData.theme?.id || "story"),
+          illustrationStyle: String(
+            formData.illustrationStyle?.name ||
+              formData.illustrationStyle?.id ||
+              "style"
+          ),
+          language: formData.language?.id || locale || "tr",
+          totalPages: parseInt(planType, 10),
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || !json.success || !json.data?.bookId) {
+        throw new Error(json.error || json.details || tc("checkoutPrepareError"))
+      }
+      addToCart({
+        type: "ebook_plan",
+        bookId: json.data.bookId,
+        bookTitle: titleLine,
+        price: unitPrice,
+        quantity: 1,
+        planType,
+        characterData: formData,
+        coverImage: formData.photo?.url || undefined,
+        productId: "ebook",
+        currency: cur,
+      })
+      navigate(`/cart?plan=ebook`)
+    } catch (e) {
+      toast({
+        title: tc("checkoutPrepareErrorTitle"),
+        description: e instanceof Error ? e.message : tc("checkoutPrepareError"),
+        variant: "destructive",
+      })
+    } finally {
+      setPayCheckout(false)
+    }
+  }, [
+    formData,
+    currencyConfig,
+    locale,
+    addToCart,
+    navigate,
+    toast,
+    t,
+    tc,
+    getCharactersData,
+    getCharacterIdsForApi,
+  ])
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/5 via-white to-brand-2/5 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
@@ -1366,42 +1436,27 @@ export default function Step6Page() {
                 >
                   <Button
                     type="button"
-                    loading={isLoadingCurrency || isNavPending}
-                    disabled={isCreating || isLoadingCurrency || isNavPending}
-                    onClick={() => {
-                      const planType = pageCountToPlanType(formData.pageCount)
-                      const cur = currencyConfig.currency as Currency
-                      const unitPrice = getProductPrice("ebook", cur)
-                      addToCart({
-                        type: "ebook_plan",
-                        bookTitle: t("cartEbookLine", {
-                          pages: planType,
-                          name: formData.character.name,
-                        }),
-                        price: unitPrice,
-                        quantity: 1,
-                        planType,
-                        characterData: formData,
-                        coverImage: formData.photo?.url || undefined,
-                        productId: "ebook",
-                        currency: cur,
-                      })
-                      navigate(`/cart?plan=ebook`)
-                    }}
+                    loading={isLoadingCurrency || isNavPending || isPayCheckout}
+                    disabled={isCreating || isLoadingCurrency || isNavPending || isPayCheckout}
+                    onClick={() => void handlePayCheckout()}
                     className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {!isLoadingCurrency && !isNavPending && (
+                    {!isLoadingCurrency && !isNavPending && !isPayCheckout && (
                       <ShoppingCart className="mr-2 h-6 w-6" />
                     )}
                     <span>
-                      {isLoadingCurrency || isNavPending
+                      {isLoadingCurrency || isNavPending || isPayCheckout
                         ? tc("navigating")
                         : t("payCreate", { price: currencyConfig.price })}
                     </span>
                   </Button>
-                  <p className="mt-2 text-center text-xs text-gray-600 dark:text-slate-400">
-                    {t("hardcoverDiscount", { price: currencyConfig.price })}
-                  </p>
+                  {currencyConfig.currency === "TRY" && (
+                    <p className="mt-2 text-center text-xs text-gray-600 dark:text-slate-400">
+                      {t("hardcoverDiscount", {
+                        price: `₺${HARDCOVER_PRINT_PROMO_DISCOUNT_TRY}`,
+                      })}
+                    </p>
+                  )}
                 </motion.div>
               )}
 

@@ -52,6 +52,12 @@ const PRICES: Record<ProductId, PriceTable> = {
   },
 } as const
 
+/**
+ * Step 6 alt metnindeki “ciltli baskı indirimi” tutarı (TRY).
+ * E-kitap satış fiyatından (PRICES.ebook) bağımsız pazarlama değeridir.
+ */
+export const HARDCOVER_PRINT_PROMO_DISCOUNT_TRY = 250
+
 // ============================================================================
 // Ürün kataloğu
 // ============================================================================

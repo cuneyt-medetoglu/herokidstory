@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useState, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import { useRouter, Link } from "@/i18n/navigation"
 import { motion } from "framer-motion"
@@ -24,6 +24,9 @@ import {
 import { useCart } from "@/contexts/CartContext"
 import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
+import { useCurrency } from "@/contexts/CurrencyContext"
+import { getProductPrice } from "@/lib/pricing/payment-products"
+import type { Currency } from "@/lib/currency"
 import {
   Dialog,
   DialogContent,
@@ -40,6 +43,7 @@ function DraftPreviewContent() {
   const draftId = searchParams.get("draftId")
   const { addToCart } = useCart()
   const { toast } = useToast()
+  const { currencyConfig } = useCurrency()
 
   const { data: session } = useSession()
   const isAuthenticated = !!session?.user
@@ -47,13 +51,18 @@ function DraftPreviewContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedPlan, setSelectedPlan] = useState<"10" | "15" | "20">("10")
   const [showPlanModal, setShowPlanModal] = useState(false)
+  const [isPlanCheckout, setPlanCheckout] = useState(false)
 
-  // Plan prices (mock - will be fetched from pricing API later)
-  const planPrices = {
-    "10": 7.99,
-    "15": 9.99,
-    "20": 12.99,
-  }
+  const cur = currencyConfig.currency as Currency
+  const ebookUnit = getProductPrice("ebook", cur)
+  const planPrices = useMemo(
+    () => ({
+      "10": ebookUnit,
+      "15": ebookUnit,
+      "20": ebookUnit,
+    }),
+    [ebookUnit]
+  )
 
   useEffect(() => {
     const loadDraft = async () => {
@@ -111,27 +120,73 @@ function DraftPreviewContent() {
     setShowPlanModal(true)
   }
 
-  const handlePlanSelect = () => {
+  const handlePlanSelect = async () => {
     if (!draft) return
+    if (!isAuthenticated) {
+      toast({
+        title: t("toasts.addedToCartTitle"),
+        description: t("toasts.loginRequiredDesc"),
+        variant: "destructive",
+      })
+      return
+    }
 
-    // Add ebook plan to cart with draft info
-    addToCart({
-      type: "ebook_plan",
-      bookTitle: `E-Book (${selectedPlan} pages) - ${draft.characterData.name}'s Story`,
-      price: planPrices[selectedPlan],
-      quantity: 1,
-      planType: selectedPlan,
-      draftId: draft.draftId,
-      characterData: draft.characterData,
-    })
+    const uuidRe =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const charIds = draft.characterData.characterIds ?? []
+    const characterId = charIds.find((id) => typeof id === "string" && uuidRe.test(id))
+    const titleLine = `E-Book (${selectedPlan} pages) - ${draft.characterData.name}'s Story`
+    const lang =
+      (draft.wizardState?.step3?.language as string | undefined) || "tr"
 
-    toast({
-      title: t("toasts.addedToCartTitle"),
-      description: t("toasts.addedToCartDesc"),
-    })
+    setPlanCheckout(true)
+    try {
+      const res = await fetch("/api/books/checkout-placeholder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(characterId ? { characterId } : {}),
+          title: titleLine,
+          theme: draft.theme || "story",
+          illustrationStyle: draft.style || "3d_animation",
+          language: lang,
+          totalPages: parseInt(selectedPlan, 10),
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || !json.success || !json.data?.bookId) {
+        throw new Error(json.error || json.details || "checkout-placeholder failed")
+      }
 
-    setShowPlanModal(false)
-    router.push("/cart")
+      addToCart({
+        type: "ebook_plan",
+        bookId: json.data.bookId,
+        bookTitle: titleLine,
+        price: planPrices[selectedPlan],
+        quantity: 1,
+        planType: selectedPlan,
+        draftId: draft.draftId,
+        characterData: draft.characterData,
+        productId: "ebook",
+        currency: cur,
+      })
+
+      toast({
+        title: t("toasts.addedToCartTitle"),
+        description: t("toasts.addedToCartDesc"),
+      })
+
+      setShowPlanModal(false)
+      router.push("/cart")
+    } catch (e) {
+      toast({
+        title: t("toasts.loadErrorTitle"),
+        description: e instanceof Error ? e.message : t("toasts.loadErrorDesc"),
+        variant: "destructive",
+      })
+    } finally {
+      setPlanCheckout(false)
+    }
   }
 
   const handleLoginToSave = () => {
@@ -313,7 +368,10 @@ function DraftPreviewContent() {
                         </div>
                       </div>
                       <div className="text-lg font-bold text-primary">
-                        ${planPrices[plan].toFixed(2)}
+                        {currencyConfig.symbol}
+                        {cur === "TRY"
+                          ? planPrices[plan]
+                          : planPrices[plan].toFixed(2)}
                       </div>
                     </div>
                   </button>
@@ -330,10 +388,11 @@ function DraftPreviewContent() {
                 {t("planModal.cancel")}
               </Button>
               <Button
-                onClick={handlePlanSelect}
+                onClick={() => void handlePlanSelect()}
+                disabled={isPlanCheckout}
                 className="flex-1 bg-gradient-to-r from-primary to-brand-2 text-white"
               >
-                {t("planModal.addToCart")}
+                {isPlanCheckout ? "…" : t("planModal.addToCart")}
               </Button>
             </div>
           </DialogContent>

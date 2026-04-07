@@ -1,11 +1,11 @@
 "use client"
 
-import { Suspense } from "react"
+import { Suspense, useEffect, useState, useMemo, useCallback } from "react"
+import type { ElementType } from "react"
 import { useSearchParams } from "next/navigation"
 import { useRouter, Link } from "@/i18n/navigation"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import Image from "next/image"
-import { useEffect, useState, useMemo, useCallback } from "react"
 import { useTranslations } from "next-intl"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -21,14 +21,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { CurrencyConfig } from "@/lib/currency"
 import { useCurrency } from "@/contexts/CurrencyContext"
 import { useCart } from "@/contexts/CartContext"
-import { getProductPrice } from "@/lib/pricing/payment-products"
+import {
+  getProductPrice,
+  HARDCOVER_PRINT_PROMO_DISCOUNT_TRY,
+} from "@/lib/pricing/payment-products"
 import type { Currency } from "@/lib/currency"
 
-const HAIR_COLOR_VALUES = ["light-blonde", "blonde", "dark-blonde", "black", "brown", "red"]
-const EYE_COLOR_VALUES = ["blue", "green", "brown", "black", "hazel"]
+const HAIR_COLOR_VALUES = ["light-blonde", "blonde", "dark-blonde", "black", "brown", "red"] as const
+const EYE_COLOR_VALUES = ["blue", "green", "brown", "black", "hazel"] as const
+
+const HAIR_KEY_MAP: Record<string, string> = {
+  "light-blonde": "lightBlonde",
+  "blonde": "blonde",
+  "dark-blonde": "darkBlonde",
+  "black": "black",
+  "brown": "brown",
+  "red": "red",
+}
 
 type ExampleBook = {
   id: string
@@ -89,6 +100,16 @@ function pageCountToPlanType(count: number | undefined): "10" | "15" | "20" {
   return "20"
 }
 
+interface DecorativeElement {
+  Icon: React.ElementType
+  top: string
+  left?: string
+  right?: string
+  delay: number
+  size: string
+  color: string
+}
+
 const floatingVariants = {
   animate: (i: number) => ({
     y: [0, -15, 0],
@@ -97,10 +118,10 @@ const floatingVariants = {
   }),
 }
 
-const decorativeElements = [
-  { Icon: Star, top: "10%", left: "8%", delay: 0, size: "h-6 w-6", color: "text-yellow-400" },
-  { Icon: Heart, top: "15%", right: "10%", delay: 0.5, size: "h-8 w-8", color: "text-brand-2" },
-  { Icon: Sparkles, top: "70%", left: "5%", delay: 1, size: "h-6 w-6", color: "text-primary" },
+const decorativeElements: DecorativeElement[] = [
+  { Icon: Star,     top: "10%", left: "8%",  delay: 0,   size: "h-6 w-6", color: "text-yellow-400" },
+  { Icon: Heart,    top: "15%", right: "10%", delay: 0.5, size: "h-8 w-8", color: "text-brand-2" },
+  { Icon: Sparkles, top: "70%", left: "5%",  delay: 1,   size: "h-6 w-6", color: "text-primary" },
   { Icon: BookOpen, top: "75%", right: "8%", delay: 1.5, size: "h-7 w-7", color: "text-blue-400" },
 ]
 
@@ -114,21 +135,14 @@ function FromExampleContent() {
   const { toast } = useToast()
   const tcCreate = useTranslations("create.common")
 
-  const hairKeyMap: Record<string, string> = {
-    "light-blonde": "lightBlonde",
-    "blonde": "blonde",
-    "dark-blonde": "darkBlonde",
-    "black": "black",
-    "brown": "brown",
-    "red": "red",
-  }
-  const hairColorOptions = HAIR_COLOR_VALUES.map((v) => ({ value: v, label: tStep1(`hairColors.${hairKeyMap[v] ?? v}`) }))
+  const hairColorOptions = HAIR_COLOR_VALUES.map((v) => ({ value: v, label: tStep1(`hairColors.${HAIR_KEY_MAP[v] ?? v}`) }))
   const eyeColorOptions = EYE_COLOR_VALUES.map((v) => ({ value: v, label: tStep1(`eyeColors.${v}`) }))
   const exampleId = searchParams.get("exampleId")
 
   const [example, setExample] = useState<ExampleBook | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [isPayCheckout, setPayCheckout] = useState(false)
   const [characters, setCharacters] = useState<CharacterSlot[]>([])
   const [step, setStep] = useState<"form" | "summary">("form")
   const { data: session } = useSession()
@@ -138,7 +152,19 @@ function FromExampleContent() {
   const { addToCart } = useCart()
 
   const characterCount = useMemo(() => (example ? getExampleCharacterCount(example) : 0), [example])
-  const isFormValid = characters.length > 0 && characters.every((c) => c.name.trim() && (c.gender === "boy" || c.gender === "girl") && c.photoFile && (c.hairColor ?? "").trim() !== "" && (c.eyeColor ?? "").trim() !== "")
+  const isFormValid = useMemo(
+    () =>
+      characters.length > 0 &&
+      characters.every(
+        (c) =>
+          c.name.trim() &&
+          (c.gender === "boy" || c.gender === "girl") &&
+          c.photoFile !== null &&
+          (c.hairColor ?? "").trim() !== "" &&
+          (c.eyeColor ?? "").trim() !== ""
+      ),
+    [characters]
+  )
 
   useEffect(() => {
     if (!exampleId) {
@@ -233,8 +259,10 @@ function FromExampleContent() {
     })
   }, [])
 
-  const createCharactersAndBook = async (skipPayment: boolean) => {
-    if (!example || characters.length === 0) return
+  const createUploadedCharacterIds = async (): Promise<string[]> => {
+    if (!example || characters.length === 0) {
+      throw new Error(t("toasts.missingFieldsDesc"))
+    }
     const characterIds: string[] = []
     for (let i = 0; i < characters.length; i++) {
       const c = characters[i]
@@ -272,6 +300,12 @@ function FromExampleContent() {
       if (!id) throw new Error("No character ID returned")
       characterIds.push(id)
     }
+    return characterIds
+  }
+
+  const createCharactersAndBook = async (skipPayment: boolean) => {
+    if (!example || characters.length === 0) return
+    const characterIds = await createUploadedCharacterIds()
     const bookRes = await fetch("/api/books", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -348,7 +382,7 @@ function FromExampleContent() {
               whileInView={{ opacity: 0.4, scale: 1 }}
               viewport={{ once: true }}
               className="absolute"
-              style={{ top: el.top, left: el.left, right: (el as any).right }}
+              style={{ top: el.top, left: el.left, right: el.right }}
             >
               <Icon className={`${el.size} ${el.color} drop-shadow-lg`} />
             </motion.div>
@@ -606,46 +640,88 @@ function FromExampleContent() {
                   {user && (
                     <Button
                       type="button"
-                      loading={isLoadingCurrency || isNavPending}
-                      disabled={isLoadingCurrency || isNavPending}
-                      onClick={() => {
-                        if (!example) return
+                      loading={isLoadingCurrency || isNavPending || isPayCheckout}
+                      disabled={isLoadingCurrency || isNavPending || isPayCheckout}
+                      onClick={async () => {
+                        if (!example || !isFormValid) return
                         const planType = pageCountToPlanType(example.total_pages)
                         const cur = currencyConfig.currency as Currency
                         const childName =
                           characters[0]?.name?.trim() || example.title
-                        addToCart({
-                          type: "ebook_plan",
-                          bookTitle: t("cartEbookLine", {
-                            pages: planType,
-                            name: childName,
-                          }),
-                          price: getProductPrice("ebook", cur),
-                          quantity: 1,
-                          planType,
-                          characterData: {
-                            fromExampleId: example.id,
-                            characters,
-                          },
-                          coverImage: example.cover_image_url || undefined,
-                          productId: "ebook",
-                          currency: cur,
+                        const titleLine = t("cartEbookLine", {
+                          pages: planType,
+                          name: childName,
                         })
-                        navigate(`/cart?plan=ebook&fromExampleId=${exampleId}`)
+                        setPayCheckout(true)
+                        try {
+                          const characterIds = await createUploadedCharacterIds()
+                          const res = await fetch("/api/books/checkout-placeholder", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              characterId: characterIds[0],
+                              title: titleLine,
+                              theme: example.theme,
+                              illustrationStyle: example.illustration_style,
+                              language: example.language || "en",
+                              totalPages: parseInt(planType, 10),
+                              sourceExampleBookId: example.id,
+                            }),
+                          })
+                          const json = await res.json()
+                          if (!res.ok || !json.success || !json.data?.bookId) {
+                            throw new Error(
+                              json.error || json.details || tcCreate("checkoutPrepareError")
+                            )
+                          }
+                          addToCart({
+                            type: "ebook_plan",
+                            bookId: json.data.bookId,
+                            bookTitle: titleLine,
+                            price: getProductPrice("ebook", cur),
+                            quantity: 1,
+                            planType,
+                            characterData: {
+                              fromExampleId: example.id,
+                              characters,
+                            },
+                            coverImage: example.cover_image_url || undefined,
+                            productId: "ebook",
+                            currency: cur,
+                          })
+                          navigate(`/cart?plan=ebook&fromExampleId=${exampleId}`)
+                        } catch (err) {
+                          toast({
+                            title: tcCreate("checkoutPrepareErrorTitle"),
+                            description:
+                              err instanceof Error
+                                ? err.message
+                                : tcCreate("checkoutPrepareError"),
+                            variant: "destructive",
+                          })
+                        } finally {
+                          setPayCheckout(false)
+                        }
                       }}
                       className="w-full bg-gradient-to-r from-primary to-brand-2 px-8 py-8 text-lg font-bold text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
                     >
-                      {!isLoadingCurrency && !isNavPending && (
+                      {!isLoadingCurrency && !isNavPending && !isPayCheckout && (
                         <ShoppingCart className="mr-2 h-6 w-6" />
                       )}
                       <span>
-                        {isLoadingCurrency || isNavPending
+                        {isLoadingCurrency || isNavPending || isPayCheckout
                           ? tcCreate("navigating")
                           : t("payCreate", { price: currencyConfig.price })}
                       </span>
                     </Button>
                   )}
-                  {user && <p className="text-center text-xs text-gray-600 dark:text-slate-400">{t("hardcoverDiscount", { price: currencyConfig.price })}</p>}
+                  {user && currencyConfig.currency === "TRY" && (
+                    <p className="text-center text-xs text-gray-600 dark:text-slate-400">
+                      {t("hardcoverDiscount", {
+                        price: `₺${HARDCOVER_PRINT_PROMO_DISCOUNT_TRY}`,
+                      })}
+                    </p>
+                  )}
 
                   {showSkipPaymentButton && (
                     <div className="space-y-1">

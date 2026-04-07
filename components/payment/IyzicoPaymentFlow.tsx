@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { BillingAddressForm } from "@/components/payment/BillingAddressForm"
 import { IyzicoCheckoutForm } from "@/components/payment/IyzicoCheckoutForm"
 import { useCart } from "@/contexts/CartContext"
+import { isUuid } from "@/lib/utils/uuid"
 import type { BillingAddress } from "@/lib/payment/types"
 import type { ProductId } from "@/lib/pricing/payment-products"
 import type { CartItem } from "@/contexts/CartContext"
@@ -58,8 +59,9 @@ function resolveProductId(item: CartItem): ProductId {
 }
 
 function resolveBookId(item: CartItem): string {
-  // bookId > draftId > type tabanlı yer tutucu
-  return item.bookId ?? (item as CartItem & { draftId?: string }).draftId ?? `book-${item.type}`
+  const raw = item.bookId ?? item.draftId ?? ""
+  if (raw && isUuid(raw)) return raw.trim()
+  throw new Error("INVALID_BOOK_ID")
 }
 
 // ============================================================================
@@ -91,17 +93,30 @@ export function IyzicoPaymentFlow({ onPaymentInitiated }: IyzicoPaymentFlowProps
 
   const handleAddressSubmit = useCallback(
     async (billingAddress: BillingAddress) => {
+      // Sepet validasyonu — API'ye gitmeden önce, loading state açılmadan önce
+      let apiItems: { bookId: string; productId: ProductId; quantity: number }[]
+      try {
+        apiItems = items.map((item) => ({
+          bookId:    resolveBookId(item),
+          productId: resolveProductId(item),
+          quantity:  item.quantity,
+        }))
+      } catch (e) {
+        const code = e instanceof Error ? e.message : ""
+        const msg =
+          code === "INVALID_BOOK_ID"
+            ? t("iyzicoPayment.invalidBookId")
+            : code || t("iyzicoPayment.initError")
+        setError(msg)
+        setState("error")
+        return
+      }
+
       setAddress(billingAddress)
       setState("loading")
       setError(null)
 
       try {
-        const apiItems = items.map((item) => ({
-          bookId:    resolveBookId(item),
-          productId: resolveProductId(item),
-          quantity:  item.quantity,
-        }))
-
         const res = await fetch("/api/payment/iyzico/initialize", {
           method:  "POST",
           headers: { "Content-Type": "application/json" },

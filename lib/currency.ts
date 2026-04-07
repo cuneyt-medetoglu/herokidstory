@@ -3,6 +3,8 @@
  * Detects user's country based on IP geolocation and returns appropriate currency
  */
 
+import { getProductPrice } from "@/lib/pricing/payment-products"
+
 export type Currency = "USD" | "TRY" | "EUR" | "GBP"
 
 export interface CurrencyConfig {
@@ -38,28 +40,21 @@ const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
   LT: "EUR",
 }
 
-// Currency configurations
-export const CURRENCY_CONFIGS: Record<Currency, CurrencyConfig> = {
-  USD: {
-    currency: "USD",
-    symbol: "$",
-    price: "$7.99",
-  },
-  TRY: {
-    currency: "TRY",
-    symbol: "₺",
-    price: "₺250",
-  },
-  EUR: {
-    currency: "EUR",
-    symbol: "€",
-    price: "€7.50",
-  },
-  GBP: {
-    currency: "GBP",
-    symbol: "£",
-    price: "£6.50",
-  },
+/** Sembol + para birimi; `price` alanı getCurrencyConfig ile doldurulur (katalog: ebook). */
+const CURRENCY_SYMBOLS: Record<Currency, Omit<CurrencyConfig, "price">> = {
+  USD: { currency: "USD", symbol: "$" },
+  TRY: { currency: "TRY", symbol: "₺" },
+  EUR: { currency: "EUR", symbol: "€" },
+  GBP: { currency: "GBP", symbol: "£" },
+}
+
+
+function formatEbookListPrice(currency: Currency, amount: number): string {
+  const sym = CURRENCY_SYMBOLS[currency].symbol
+  if (currency === "TRY") {
+    return `${sym}${Number.isInteger(amount) ? amount : amount.toFixed(2)}`
+  }
+  return `${sym}${amount.toFixed(2)}`
 }
 
 /**
@@ -82,7 +77,12 @@ export function detectCurrencyFromCountry(countryCode: string | null): Currency 
  * @returns Currency configuration with price and symbol
  */
 export function getCurrencyConfig(currency: Currency): CurrencyConfig {
-  return CURRENCY_CONFIGS[currency]
+  const base = CURRENCY_SYMBOLS[currency]
+  const amount = getProductPrice("ebook", currency)
+  return {
+    ...base,
+    price: formatEbookListPrice(currency, amount),
+  }
 }
 
 /**

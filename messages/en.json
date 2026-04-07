@@ -559,7 +559,9 @@
       "next": "Next",
       "saving": "Saving...",
       "navigating": "Loading…",
-      "pleaseWait": "Please wait…"
+      "pleaseWait": "Please wait…",
+      "checkoutPrepareErrorTitle": "Could not prepare checkout",
+      "checkoutPrepareError": "We could not create your book record for payment. Please try again."
     },
     "step1": {
       "stepProgress": "Step 1 of 6",
@@ -1432,6 +1434,7 @@
       "secureNotice": "Your card details are securely processed by iyzico. We never store your card information.",
       "cancelPayment": "Go Back",
       "initError": "Payment could not be initiated. Please try again.",
+      "invalidBookId": "Your cart is missing a valid book reference. Please go back to the creation step and add the e-book to the cart again.",
       "retryButton": "Try Again",
       "poweredBy": "Secured by iyzico"
     }
@@ -1457,7 +1460,8 @@
       "emailComingSoonTitle": "Coming soon",
       "emailComingSoonDesc": "Email sharing feature will be available soon",
       "addedToCartTitle": "Added to cart",
-      "addedToCartDesc": "E-Book plan has been added to your cart"
+      "addedToCartDesc": "E-Book plan has been added to your cart",
+      "loginRequiredDesc": "Please sign in to add this plan to your cart."
     },
     "planModal": {
       "title": "Select E-Book Plan",

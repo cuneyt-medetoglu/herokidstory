@@ -559,7 +559,9 @@
       "next": "İleri",
       "saving": "Kaydediliyor...",
       "navigating": "Yükleniyor…",
-      "pleaseWait": "Lütfen bekleyin…"
+      "pleaseWait": "Lütfen bekleyin…",
+      "checkoutPrepareErrorTitle": "Ödemeye hazırlık başarısız",
+      "checkoutPrepareError": "Sepet için kitap kaydı oluşturulamadı. Lütfen tekrar deneyin."
     },
     "step1": {
       "stepProgress": "Adım 1 / 6",
@@ -1432,6 +1434,7 @@
       "secureNotice": "Kart bilgileriniz iyzico altyapısı üzerinde güvenle işlenir. Kartınız sitemizde saklanmaz.",
       "cancelPayment": "Geri Dön",
       "initError": "Ödeme başlatılamadı. Lütfen tekrar deneyin.",
+      "invalidBookId": "Sepette geçerli kitap kaydı yok. Lütfen oluşturma adımına dönüp e-kitabı yeniden sepete ekleyin.",
       "retryButton": "Tekrar Dene",
       "poweredBy": "iyzico güvencesiyle"
     }
@@ -1457,7 +1460,8 @@
       "emailComingSoonTitle": "Yakında",
       "emailComingSoonDesc": "E-posta paylaşım özelliği yakında kullanılabilir olacak",
       "addedToCartTitle": "Sepete eklendi",
-      "addedToCartDesc": "E-Kitap planı sepetinize eklendi"
+      "addedToCartDesc": "E-Kitap planı sepetinize eklendi",
+      "loginRequiredDesc": "Sepete eklemek için lütfen giriş yapın."
     },
     "planModal": {
       "title": "E-Kitap Planını Seç",
