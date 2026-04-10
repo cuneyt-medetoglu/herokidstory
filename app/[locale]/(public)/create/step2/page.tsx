@@ -948,7 +948,7 @@ export default function Step2Page() {
             <div className="h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: "33.33%" }}
+                animate={{ width: "50%" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="h-full bg-gradient-to-r from-primary to-brand-2"
               />

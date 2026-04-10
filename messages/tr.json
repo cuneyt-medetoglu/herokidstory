@@ -570,7 +570,7 @@
       "checkoutPrepareError": "Sepet için kitap kaydı oluşturulamadı. Lütfen tekrar deneyin."
     },
     "step1": {
-      "stepProgress": "Adım 1 / 6",
+      "stepProgress": "Adım 1 / 4",
       "stepTitle": "Karakter Bilgileri",
       "title": "Karakter Bilgileri",
       "subtitle": "Çocuğunuz hakkında bize bilgi verin",
@@ -613,7 +613,7 @@
       }
     },
     "step2": {
-      "stepProgress": "Adım 2 / 6",
+      "stepProgress": "Adım 2 / 4",
       "stepTitle": "Karakter ve Fotoğraf Ekle",
       "title": "Karakter ve Fotoğraf Ekle",
       "subtitle": "Karakterleriniz için fotoğraf yükleyin",
@@ -764,7 +764,7 @@
       "photoReady": "Fotoğraf Hazır"
     },
     "step3": {
-      "stepProgress": "Adım 3 / 6",
+      "stepProgress": "Adım 3 / 4",
       "stepTitle": "Hikaye Ayarları",
       "themeTitle": "Hikaye Temanızı Seçin",
       "themeSubtitle": "Çocuğunuz nasıl bir macera yaşasın?",
@@ -864,7 +864,7 @@
       "pageCountPlaceholder": "Boş bırakın (varsayılan: 12 sayfa)"
     },
     "step6": {
-      "stepProgress": "Adım 6 / 6",
+      "stepProgress": "Adım 4 / 4",
       "stepTitle": "İncele ve Oluştur",
       "title": "İncele ve Oluştur",
       "subtitle": "Seçimlerinizi gözden geçirin ve kişiselleştirilmiş kitabınızı oluşturun",
@@ -884,7 +884,7 @@
       "customThemeBadge": "Hikaye fikriniz gerekli",
       "customStoryLead": "Özel hikaye fikriniz (tüm hikayeyi yönlendirir):",
       "noCustomEmpty": "Özel istek yok",
-      "noCustomTheme": "Lütfen 5. adıma dönüp hikaye fikrinizi yazın.",
+      "noCustomTheme": "Lütfen 3. adıma dönüp hikaye fikrinizi yazın.",
       "yearsOld": "{count, plural, one {# yaşında} other {# yaşında}}",
       "furColorLabel": "Tüy rengi:",
       "labels": {
@@ -951,7 +951,7 @@
         "freeCoverCreatedDesc": "Ücretsiz kitap kapağınız önizlemeye hazır.",
         "freeCoverError": "Ücretsiz kapak oluşturulamadı",
         "storyRequired": "Hikaye fikri gerekli",
-        "storyRequiredDesc": "Özel tema için lütfen 5. adımda hikaye fikrinizi açıklayın.",
+        "storyRequiredDesc": "Özel tema için lütfen 3. adımda hikaye fikrinizi açıklayın.",
         "charactersRequired": "Karakter gerekli",
         "charactersRequiredDesc": "Önceki adımlarda önce karakter kaydedin.",
         "bookStarted": "Kitap oluşturma başladı",

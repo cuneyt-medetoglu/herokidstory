@@ -211,7 +211,7 @@ export default function Step1Page() {
             <div className="h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: "16.67%" }}
+                animate={{ width: "25%" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="h-full bg-gradient-to-r from-primary to-brand-2"
               />

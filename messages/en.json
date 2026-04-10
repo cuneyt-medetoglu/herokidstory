@@ -570,7 +570,7 @@
       "checkoutPrepareError": "We could not create your book record for payment. Please try again."
     },
     "step1": {
-      "stepProgress": "Step 1 of 6",
+      "stepProgress": "Step 1 of 4",
       "stepTitle": "Character Information",
       "title": "Character Information",
       "subtitle": "Tell us about your child",
@@ -613,7 +613,7 @@
       }
     },
     "step2": {
-      "stepProgress": "Step 2 of 6",
+      "stepProgress": "Step 2 of 4",
       "stepTitle": "Add Characters & Photos",
       "title": "Add Characters & Photos",
       "subtitle": "Upload photos for your characters",
@@ -764,7 +764,7 @@
       "photoReady": "Photo Ready"
     },
     "step3": {
-      "stepProgress": "Step 3 of 6",
+      "stepProgress": "Step 3 of 4",
       "stepTitle": "Story Settings",
       "themeTitle": "Choose Your Story Theme",
       "themeSubtitle": "What kind of adventure should your child have?",
@@ -864,7 +864,7 @@
       "pageCountPlaceholder": "Leave empty for default (12 pages)"
     },
     "step6": {
-      "stepProgress": "Step 6 of 6",
+      "stepProgress": "Step 4 of 4",
       "stepTitle": "Review & Create",
       "title": "Review & Create",
       "subtitle": "Review your selections and create your personalized book",
@@ -884,7 +884,7 @@
       "customThemeBadge": "Your story idea required",
       "customStoryLead": "Your custom story idea (drives the entire story):",
       "noCustomEmpty": "No custom requests",
-      "noCustomTheme": "Please go back to Step 5 and describe your story idea.",
+      "noCustomTheme": "Please go back to Step 3 and describe your story idea.",
       "yearsOld": "{count, plural, one {# year old} other {# years old}}",
       "furColorLabel": "Fur Color:",
       "labels": {
@@ -951,7 +951,7 @@
         "freeCoverCreatedDesc": "Your free book cover is ready to preview.",
         "freeCoverError": "Failed to create free cover",
         "storyRequired": "Story idea required",
-        "storyRequiredDesc": "For Custom theme, please describe your story idea in Step 5.",
+        "storyRequiredDesc": "For Custom theme, please describe your story idea in Step 3.",
         "charactersRequired": "Characters required",
         "charactersRequiredDesc": "Save character(s) in previous steps first.",
         "bookStarted": "Book creation started",
