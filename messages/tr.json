@@ -87,6 +87,7 @@
     "signUp": "Kayıt Ol",
     "logout": "Çıkış Yap",
     "myLibrary": "Kitaplığım",
+    "myOrders": "Siparişlerim",
     "settings": "Ayarlar",
     "adminPanel": "Admin Panel",
     "shoppingCart": "Alışveriş Sepeti",
@@ -101,6 +102,7 @@
       "jobQueue": "Job Queue",
       "orders": "Siparişler",
       "users": "Kullanıcılar",
+      "promoCodes": "İndirim Kodları",
       "system": "Sistem",
       "comingSoon": "yakında",
       "backToDashboard": "Ana Dashboard",
@@ -1346,7 +1348,29 @@
     "shippingFree": "Ücretsiz",
     "shippingNA": "Yok",
     "total": "Toplam",
-    "proceedToCheckout": "Ödemeye Geç"
+    "proceedToCheckout": "Ödemeye Geç",
+    "promo": {
+      "label": "İndirim Kodu",
+      "placeholder": "HEROKID20",
+      "apply": "Uygula",
+      "remove": "Kaldır",
+      "applying": "Uygulanıyor...",
+      "applied": "%{value} indirim uygulandı!",
+      "appliedFixed": "₺{value} indirim uygulandı!",
+      "discount": "İndirim",
+      "errors": {
+        "not_found": "Geçersiz kod. Lütfen kontrol edip tekrar deneyin.",
+        "inactive": "Bu indirim kodu artık geçerli değil.",
+        "expired": "Bu indirim kodunun süresi dolmuş.",
+        "not_started": "Bu indirim kodu henüz geçerli değil.",
+        "limit_reached": "Bu indirim kodunun kullanım limiti dolmuş.",
+        "user_limit_reached": "Bu kodu daha önce kullandınız.",
+        "min_order_not_met": "Bu kod için minimum sipariş tutarı sağlanmıyor.",
+        "product_not_applicable": "Bu kod sepetinizdeki ürünler için geçerli değil.",
+        "currency_mismatch": "Bu kod farklı bir para birimi için geçerli.",
+        "generic": "Kod uygulanamadı. Lütfen tekrar deneyin."
+      }
+    }
   },
   "checkout": {
     "title": "Ödeme",

@@ -3,24 +3,90 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Trash2, ShoppingCart, Check, ArrowRight, ArrowLeft } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Trash2, ShoppingCart, Check, ArrowRight, ArrowLeft, Tag, X, Loader2 } from "lucide-react"
 import { useCart } from "@/contexts/CartContext"
+import type { AppliedPromo } from "@/contexts/CartContext"
 import { useRouter, Link } from "@/i18n/navigation"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { useEffect } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
 import { useCurrency } from "@/contexts/CurrencyContext"
 
 export default function CartPage() {
   const router = useRouter()
   const { navigate, isPending } = useWizardNavigate()
-  const { items, removeFromCart, getCartTotal, isLoading } = useCart()
+  const { items, appliedPromo, removeFromCart, getCartTotal, getCartSubtotal, setAppliedPromo, isLoading } = useCart()
   const { currencyConfig } = useCurrency()
+  const subtotal = getCartSubtotal()
   const total = getCartTotal()
   const t = useTranslations("cart")
+  const tp = useTranslations("cart.promo")
   const tcCreate = useTranslations("create.common")
   const fmt = (n: number) => `${currencyConfig.symbol}${n.toFixed(2)}`
+
+  // Promo kodu state'i
+  const [promoInput, setPromoInput]   = useState("")
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoError, setPromoError]   = useState<string | null>(null)
+
+  const handleApplyPromo = useCallback(async () => {
+    if (!promoInput.trim()) return
+    setPromoLoading(true)
+    setPromoError(null)
+    try {
+      const itemTypes = items.map((i) =>
+        i.type === "ebook_plan" ? "ebook" : i.type
+      )
+      const res = await fetch("/api/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code:      promoInput.trim(),
+          subtotal,
+          currency:  currencyConfig.currency,
+          itemTypes,
+        }),
+      })
+      const data = await res.json() as {
+        valid: boolean
+        error?: string
+        code?: string
+        promoCodeId?: string
+        discountType?: "percent" | "fixed"
+        discountValue?: number
+        discountAmount?: number
+      }
+      if (!data.valid) {
+        const errorKey = data.error as string | undefined
+        const msg = errorKey
+          ? (t(`promo.errors.${errorKey}` as Parameters<typeof t>[0]) ?? tp("errors.generic"))
+          : tp("errors.generic")
+        setPromoError(msg)
+      } else {
+        const promo: AppliedPromo = {
+          code:           data.code!,
+          promoCodeId:    data.promoCodeId!,
+          discountType:   data.discountType!,
+          discountValue:  data.discountValue!,
+          discountAmount: data.discountAmount!,
+        }
+        setAppliedPromo(promo)
+        setPromoInput("")
+      }
+    } catch {
+      setPromoError(tp("errors.generic"))
+    } finally {
+      setPromoLoading(false)
+    }
+  }, [promoInput, subtotal, currencyConfig.currency, items, setAppliedPromo, t, tp])
+
+  const handleRemovePromo = useCallback(() => {
+    setAppliedPromo(null)
+    setPromoError(null)
+    setPromoInput("")
+  }, [setAppliedPromo])
 
   useEffect(() => {
     router.prefetch("/checkout")
@@ -158,11 +224,72 @@ export default function CartPage() {
                   {t("orderSummary")}
                 </h3>
 
+                {/* Promo kodu input */}
+                {!appliedPromo ? (
+                  <div className="mb-4">
+                    <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <Tag className="mr-1 inline h-4 w-4" />
+                      {tp("label")}
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={promoInput}
+                        onChange={(e) => {
+                          setPromoInput(e.target.value.toUpperCase())
+                          setPromoError(null)
+                        }}
+                        onKeyDown={(e) => { if (e.key === "Enter") void handleApplyPromo() }}
+                        placeholder={tp("placeholder")}
+                        className="font-mono text-sm uppercase"
+                        disabled={promoLoading}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => void handleApplyPromo()}
+                        disabled={!promoInput.trim() || promoLoading}
+                        className="shrink-0"
+                      >
+                        {promoLoading
+                          ? <Loader2 className="h-4 w-4 animate-spin" />
+                          : tp("apply")}
+                      </Button>
+                    </div>
+                    {promoError && (
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">{promoError}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mb-4 flex items-center justify-between rounded-lg bg-green-50 px-3 py-2 dark:bg-green-900/20">
+                    <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
+                      <Check className="h-4 w-4 shrink-0" />
+                      <span className="font-medium font-mono">{appliedPromo.code}</span>
+                      <span className="text-xs opacity-80">
+                        {appliedPromo.discountType === "percent"
+                          ? `%${appliedPromo.discountValue}`
+                          : fmt(appliedPromo.discountValue)}
+                      </span>
+                    </div>
+                    <button onClick={handleRemovePromo} className="ml-2 text-slate-400 hover:text-red-500">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
                 <div className="mb-4 space-y-2">
                   <div className="flex justify-between text-slate-600 dark:text-slate-400">
                     <span>{t("subtotal")}</span>
-                    <span>{fmt(total)}</span>
+                    <span>{fmt(subtotal)}</span>
                   </div>
+                  {appliedPromo && (
+                    <div className="flex justify-between text-green-600 dark:text-green-400">
+                      <span className="flex items-center gap-1">
+                        <Tag className="h-4 w-4" />
+                        {tp("discount")}
+                      </span>
+                      <span>-{fmt(appliedPromo.discountAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-green-600 dark:text-green-400">
                     <span className="flex items-center gap-1">
                       <Check className="h-4 w-4" />

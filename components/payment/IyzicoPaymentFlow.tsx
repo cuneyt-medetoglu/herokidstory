@@ -80,7 +80,7 @@ interface IyzicoPaymentFlowProps {
 export function IyzicoPaymentFlow({ onPaymentInitiated }: IyzicoPaymentFlowProps) {
   const t      = useTranslations("checkout")
   const tBadge = useTranslations("payment.providerBadge")
-  const { items } = useCart()
+  const { items, appliedPromo } = useCart()
 
   const [state, setState]       = useState<FlowState>("billing-form")
   const [errorMessage, setError] = useState<string | null>(null)
@@ -117,10 +117,15 @@ export function IyzicoPaymentFlow({ onPaymentInitiated }: IyzicoPaymentFlowProps
       setError(null)
 
       try {
+        const body: Record<string, unknown> = { items: apiItems, billingAddress }
+        if (appliedPromo) {
+          body.promoCode   = appliedPromo.code
+          body.promoCodeId = appliedPromo.promoCodeId
+        }
         const res = await fetch("/api/payment/iyzico/initialize", {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ items: apiItems, billingAddress }),
+          body:    JSON.stringify(body),
         })
 
         const json = await res.json()
@@ -142,7 +147,7 @@ export function IyzicoPaymentFlow({ onPaymentInitiated }: IyzicoPaymentFlowProps
         setState("error")
       }
     },
-    [items, t, onPaymentInitiated]
+    [items, appliedPromo, t, onPaymentInitiated]
   )
 
   // ============================================================================

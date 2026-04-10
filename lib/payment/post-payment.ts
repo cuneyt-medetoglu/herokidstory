@@ -20,6 +20,7 @@ import { buildOrderConfirmationEmail } from '@/lib/email/templates/order-confirm
 import { buildAdminHardcopyEmail } from '@/lib/email/templates/admin-hardcopy'
 import type { OrderConfirmationData } from '@/lib/email/templates/order-confirmation'
 import { enqueuePaidCheckoutBooks } from '@/lib/payment/paid-checkout-generation'
+import { recordPromoCodeUsage } from '@/lib/db/promo-codes'
 
 // ============================================================================
 // Yardımcılar
@@ -65,6 +66,20 @@ export async function handlePaymentSuccess(orderId: string): Promise<void> {
     await enqueuePaidCheckoutBooks(orderId)
   } catch (err) {
     console.error('[post-payment] paid-checkout-generation hatası:', { orderId, err })
+  }
+
+  // 0b. Promo kodu kullanımını kaydet (varsa)
+  if (order.promo_code_id && order.discount_amount > 0) {
+    try {
+      await recordPromoCodeUsage({
+        promoCodeId:    order.promo_code_id,
+        userId:         order.user_id,
+        orderId:        order.id,
+        discountAmount: order.discount_amount,
+      })
+    } catch (err) {
+      console.error('[post-payment] Promo kodu kullanım kaydı hatası:', { orderId, err })
+    }
   }
 
   const locale = localeFromCurrency(order.order_currency)

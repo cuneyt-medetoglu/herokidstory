@@ -41,6 +41,7 @@ import {
 } from '@/lib/payment/iyzico/checkout-form'
 import type { BillingAddress } from '@/lib/payment/types'
 import type { IyzicoCheckoutFormRequest } from '@/lib/payment/iyzico/types'
+import { validatePromoCode } from '@/lib/db/promo-codes'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,6 +58,8 @@ interface CartItem {
 interface InitializeRequestBody {
   items:          CartItem[]
   billingAddress: BillingAddress
+  promoCode?:     string
+  promoCodeId?:   string
 }
 
 // ============================================================================
@@ -114,7 +117,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    const { items, billingAddress } = body
+    const { items, billingAddress, promoCode, promoCodeId } = body
 
     // 3. Sunucu taraflı fiyat hesaplama — TRY sabit (iyzico = TR)
     const currency = 'TRY' as const
@@ -133,10 +136,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    const totals = calculateOrderTotals(
+    const baseTotals = calculateOrderTotals(
       items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
       currency
     )
+
+    // 3b. Promo kodu varsa sunucu tarafında yeniden doğrula
+    let verifiedPromoCodeId: string | null = null
+    let discountAmount = 0
+
+    if (promoCode && typeof promoCode === 'string') {
+      const itemTypes = items.map((i) =>
+        PRODUCT_CATALOG[i.productId]?.orderItemType ?? i.productId
+      )
+      const promoResult = await validatePromoCode({
+        code:      promoCode,
+        userId:    user.id,
+        subtotal:  baseTotals.subtotal,
+        currency,
+        itemTypes,
+      })
+      if (promoResult.valid) {
+        discountAmount       = promoResult.discountAmount
+        verifiedPromoCodeId  = promoResult.promoCodeId ?? promoCodeId ?? null
+      }
+    }
+
+    const totals = {
+      subtotal:       baseTotals.subtotal,
+      discountAmount,
+      totalAmount:    Math.max(0, baseTotals.subtotal - discountAmount),
+    }
 
     // 4a. Sipariş oluştur (DB transaction — pending)
     const order = await createOrder({
@@ -146,6 +176,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       subtotal:  totals.subtotal,
       discountAmount: totals.discountAmount,
       totalAmount:    totals.totalAmount,
+      promoCode:      promoCode ?? undefined,
+      promoCodeId:    verifiedPromoCodeId ?? undefined,
       billingAddress,
       items: items.map((item) => ({
         bookId:    item.bookId,

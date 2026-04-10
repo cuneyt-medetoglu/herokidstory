@@ -15,8 +15,6 @@ export interface CartItem {
   price: number         // Görüntüleme amaçlı; checkout'ta sunucu yeniden hesaplar
   /**
    * Para birimi — CurrencyContext'ten doldurulur.
-   * Opsiyonel: mevcut sepete ekleme noktaları henüz göndermiyorsa undefined kalabilir.
-   * Sunucu taraflı fiyat hesabı her zaman `productId` üzerinden yapılır.
    */
   currency?: Currency
   quantity: number
@@ -25,55 +23,80 @@ export interface CartItem {
   characterData?: unknown // ebook_plan: karakter verisi
 }
 
+export interface AppliedPromo {
+  code:           string
+  promoCodeId:    string
+  discountType:   "percent" | "fixed"
+  discountValue:  number
+  discountAmount: number
+}
+
 interface CartContextType {
-  items: CartItem[]
-  addToCart: (item: Omit<CartItem, "id">) => void
+  items:          CartItem[]
+  appliedPromo:   AppliedPromo | null
+  addToCart:      (item: Omit<CartItem, "id">) => void
   removeFromCart: (itemId: string) => void
-  clearCart: () => void
-  getCartTotal: () => number
-  getCartCount: () => number
-  isLoading: boolean
+  clearCart:      () => void
+  getCartTotal:   () => number
+  getCartSubtotal: () => number
+  getCartCount:   () => number
+  setAppliedPromo: (promo: AppliedPromo | null) => void
+  isLoading:      boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
-const CART_STORAGE_KEY = "herokidstory_cart"
+const CART_STORAGE_KEY  = "herokidstory_cart"
+const PROMO_STORAGE_KEY = "herokidstory_promo"
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [items, setItems]             = useState<CartItem[]>([])
+  const [appliedPromo, setAppliedPromoState] = useState<AppliedPromo | null>(null)
+  const [isLoading, setIsLoading]     = useState(true)
 
-  // Load cart from localStorage on mount
+  // Load from localStorage on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(CART_STORAGE_KEY)
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        setItems(parsed)
-      }
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY)
+      if (savedCart) setItems(JSON.parse(savedCart))
+
+      const savedPromo = localStorage.getItem(PROMO_STORAGE_KEY)
+      if (savedPromo) setAppliedPromoState(JSON.parse(savedPromo))
     } catch (error) {
-      console.error("[Cart] Error loading cart from localStorage:", error)
+      console.error("[Cart] Error loading from localStorage:", error)
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  // Save cart to localStorage whenever items change
+  // Persist cart
   useEffect(() => {
     if (!isLoading) {
       try {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
       } catch (error) {
-        console.error("[Cart] Error saving cart to localStorage:", error)
+        console.error("[Cart] Error saving cart:", error)
       }
     }
   }, [items, isLoading])
 
+  // Persist promo
+  useEffect(() => {
+    if (!isLoading) {
+      try {
+        if (appliedPromo) {
+          localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(appliedPromo))
+        } else {
+          localStorage.removeItem(PROMO_STORAGE_KEY)
+        }
+      } catch (error) {
+        console.error("[Cart] Error saving promo:", error)
+      }
+    }
+  }, [appliedPromo, isLoading])
+
   const addToCart = useCallback((item: Omit<CartItem, "id">) => {
     setItems((prev) => {
-      // Check if item already exists
-      // For hardcopy: same bookId and type
-      // For ebook_plan: same type (only one ebook plan allowed)
       const existingIndex = prev.findIndex((i) => {
         if (item.type === "hardcopy" && i.type === "hardcopy") {
           return i.bookId === item.bookId
@@ -85,11 +108,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (existingIndex >= 0) {
-        // Item already exists, don't add duplicate
         return prev
       }
 
-      // Generate unique ID for cart item
       const newItem: CartItem = {
         ...item,
         id: `cart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -105,26 +126,43 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([])
+    setAppliedPromoState(null)
     localStorage.removeItem(CART_STORAGE_KEY)
+    localStorage.removeItem(PROMO_STORAGE_KEY)
   }, [])
 
-  const getCartTotal = useCallback(() => {
+  const getCartSubtotal = useCallback(() => {
     return items.reduce((total, item) => total + item.price * item.quantity, 0)
   }, [items])
+
+  const getCartTotal = useCallback(() => {
+    const subtotal = getCartSubtotal()
+    if (appliedPromo) {
+      return Math.max(0, subtotal - appliedPromo.discountAmount)
+    }
+    return subtotal
+  }, [items, appliedPromo, getCartSubtotal])
 
   const getCartCount = useCallback(() => {
     return items.reduce((count, item) => count + item.quantity, 0)
   }, [items])
 
+  const setAppliedPromo = useCallback((promo: AppliedPromo | null) => {
+    setAppliedPromoState(promo)
+  }, [])
+
   return (
     <CartContext.Provider
       value={{
         items,
+        appliedPromo,
         addToCart,
         removeFromCart,
         clearCart,
         getCartTotal,
+        getCartSubtotal,
         getCartCount,
+        setAppliedPromo,
         isLoading,
       }}
     >

@@ -87,6 +87,7 @@
     "signUp": "Sign Up",
     "logout": "Logout",
     "myLibrary": "My Library",
+    "myOrders": "My Orders",
     "settings": "Settings",
     "adminPanel": "Admin Panel",
     "shoppingCart": "Shopping Cart",
@@ -101,6 +102,7 @@
       "jobQueue": "Job Queue",
       "orders": "Orders",
       "users": "Users",
+      "promoCodes": "Promo Codes",
       "system": "System",
       "comingSoon": "coming soon",
       "backToDashboard": "Main Dashboard",
@@ -1346,7 +1348,29 @@
     "shippingFree": "Free",
     "shippingNA": "N/A",
     "total": "Total",
-    "proceedToCheckout": "Proceed to Checkout"
+    "proceedToCheckout": "Proceed to Checkout",
+    "promo": {
+      "label": "Discount Code",
+      "placeholder": "HEROKID20",
+      "apply": "Apply",
+      "remove": "Remove",
+      "applying": "Applying...",
+      "applied": "{value}% discount applied!",
+      "appliedFixed": "${value} discount applied!",
+      "discount": "Discount",
+      "errors": {
+        "not_found": "Invalid code. Please check and try again.",
+        "inactive": "This discount code is no longer active.",
+        "expired": "This discount code has expired.",
+        "not_started": "This discount code is not yet valid.",
+        "limit_reached": "This discount code has reached its usage limit.",
+        "user_limit_reached": "You have already used this code.",
+        "min_order_not_met": "Minimum order amount not met for this code.",
+        "product_not_applicable": "This code does not apply to items in your cart.",
+        "currency_mismatch": "This code is valid for a different currency.",
+        "generic": "Code could not be applied. Please try again."
+      }
+    }
   },
   "checkout": {
     "title": "Checkout",

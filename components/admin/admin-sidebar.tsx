@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
+  Tag,
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ const NAV_ITEMS: { key: string; href: string; icon: React.ElementType; available
   { key: 'jobQueue', href: '/admin/queues', icon: Activity, available: true },
   { key: 'orders', href: '/admin/orders', icon: ShoppingCart, available: true },
   { key: 'users', href: '/admin/users', icon: Users, available: true },
+  { key: 'promoCodes', href: '/admin/promo-codes', icon: Tag, available: true },
   { key: 'system', href: '/admin/settings', icon: Settings, available: false },
 ]
 

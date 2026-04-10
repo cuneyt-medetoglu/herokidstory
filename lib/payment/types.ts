@@ -142,6 +142,7 @@ export interface CreateOrderInput {
   discountAmount?: number
   totalAmount: number
   promoCode?: string
+  promoCodeId?: string
   billingAddress?: BillingAddress
   shippingAddress?: ShippingAddress
   items: CreateOrderItemInput[]

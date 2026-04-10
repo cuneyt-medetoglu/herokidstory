@@ -50,7 +50,7 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
         input.discountAmount ?? 0,
         input.totalAmount,
         input.promoCode ?? null,
-        null,   // promo_code_id — ileride promo_codes FK
+        input.promoCodeId ?? null,
         input.billingAddress  ? JSON.stringify(input.billingAddress)  : null,
         input.shippingAddress ? JSON.stringify(input.shippingAddress) : null,
       ]
@@ -540,6 +540,8 @@ export interface OrderForEmail {
   total_amount: number
   subtotal: number
   discount_amount: number
+  promo_code: string | null
+  promo_code_id: string | null
   billing_address: Record<string, unknown> | null
   user_id: string
   user_email: string
