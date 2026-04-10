@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { DEFAULT_PAGE_COUNT, PAGE_COUNT_DEBUG_FALLBACK } from '@/lib/constants/book-config'
 import { requireUser } from '@/lib/auth/api-auth'
 import { uploadFile, getPublicUrl, getObjectBuffer } from '@/lib/storage/s3'
 import { appConfig } from '@/lib/config'
@@ -761,13 +762,13 @@ export async function POST(request: NextRequest) {
     // DETERMINE MODE: Cover Only, From Example, Full Book, or Debug (run up to masters/cover)
     // ====================================================================
     const isDebugRunUpTo = isDebugCoverMode || isDebugMastersMode
-    // Cover only: only when explicitly 0. undefined/null/NaN → default 12 (full book)
+    // Cover only: only when explicitly 0. undefined/null/NaN → DEFAULT_PAGE_COUNT (full book)
     const hasValidPageCount = typeof pageCount === 'number' && Number.isFinite(pageCount) && pageCount > 0
-    const effectivePageCountForMode = hasValidPageCount ? pageCount! : 12
+    const effectivePageCountForMode = hasValidPageCount ? pageCount! : DEFAULT_PAGE_COUNT
     const isCoverOnlyMode = !isDebugRunUpTo && !fromExampleId && pageCount === 0
     const isFromExampleMode = !isDebugRunUpTo && !!fromExampleId
     // Debug: force full book path (story → masters [→ cover]) then return without keeping book
-    const effectivePageCount = isDebugRunUpTo ? (pageCount || 5) : effectivePageCountForMode
+    const effectivePageCount = isDebugRunUpTo ? (pageCount || PAGE_COUNT_DEBUG_FALLBACK) : effectivePageCountForMode
 
     console.log(`[Create Book] 📋 Mode: ${isDebugMastersMode ? 'Debug (run up to masters)' : isDebugCoverMode ? 'Debug (run up to cover)' : isCoverOnlyMode ? 'Cover Only' : isFromExampleMode ? 'From Example' : 'Full Book'} (pageCount: ${effectivePageCount ?? 'undefined'}, fromExampleId: ${fromExampleId || 'none'})`)
     console.log(`[Create Book] 🎯 Theme: ${themeKey}`)

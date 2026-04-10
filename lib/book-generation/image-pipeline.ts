@@ -14,6 +14,7 @@
 import OpenAI from 'openai'
 import { uploadFile, getPublicUrl, getObjectBuffer } from '@/lib/storage/s3'
 import { getBookById, updateBook, updateBookProgressAtLeast } from '@/lib/db/books'
+import { PAGE_COUNT_DEBUG_FALLBACK } from '@/lib/constants/book-config'
 import { generateStoryPrompt, buildStorySystemPrompt, buildStoryResponseSchema } from '@/lib/prompts/story/base'
 import {
   DEFAULT_STORY_MODEL,
@@ -809,7 +810,7 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
   // ----------------------------------------------------------------
   if (needsStoryGeneration) {
     const effectiveStoryModel = ctx.storyModel || DEFAULT_STORY_MODEL
-    const effectivePageCount = ctx.pageCount || 4
+    const effectivePageCount = ctx.pageCount || PAGE_COUNT_DEBUG_FALLBACK
 
     const storyPrompt = generateStoryPrompt({
       characterName: character.name,

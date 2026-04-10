@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { DEFAULT_PAGE_COUNT, PAGE_COUNT_MIN, PAGE_COUNT_MAX } from '@/lib/constants/book-config'
 import { requireUser } from '@/lib/auth/api-auth'
 import { getCharacterById } from '@/lib/db/characters'
 import { createBook, getBookById } from '@/lib/db/books'
@@ -111,9 +112,9 @@ export async function POST(request: NextRequest) {
       storyModel: requestedModel,
     } = body
     const expectedPageCount =
-      typeof pageCountOverride === 'number' && pageCountOverride >= 2 && pageCountOverride <= 20
+      typeof pageCountOverride === 'number' && pageCountOverride >= PAGE_COUNT_MIN && pageCountOverride <= PAGE_COUNT_MAX
         ? pageCountOverride
-        : 12
+        : DEFAULT_PAGE_COUNT
 
     // Admin/debug only model override (mirrors books/route.ts logic)
     const userRole = await getUserRole(user.id)

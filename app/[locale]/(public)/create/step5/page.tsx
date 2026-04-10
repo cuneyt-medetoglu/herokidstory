@@ -15,9 +15,11 @@ import {
   readWizardFormMirror,
   readWizardLocal,
 } from "@/lib/herokid-wizard-storage"
+import {
+  PAGE_COUNT_MAX,
+  resolvePageCount,
+} from "@/lib/constants/book-config"
 
-// Default page count when debug field is left empty
-const DEFAULT_PAGE_COUNT = 12
 const STORY_IDEA_MAX_LENGTH = 1000
 
 // Build schema based on whether custom theme is selected (Step 5 requires customRequests when theme is custom)
@@ -29,10 +31,10 @@ function getFormSchema(
     customRequests: isCustomTheme
       ? z.string().min(10, messages.minLength).max(STORY_IDEA_MAX_LENGTH, messages.maxLength)
       : z.string().max(STORY_IDEA_MAX_LENGTH, messages.maxLength).optional().or(z.literal("")),
-    // Boş/NaN = undefined kabul et; sayı ise 0–20 arası. Boş bırakılınca default 12 kullanılacak.
+    // Boş/NaN = undefined kabul et; sayı ise 0–PAGE_COUNT_MAX arası. Boş bırakılınca resolvePageCount varsayılan uygular.
     pageCount: z.preprocess(
       (val) => (val === "" || val === undefined || Number.isNaN(val) ? undefined : Number(val)),
-      z.number().min(0).max(20).optional()
+      z.number().min(0).max(PAGE_COUNT_MAX).optional()
     ),
   })
 }
@@ -108,10 +110,7 @@ export default function Step5Page() {
   const handleNext = async () => {
     const valid = await trigger()
     if (!valid) return
-    const resolvedPageCount =
-      typeof pageCount === "number" && Number.isFinite(pageCount) && pageCount > 0
-        ? pageCount
-        : DEFAULT_PAGE_COUNT
+    const resolvedPageCount = resolvePageCount(pageCount)
 
     navigate("/create/step6", () => {
       try {
@@ -332,8 +331,8 @@ export default function Step5Page() {
               <input
                 id="pageCount"
                 type="number"
-                min="0"
-                max="20"
+                min={0}
+                max={PAGE_COUNT_MAX}
                 {...register("pageCount", { valueAsNumber: true })}
                   placeholder={t("pageCountPlaceholder")}
                 className="w-full rounded-lg border-2 border-amber-300 bg-white p-3 text-gray-900 transition-all placeholder:text-gray-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 dark:border-amber-700 dark:bg-slate-800 dark:text-slate-50 dark:placeholder:text-slate-500 dark:focus:border-amber-500"

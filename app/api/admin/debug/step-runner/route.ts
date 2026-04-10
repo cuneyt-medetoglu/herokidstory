@@ -16,6 +16,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { PAGE_COUNT_DEBUG_FALLBACK } from '@/lib/constants/book-config'
 import { requireUser } from '@/lib/auth/api-auth'
 import { getUserRole } from '@/lib/db/users'
 import { getCharacterById } from '@/lib/db/characters'
@@ -233,7 +234,7 @@ async function handleStoryGeneration({
 }: any) {
   const character = characters[0]
   const effectiveStoryModel = storyModel || DEFAULT_STORY_MODEL
-  const effectivePageCount = pageCount || 4
+  const effectivePageCount = pageCount || PAGE_COUNT_DEBUG_FALLBACK
 
   const desc = character.description as CharacterDescription | undefined
   const storyReadingBracket =

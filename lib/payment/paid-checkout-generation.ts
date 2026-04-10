@@ -12,6 +12,7 @@ import { enqueueBookGeneration } from '@/lib/queue/client'
 import { normalizeThemeKey } from '@/lib/book-generation/normalize-theme-key'
 import { cloneExampleStoryForPaidPlaceholder } from '@/lib/book-generation/from-example-story-clone'
 import { DEFAULT_STORY_MODEL } from '@/lib/ai/openai-models'
+import { DEFAULT_PAGE_COUNT, PAGE_COUNT_DB_MAX } from '@/lib/constants/book-config'
 
 function parseBookMeta(book: Book): Record<string, unknown> {
   const raw = book.generation_metadata
@@ -84,7 +85,7 @@ export async function enqueuePaidCheckoutBooks(orderId: string): Promise<void> {
       const themeKey = normalizeThemeKey(book.theme || 'story')
       const illustrationStyle = book.illustration_style || '3d_animation'
       const language = book.language || 'tr'
-      const pageCount = Math.max(1, Math.min(64, book.total_pages || 10))
+      const pageCount = Math.max(1, Math.min(PAGE_COUNT_DB_MAX, book.total_pages || DEFAULT_PAGE_COUNT))
 
       const nextMeta: Record<string, unknown> = {
         ...meta,

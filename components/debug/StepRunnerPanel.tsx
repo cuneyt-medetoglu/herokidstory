@@ -8,6 +8,12 @@
 
 import { useState, useCallback, useMemo } from "react"
 import { ALLOWED_STORY_MODELS, DEFAULT_STORY_MODEL } from "@/lib/ai/openai-models"
+import {
+  DEFAULT_PAGE_COUNT,
+  PAGE_COUNT_MIN,
+  PAGE_COUNT_MAX,
+  PAGE_COUNT_DEBUG_FALLBACK,
+} from "@/lib/constants/book-config"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -130,13 +136,13 @@ function getWizardCustomRequests(w: Record<string, unknown> | null | undefined):
   return root || undefined
 }
 
-/** Step 5 sayfa sayısı — yoksa veya geçersizse 12 (API ile uyumlu 2–20). */
+/** Step 5 sayfa sayısı — yoksa veya geçersizse DEFAULT_PAGE_COUNT. */
 function getWizardPageCount(w: Record<string, unknown> | null | undefined): number {
   const s5 = w?.step5 as Record<string, unknown> | undefined
   const raw = s5?.pageCount
   const n = typeof raw === "number" && Number.isFinite(raw) ? raw : parseInt(String(raw ?? ""), 10)
-  if (Number.isFinite(n) && n >= 2 && n <= 20) return Math.floor(n)
-  return 12
+  if (Number.isFinite(n) && n >= PAGE_COUNT_MIN && n <= PAGE_COUNT_MAX) return Math.floor(n)
+  return DEFAULT_PAGE_COUNT
 }
 
 function getWizardReadingBracket(w: Record<string, unknown> | null | undefined): ReadingAgeBracketId | undefined {
@@ -523,9 +529,9 @@ export function StepRunnerPanel({ wizardData, characterIds }: StepRunnerPanelPro
           <input
             type="number"
             value={pageCount}
-            onChange={(e) => setPageCount(Math.max(1, parseInt(e.target.value) || 4))}
+            onChange={(e) => setPageCount(Math.max(1, parseInt(e.target.value) || PAGE_COUNT_DEBUG_FALLBACK))}
             min={1}
-            max={20}
+            max={PAGE_COUNT_MAX}
             className="w-full text-xs rounded border border-purple-500/30 bg-zinc-900 text-zinc-200 px-2 py-1 focus:outline-none focus:border-purple-400"
           />
         </div>

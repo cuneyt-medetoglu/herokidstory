@@ -52,8 +52,7 @@ import {
 } from "@/lib/wizard/reading-age-from-wizard"
 import { StepRunnerPanel } from "@/components/debug/StepRunnerPanel"
 import { ALLOWED_STORY_MODELS, DEFAULT_STORY_MODEL } from "@/lib/ai/openai-models"
-
-const DEFAULT_PAGE_COUNT = 12
+import { DEFAULT_PAGE_COUNT, resolvePageCount } from "@/lib/constants/book-config"
 
 /** Sepet / ödeme planı: sayfa sayısı → ürün bandı (10 / 15 / 20) */
 function pageCountToPlanType(count: number | undefined): "10" | "15" | "20" {
@@ -542,9 +541,7 @@ export default function Step6Page() {
       (typeof wizardData?.step4?.illustrationStyle === "string" ? wizardData.step4.illustrationStyle : "") ||
       "watercolor"
     const language = (wizardData?.step3?.language?.id || formData.language?.id || "en") as "en" | "tr" | "de" | "fr" | "es" | "zh" | "pt" | "ru"
-    const pageCount = typeof formData.pageCount === "number" && Number.isFinite(formData.pageCount) && formData.pageCount > 0
-      ? formData.pageCount
-      : DEFAULT_PAGE_COUNT
+    const pageCount = resolvePageCount(formData.pageCount)
     const payload = {
       ...(characterIds.length > 0 ? { characterIds } : singleId || fallbackId ? { characterId: singleId || fallbackId } : {}),
       theme: themeKey,
@@ -629,9 +626,7 @@ export default function Step6Page() {
       "watercolor"
     const language = exampleBookLanguage
 
-    const examplePageCount = typeof formData.pageCount === "number" && Number.isFinite(formData.pageCount) && formData.pageCount > 0
-      ? formData.pageCount
-      : DEFAULT_PAGE_COUNT
+    const examplePageCount = resolvePageCount(formData.pageCount)
     const payload = {
       ...(characterIds.length > 0 ? { characterIds } : singleId || fallbackId ? { characterId: singleId || fallbackId } : {}),
       theme: themeKey,
@@ -725,7 +720,7 @@ export default function Step6Page() {
               "style"
           ),
           language: formData.language?.id || locale || "tr",
-          totalPages: parseInt(planType, 10),
+          totalPages: resolvePageCount(formData.pageCount),
         }),
       })
       const json = await res.json()

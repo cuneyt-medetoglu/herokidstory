@@ -4,6 +4,7 @@ import {
   wordsPerPageRangeString,
   type ReadingAgeBracketConfig,
 } from '@/lib/config/reading-age-brackets'
+import { DEFAULT_PAGE_COUNT, PAGE_COUNT_MIN, PAGE_COUNT_MAX } from '@/lib/constants/book-config'
 
 /**
  * Story Generation Prompt - Version 1.0.0
@@ -219,17 +220,17 @@ export function generateStoryPrompt(input: StoryGenerationInput): string {
   // Kaldırıldı: buildSafetySection (system'de), buildLanguageSection (system'de)
   const sections = [
     buildCharacterSection(characterDesc, characters),
-    buildStoryRequirementsSection(themeConfig, characterAge, readingCfg, pageCount ?? 12, language, illustrationStyle),
-    ...(customRequests?.trim() ? [buildStorySeedSection(customRequests.trim(), pageCount ?? 12)] : []),
+    buildStoryRequirementsSection(themeConfig, characterAge, readingCfg, pageCount ?? DEFAULT_PAGE_COUNT, language, illustrationStyle),
+    ...(customRequests?.trim() ? [buildStorySeedSection(customRequests.trim(), pageCount ?? DEFAULT_PAGE_COUNT)] : []),
     buildSupportingEntitiesSection(theme, characters, customRequests), // Pets must NOT be duplicated in supportingEntities
     buildAgeAppropriateSection(readingCfg),
-    buildStoryStructureSection(characterName, pageCount ?? 12, characters),
+    buildStoryStructureSection(characterName, pageCount ?? DEFAULT_PAGE_COUNT, characters),
     buildThemeSpecificSection(themeConfig, theme),
     buildVisualDiversitySection(),
     buildWritingStyleSection(readingCfg, language, characterName, characters),
     buildIllustrationSection(illustrationStyle, characterName, characters),
-    buildOutputFormatSection(readingCfg, pageCount ?? 12),
-    buildVerificationChecklistSection(readingCfg, characterName, themeConfig, pageCount ?? 12, language),
+    buildOutputFormatSection(readingCfg, pageCount ?? DEFAULT_PAGE_COUNT),
+    buildVerificationChecklistSection(readingCfg, characterName, themeConfig, pageCount ?? DEFAULT_PAGE_COUNT, language),
     `Generate the story now in valid JSON format with EXACTLY ${resolveStoryPageCount(pageCount)} pages.`
   ]
   
@@ -241,10 +242,10 @@ export function generateStoryPrompt(input: StoryGenerationInput): string {
 // ============================================================================
 
 function resolveStoryPageCount(override?: number): number {
-  if (override !== undefined && override >= 2 && override <= 20) {
+  if (override !== undefined && override >= PAGE_COUNT_MIN && override <= PAGE_COUNT_MAX) {
     return override
   }
-  return 12
+  return DEFAULT_PAGE_COUNT
 }
 
 /**
