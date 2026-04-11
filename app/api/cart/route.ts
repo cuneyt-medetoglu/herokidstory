@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireUser } from "@/lib/auth/api-auth"
 import { getBooksByIds } from "@/lib/db/books"
-
-/**
- * Cart API Routes
- * 
- * GET /api/cart - Get user's cart
- * POST /api/cart/add - Add items to cart
- * DELETE /api/cart/remove - Remove item from cart
- * POST /api/cart/clear - Clear cart
- */
-
-const HARDCOPY_PRICE = 34.99 // $34.99 per hardcopy
+import { getProductPrice } from "@/lib/pricing/payment-products"
+import { getUserCurrency } from "@/lib/currency"
 
 export async function GET(request: NextRequest) {
   try {
@@ -81,12 +72,15 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Return cart items (client will add them to cart)
+      const currency = getUserCurrency(request.headers)
+      const hardcopyPrice = getProductPrice("hardcopy", currency)
+
       const cartItems = books.map((book) => ({
         bookId: book.id,
         bookTitle: book.title || "Untitled Book",
         coverImage: book.cover_image_url || "",
-        price: HARDCOPY_PRICE,
+        price: hardcopyPrice,
+        currency,
         type: "hardcopy" as const,
       }))
 

@@ -49,12 +49,24 @@ const CURRENCY_SYMBOLS: Record<Currency, Omit<CurrencyConfig, "price">> = {
 }
 
 
-function formatEbookListPrice(currency: Currency, amount: number): string {
+function formatPrice(currency: Currency, amount: number): string {
   const sym = CURRENCY_SYMBOLS[currency].symbol
   if (currency === "TRY") {
     return `${sym}${Number.isInteger(amount) ? amount : amount.toFixed(2)}`
   }
   return `${sym}${amount.toFixed(2)}`
+}
+
+/**
+ * Format any product price with the correct currency symbol.
+ * Unlike getCurrencyConfig (ebook-only), this works for any product.
+ */
+export function formatProductPrice(
+  productId: Parameters<typeof getProductPrice>[0],
+  currency: Currency
+): string {
+  const amount = getProductPrice(productId, currency)
+  return formatPrice(currency, amount)
 }
 
 /**
@@ -81,7 +93,7 @@ export function getCurrencyConfig(currency: Currency): CurrencyConfig {
   const amount = getProductPrice("ebook", currency)
   return {
     ...base,
-    price: formatEbookListPrice(currency, amount),
+    price: formatPrice(currency, amount),
   }
 }
 

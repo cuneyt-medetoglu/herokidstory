@@ -45,9 +45,10 @@ const countries = [
 /** Para birimi seçici: Ödeme sistemleri (Stripe/İyzico) yapılınca tekrar açılacak. */
 const SHOW_CURRENCY_SELECTOR = false
 
-const LOCALE_META: Record<string, { flag: string; label: string }> = {
-  en: { flag: "🇬🇧", label: "EN" },
-  tr: { flag: "🇹🇷", label: "TR" },
+/** Dil kodu (bayrak emoji bazı fontlarda TR/GB harfleriyle çift görünüme yol açıyordu). */
+const LOCALE_META: Record<string, { label: string }> = {
+  en: { label: "EN" },
+  tr: { label: "TR" },
 }
 
 export function Header() {
@@ -202,7 +203,7 @@ export function Header() {
                 aria-label="Switch language"
               >
                 <Globe className="h-4 w-4" />
-                <span className="font-medium">{currentLocaleMeta.flag} {currentLocaleMeta.label}</span>
+                <span className="font-medium">{currentLocaleMeta.label}</span>
                 <ChevronDown className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -213,7 +214,6 @@ export function Header() {
                   onClick={() => handleLocaleSwitch(code)}
                   className="cursor-pointer gap-2"
                 >
-                  <span>{meta.flag}</span>
                   <span className="font-medium">{meta.label}</span>
                 </DropdownMenuItem>
               ))}
@@ -562,9 +562,7 @@ export function Header() {
                       >
                         <span className="flex items-center gap-2">
                           <Globe className="h-4 w-4" />
-                          <span className="font-medium">
-                            {currentLocaleMeta.flag} {currentLocaleMeta.label}
-                          </span>
+                          <span className="font-medium">{currentLocaleMeta.label}</span>
                         </span>
                         <ChevronDown className="h-4 w-4" />
                       </Button>
@@ -579,7 +577,6 @@ export function Header() {
                           }}
                           className="cursor-pointer gap-2"
                         >
-                          <span>{meta.flag}</span>
                           <span className="font-medium">{meta.label}</span>
                         </DropdownMenuItem>
                       ))}

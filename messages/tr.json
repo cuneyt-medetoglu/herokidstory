@@ -1317,6 +1317,22 @@
       "cta": "Kitabını Oluşturmaya Başla",
       "ctaSubtitle": "Adım adım kişiselleştirilmiş kitabını oluştur"
     },
+    "hardcover": {
+      "title": "Baskı Kitap",
+      "typeLabel": "Fiziksel",
+      "feature1": "Ciltli sert kapak",
+      "feature2": "A4 format",
+      "feature3": "Ücretsiz kargo",
+      "feature4": "Premium baskı kalitesi",
+      "convertText": "Önce E-Kitap oluşturun, ardından ciltliye dönüştürün",
+      "cta": "Kitabını Oluştur"
+    },
+    "bundle": {
+      "title": "E-Kitap + Baskı Paketi",
+      "subtitle": "İkisini birden al, tasarruf et",
+      "save": "{amount} tasarruf",
+      "cta": "Paketi Seç"
+    },
     "hardcoverInfo": {
       "title": "Kitaplığımda sert kapağa dönüştür",
       "subtitle": "Tamamlanan E-Kitaplardan basılı kitap sipariş et"
@@ -1344,6 +1360,40 @@
       "securePayment": "Güvenli ödeme",
       "moneyBack": "Para iade garantisi",
       "trustedBy": "Binlerce ebeveynin güveni"
+    }
+  },
+  "pricingFaq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "E-Kitaplarımız hakkında bilmeniz gereken her şey",
+    "items": {
+      "included": {
+        "question": "E-Kitap'a neler dahil?",
+        "answer": "Her E-Kitap, yüksek kaliteli illüstrasyonlarla 12 sayfalık kişiselleştirilmiş bir hikaye içerir. Çocuğunuzun adı ve özellikleri hikayeye entegre edilir. Sınırsız indirilebilen ve paylaşılabilen bir PDF dosyası alırsınız."
+      },
+      "convertHardcover": {
+        "question": "E-Kitabımı daha sonra ciltli baskıya dönüştürebilir miyim?",
+        "answer": "Evet! Kitaplığım bölümünden E-Kitabınızı kolayca güzel bir ciltli basılı kitaba dönüştürebilirsiniz. Tüm kişiselleştirmeleriniz korunur ve istediğiniz zaman fiziksel kopya sipariş edebilirsiniz."
+      },
+      "deliveryTime": {
+        "question": "E-Kitabımı ne kadar sürede alırım?",
+        "answer": "Kişiselleştirilmiş E-Kitabınız siparişinizi tamamladıktan sonra yaklaşık 2 saat içinde hazır olur. Hazır olduğunda indirme bağlantısı içeren bir e-posta bildirimi alırsınız."
+      },
+      "editAfterPurchase": {
+        "question": "Satın alma sonrası kitabımı düzenleyebilir miyim?",
+        "answer": "Evet, Kitaplığım bölümünden kitabınızın kişiselleştirmelerinde değişiklik yapabilirsiniz. Yapılan düzenlemeler güncellenmiş bilgilerle E-Kitabınızın yeni bir versiyonunu oluşturur."
+      },
+      "refundPolicy": {
+        "question": "İade politikanız nedir?",
+        "answer": "E-Kitabınızdan tamamen memnun kalmazsanız, satın alma tarihinden itibaren 30 gün içinde %100 para iade garantisi sunuyoruz. İade talebiniz için destek ekibimizle iletişime geçmeniz yeterlidir."
+      },
+      "paymentMethods": {
+        "question": "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
+        "answer": "Tüm büyük kredi kartlarını (Visa, Mastercard, American Express) ve iyzico üzerinden güvenli ödeme işlemlerini kabul ediyoruz. Tüm işlemler şifrelenir ve güvenlidir."
+      },
+      "priceSameCountries": {
+        "question": "Fiyat tüm ülkelerde aynı mı?",
+        "answer": "Fiyatlarımız konumunuza göre otomatik olarak yerel para birimine uyarlanır. Gerçek değer tüm bölgelerde eşdeğer kalır."
+      }
     }
   },
   "cart": {
@@ -1708,14 +1758,29 @@
     "hardcover": {
       "title": "Baskı Kitap",
       "type": "Fiziksel",
-      "feature1": "Ciltli kitap",
+      "feature1": "Ciltli sert kapak",
       "feature2": "A4 format",
       "feature3": "Ücretsiz kargo",
-      "availableIn": "Kitaplığımda Mevcut",
-      "convertText": "E-Kitaplarınızı ciltliye dönüştürün",
-      "viewInLibrary": "Kitaplıkta Görüntüle"
+      "feature4": "Premium baskı kalitesi",
+      "convertText": "Önce E-Kitap oluşturun, ardından ciltliye dönüştürün",
+      "cta": "Kitabını Oluştur"
     },
-    "trust": "Güvenli ödeme • Para iade garantisi • Binlerce ebeveyn tarafından güvenilen"
+    "bundle": {
+      "title": "E-Kitap + Baskı Paketi",
+      "subtitle": "İkisini birden al, tasarruf et",
+      "save": "{amount} tasarruf",
+      "cta": "Paketi Seç"
+    },
+    "trust": {
+      "secure": "Güvenli ödeme",
+      "moneyBack": "30 gün para iade garantisi",
+      "trustedBy": "Binlerce ebeveynin güveni"
+    },
+    "miniSteps": {
+      "step1": "Hikayeni oluştur",
+      "step2": "Öde",
+      "step3": "Anında indir"
+    }
   },
   "homeExamples": {
     "title": "Örnek Kitaplar",

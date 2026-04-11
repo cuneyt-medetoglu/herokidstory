@@ -1317,6 +1317,22 @@
       "cta": "Start Creating Your Book",
       "ctaSubtitle": "Create your personalized book step by step"
     },
+    "hardcover": {
+      "title": "Printed Book",
+      "typeLabel": "Physical",
+      "feature1": "Hardcover binding",
+      "feature2": "A4 format",
+      "feature3": "Free shipping",
+      "feature4": "Premium print quality",
+      "convertText": "Create your E-Book first, then convert to hardcover",
+      "cta": "Create Your Book"
+    },
+    "bundle": {
+      "title": "E-Book + Print Bundle",
+      "subtitle": "Get both and save",
+      "save": "Save {amount}",
+      "cta": "Get Bundle"
+    },
     "hardcoverInfo": {
       "title": "Convert to hardcover in My Library",
       "subtitle": "Order printed books from completed E-Books"
@@ -1344,6 +1360,40 @@
       "securePayment": "Secure payment",
       "moneyBack": "Money-back guarantee",
       "trustedBy": "Trusted by thousands of parents"
+    }
+  },
+  "pricingFaq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about our E-Books",
+    "items": {
+      "included": {
+        "question": "What is included in the E-Book?",
+        "answer": "Each E-Book includes a 12-page personalized story with high-quality illustrations, custom character names, and your child as the main character. You'll receive a PDF file that can be downloaded and shared unlimited times."
+      },
+      "convertHardcover": {
+        "question": "Can I convert my E-Book to hardcover later?",
+        "answer": "Yes! You can easily convert your E-Book to a beautiful hardcover printed book at any time from your My Library section. You'll keep all your personalization and can order physical copies whenever you'd like."
+      },
+      "deliveryTime": {
+        "question": "How long does it take to receive my E-Book?",
+        "answer": "Your personalized E-Book will be ready in approximately 2 hours after you complete your order. You'll receive an email notification with a download link as soon as it's ready."
+      },
+      "editAfterPurchase": {
+        "question": "Can I edit my book after purchase?",
+        "answer": "Yes, you can make changes to your book's personalization from your My Library section. Any edits will generate a new version of your E-Book with the updated information."
+      },
+      "refundPolicy": {
+        "question": "What is the refund policy?",
+        "answer": "We offer a 100% money-back guarantee within 30 days of purchase if you're not completely satisfied with your E-Book. Simply contact our support team to request a refund."
+      },
+      "paymentMethods": {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and secure payment processing through Stripe. All transactions are encrypted and secure."
+      },
+      "priceSameCountries": {
+        "question": "Is the price the same in all countries?",
+        "answer": "Our prices are automatically adjusted based on your location to show the local currency. The actual value remains equivalent across all regions."
+      }
     }
   },
   "cart": {
@@ -1708,14 +1758,29 @@
     "hardcover": {
       "title": "Printed Book",
       "type": "Physical",
-      "feature1": "Hardcover book",
+      "feature1": "Hardcover binding",
       "feature2": "A4 format",
       "feature3": "Free shipping",
-      "availableIn": "Available in My Library",
-      "convertText": "Convert your E-Books to hardcover",
-      "viewInLibrary": "View in Library"
+      "feature4": "Premium print quality",
+      "convertText": "Create your E-Book first, then convert to hardcover",
+      "cta": "Create Your Book"
     },
-    "trust": "Secure payment • Money-back guarantee • Trusted by thousands of parents"
+    "bundle": {
+      "title": "E-Book + Print Bundle",
+      "subtitle": "Get both and save",
+      "save": "Save {amount}",
+      "cta": "Get Bundle"
+    },
+    "trust": {
+      "secure": "Secure payment",
+      "moneyBack": "30-day money-back guarantee",
+      "trustedBy": "Trusted by thousands of parents"
+    },
+    "miniSteps": {
+      "step1": "Create your story",
+      "step2": "Pay",
+      "step3": "Instant download"
+    }
   },
   "homeExamples": {
     "title": "Example Books",
