@@ -21,6 +21,7 @@ import {
 import { Link, useRouter } from "@/i18n/navigation"
 import { useState, useCallback, useEffect, useMemo } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import { useStepGuard } from "@/hooks/use-step-guard"
 import {
   persistWizardData,
   readWizardFormMirror,
@@ -190,6 +191,7 @@ export default function Step2Page() {
   const router = useRouter()
   const { isPending, navigate } = useWizardNavigate()
   const { toast } = useToast()
+  useStepGuard(2)
 
   useEffect(() => {
     router.prefetch("/create/step3")

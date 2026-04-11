@@ -24,6 +24,7 @@ import Image from "next/image"
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import { useStepGuard } from "@/hooks/use-step-guard"
 import { useTranslations, useLocale } from "next-intl"
 import { useToast } from "@/hooks/use-toast"
 import { useSession } from "next-auth/react"
@@ -142,6 +143,7 @@ export default function Step4Page() {
   )
   const router = useRouter()
   const { navigate, isPending: isNavPending } = useWizardNavigate()
+  useStepGuard(4)
   const locale = useLocale()
   const { toast } = useToast()
   const [isCreating, setIsCreating] = useState(false)

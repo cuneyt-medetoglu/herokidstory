@@ -30,6 +30,7 @@ import {
 import { Link, useRouter } from "@/i18n/navigation"
 import { useState, useEffect, useMemo } from "react"
 import { useWizardNavigate } from "@/hooks/use-wizard-navigate"
+import { useStepGuard } from "@/hooks/use-step-guard"
 import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -152,6 +153,7 @@ export default function Step3Page() {
   const tc = useTranslations("create.common")
   const router = useRouter()
   const { isPending, navigate } = useWizardNavigate()
+  useStepGuard(3)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
