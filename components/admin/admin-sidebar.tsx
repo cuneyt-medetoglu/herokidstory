@@ -14,6 +14,8 @@ import {
   ChevronRight,
   ArrowLeft,
   Tag,
+  Volume2,
+  SlidersHorizontal,
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -25,6 +27,8 @@ const NAV_ITEMS: { key: string; href: string; icon: React.ElementType; available
   { key: 'orders', href: '/admin/orders', icon: ShoppingCart, available: true },
   { key: 'users', href: '/admin/users', icon: Users, available: true },
   { key: 'promoCodes', href: '/admin/promo-codes', icon: Tag, available: true },
+  { key: 'ttsDefaults', href: '/admin/tts-settings', icon: Volume2, available: true },
+  { key: 'readerDefaults', href: '/admin/reader-defaults', icon: SlidersHorizontal, available: true },
   { key: 'system', href: '/admin/settings', icon: Settings, available: false },
 ]
 

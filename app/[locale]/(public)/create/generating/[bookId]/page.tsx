@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
-import { useBookGenerationStatus, getStepLabel } from '@/hooks/useBookGenerationStatus'
+import { useBookGenerationStatus, getStepLabel, type GenerationStep } from '@/hooks/useBookGenerationStatus'
 import { Button } from '@/components/ui/button'
 import { BookOpen, CheckCircle2, AlertCircle, ArrowLeft, X, Loader2, Mail } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -13,11 +13,11 @@ interface PageProps {
 }
 
 const STEPS = [
-  { key: 'story_generating', label: { tr: 'Hikaye yazılıyor', en: 'Writing story' }, threshold: 15 },
-  { key: 'master_generating', label: { tr: 'Karakter illüstrasyonu', en: 'Character illustration' }, threshold: 30 },
-  { key: 'cover_generating', label: { tr: 'Kapak tasarımı', en: 'Cover design' }, threshold: 50 },
-  { key: 'pages_generating', label: { tr: 'Sayfa görselleri', en: 'Page illustrations' }, threshold: 90 },
-  { key: 'tts_generating', label: { tr: 'Sesli anlatım', en: 'Narration audio' }, threshold: 100 },
+  { key: 'story_generating', label: { tr: 'Hikaye yazılıyor', en: 'Writing story' }, threshold: 10 },
+  { key: 'master_generating', label: { tr: 'Karakter illüstrasyonu', en: 'Character illustration' }, threshold: 25 },
+  { key: 'cover_generating', label: { tr: 'Kapak tasarımı', en: 'Cover design' }, threshold: 40 },
+  { key: 'pages_generating', label: { tr: 'Sayfa görselleri', en: 'Page illustrations' }, threshold: 80 },
+  { key: 'video_generating', label: { tr: 'Sesli hikaye hazırlanıyor', en: 'Preparing audio story' }, threshold: 100 },
 ]
 
 function StepItem({
@@ -79,6 +79,10 @@ export default function GeneratingPage({ params }: PageProps) {
   const router = useRouter()
   const { title, progress, step, isDone, isError, isLoading, lastGenerationError } =
     useBookGenerationStatus(bookId)
+  const displayStep: GenerationStep =
+    step === 'watch_preparing' || step === 'tts_generating'
+      ? 'video_generating'
+      : step
   const [displayProgress, setDisplayProgress] = useState(0)
 
   useEffect(() => {
@@ -168,7 +172,7 @@ export default function GeneratingPage({ params }: PageProps) {
           {!isError && !isLoading && (
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{getStepLabel(step, locale)}</span>
+                <span>{getStepLabel(displayStep, locale)}</span>
                 <span className="font-mono font-medium text-foreground">{displayProgress}%</span>
               </div>
               <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -192,7 +196,7 @@ export default function GeneratingPage({ params }: PageProps) {
                   label={locale === 'tr' ? s.label.tr : s.label.en}
                   threshold={s.threshold}
                   progress={displayProgress}
-                  currentStep={step}
+                  currentStep={displayStep}
                   stepKey={s.key}
                 />
               ))}

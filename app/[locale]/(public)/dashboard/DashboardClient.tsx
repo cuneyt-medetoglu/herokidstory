@@ -13,7 +13,6 @@ import {
   Plus,
   Download,
   Share2,
-  Trash2,
   Edit,
   Loader2,
   ShoppingCart,
@@ -21,6 +20,9 @@ import {
   Square,
   Volume2,
   SlidersHorizontal,
+  Headphones,
+  FileText,
+  Film,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +32,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Empty } from "@/components/ui/empty"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { useCart } from "@/contexts/CartContext"
 import { useCurrency } from "@/contexts/CurrencyContext"
@@ -43,6 +51,8 @@ export type DashboardBook = {
   status: "completed" | "in-progress" | "draft"
   createdDate: string
   illustrationStyle?: string
+  videoUrl?: string
+  audioStoryStatus?: "idle" | "generating" | "ready" | "failed"
 }
 
 const statusColors = {
@@ -119,6 +129,10 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
     router.push(`/books/${bookId}/view`)
   }
 
+  const handleWatchBook = (bookId: string) => {
+    router.push(`/books/${bookId}/view?mode=audio-story`)
+  }
+
   const handleEditBook = (bookId: string) => {
     router.push(`/books/${bookId}/settings`)
   }
@@ -164,40 +178,47 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
     }
   }
 
-  const handleShareBook = (bookId: string) => {
-    // ROADMAP: Share functionality
-    console.log("Share book:", bookId)
-  }
-
-  const handleDeleteBook = async (bookId: string) => {
+  const handleDownloadVideo = async (bookId: string, bookTitle?: string) => {
     try {
-      if (!confirm(t("toasts.deleteConfirm"))) return
-
-      const response = await fetch(`/api/books/${bookId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      })
-
-      const result = await response.json()
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || result.details || "Failed to delete book")
+      setDownloadingBookId(bookId)
+      // Aynı-origin indirme: S3 signed URL'ye tarayıcıdan fetch CORS yüzünden çoğu ortamda başarısız olur
+      const videoRes = await fetch(`/api/books/${bookId}/audio-story/download`)
+      if (!videoRes.ok) {
+        const errBody = await videoRes.json().catch(() => ({}))
+        throw new Error((errBody as { error?: string }).error || "Video indirilemedi")
       }
-
-      setBooks(books.filter((book) => book.id !== bookId))
-      setSelectedBooks(selectedBooks.filter((id) => id !== bookId))
+      const blob = await videoRes.blob()
+      const blobUrl = URL.createObjectURL(blob)
+      const safeName = (bookTitle || bookId)
+        .replace(/[/\\?%*:|"<>]/g, "")
+        .replace(/\s+/g, "_")
+        .slice(0, 80) || bookId
+      const a = document.createElement("a")
+      a.href = blobUrl
+      a.download = `${safeName}.mp4`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(blobUrl)
 
       toast({
-        title: t("toasts.bookDeletedTitle"),
-        description: t("toasts.deleteSuccess"),
+        title: t("toasts.videoSuccessTitle"),
+        description: t("toasts.videoSuccessDesc"),
       })
     } catch (error) {
       toast({
-        title: t("toasts.deleteFailedTitle"),
-        description: error instanceof Error ? error.message : t("toasts.deleteFailed"),
+        title: t("toasts.videoFailedTitle"),
+        description: error instanceof Error ? error.message : t("toasts.videoFailedDesc"),
         variant: "destructive",
       })
+    } finally {
+      setDownloadingBookId(null)
     }
+  }
+
+  const handleShareBook = (bookId: string) => {
+    // ROADMAP: Share functionality
+    console.log("Share book:", bookId)
   }
 
   const handleSelectAll = () => {
@@ -653,7 +674,47 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                       >
                         {book.status === "in-progress" ? t("continue") : t("read")}
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleEditBook(book.id)} className="flex-1">
+                      {book.status === "completed" && book.audioStoryStatus === "generating" && (
+                        <Button
+                          size="sm"
+                          disabled
+                          className="flex-1 bg-gradient-to-r from-purple-400 to-pink-400 opacity-70 text-white"
+                        >
+                          <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                          {t("watchModeLoading")}
+                        </Button>
+                      )}
+                      {book.status === "completed" && book.audioStoryStatus === "ready" && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleWatchBook(book.id)}
+                          className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition-opacity text-white"
+                        >
+                          <Headphones className="mr-1 h-3.5 w-3.5" />
+                          {t("watch")}
+                        </Button>
+                      )}
+                      {book.status === "completed" && book.audioStoryStatus === "idle" && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleWatchBook(book.id)}
+                          className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition-opacity text-white"
+                        >
+                          <Headphones className="mr-1 h-3.5 w-3.5" />
+                          {t("prepareAudioStory")}
+                        </Button>
+                      )}
+                      {book.status === "completed" && book.audioStoryStatus === "failed" && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleWatchBook(book.id)}
+                          className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 transition-opacity text-white"
+                        >
+                          <Headphones className="mr-1 h-3.5 w-3.5" />
+                          {t("retryAudioStory")}
+                        </Button>
+                      )}
+                      <Button size="sm" variant="ghost" onClick={() => handleEditBook(book.id)} className="flex-[0.8]">
                         <Edit className="mr-1 h-4 w-4" />
                         {t("edit")}
                       </Button>
@@ -675,20 +736,37 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                     )}
 
                     <div className="flex items-center gap-1 mt-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDownloadBook(book.id)}
-                        disabled={downloadingBookId === book.id}
-                        className="flex-1"
-                        title={t("tooltips.downloadPdf")}
-                      >
-                        {downloadingBookId === book.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Download className="h-4 w-4" />
-                        )}
-                      </Button>
+                      {book.status === "completed" && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled={downloadingBookId === book.id}
+                              className="flex-1"
+                              title={t("tooltips.download")}
+                            >
+                              {downloadingBookId === book.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Download className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="center">
+                            <DropdownMenuItem onClick={() => handleDownloadBook(book.id)}>
+                              <FileText className="mr-2 h-4 w-4" />
+                              {t("tooltips.downloadPdf")}
+                            </DropdownMenuItem>
+                            {book.audioStoryStatus === "ready" && (
+                              <DropdownMenuItem onClick={() => handleDownloadVideo(book.id, book.title)}>
+                                <Film className="mr-2 h-4 w-4" />
+                                {t("tooltips.downloadVideo")}
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                       <Button
                         size="sm"
                         variant="ghost"
@@ -697,15 +775,6 @@ export default function DashboardClient({ initialBooks }: DashboardClientProps) 
                         title={t("tooltips.share")}
                       >
                         <Share2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteBook(book.id)}
-                        className="flex-1 hover:text-destructive hover:bg-destructive/10"
-                        title={t("tooltips.delete")}
-                      >
-                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </CardContent>

@@ -147,10 +147,10 @@ iletilecektir. Bu veriler hikaye kitabı üretiminden sonra
    - Yurt dışı aktarım açıklaması
 
 5. VERİ SAKLAMA SÜRELERİ
-   - Hesap verisi: Hesap aktif olduğu sürece + silme sonrası X ay
-   - Çocuk fotoğrafı: Kitap üretiminden sonra ne kadar süre?
+   - Hesap verisi: Aktif sürece; hesap silinince **anında** silinir (taslak v1.2)
+   - Çocuk referans fotoğrafı: Üretim bitince silinir (kalıcı saklama yok)
    - Sipariş verisi: Yasal yükümlülük (10 yıl fatura)
-   - Log verileri: X gün
+   - Log verileri: Örn. 90 gün (taslakta tanımlı)
 
 6. ÇOCUKLARIN GİZLİLİĞİ (Ayrı Bölüm)
    - 13/16 yaş altı politikası
@@ -189,8 +189,8 @@ iletilecektir. Bu veriler hikaye kitabı üretiminden sonra
 
 | Veri | Saklama Süresi | Dayanak |
 |------|---------------|---------|
-| Hesap bilgileri | Hesap aktif sürece + silme sonrası 6 ay | Meşru menfaat |
-| Çocuk fotoğrafı (AI'ya gönderilen) | İşlem sonrası en fazla 30 gün | Minimizasyon ilkesi |
+| Hesap bilgileri | Hesap aktif sürece; hesap silindiğinde **anında** silinir (`TASLAK_GIZLILIK_POLITIKASI.md` v1.2) | Sözleşme ifası |
+| Çocuk fotoğrafı (referans) | Üretim tamamlanınca silinir (kalıcı saklama yok) | Veri minimizasyonu |
 | Üretilen kitap görselleri | Kullanıcı silene kadar | Sözleşme ifası |
 | Sipariş/fatura kaydı | 10 yıl | VUK zorunluluğu |
 | Log / IP kayıtları | 90 gün | Güvenlik / meşru menfaat |

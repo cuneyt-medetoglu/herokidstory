@@ -24,6 +24,7 @@ import {
   Loader2,
   RefreshCw,
   SlidersHorizontal,
+  BookOpen,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,7 +47,7 @@ import { ToastProvider } from "@/components/providers/ToastProvider"
 import type { UserPreferences } from "@/lib/types/user-preferences"
 import { DEFAULT_PREFERENCES } from "@/lib/types/user-preferences"
 
-type Section = "profile" | "account" | "orders" | "free-cover" | "notifications" | "app-settings" | "billing"
+type Section = "profile" | "account" | "orders" | "free-cover" | "notifications" | "app-settings" | "book-settings" | "billing"
 
 interface OrderItemData {
   id: string
@@ -122,6 +123,7 @@ const VALID_SECTIONS: Section[] = [
   "free-cover",
   "notifications",
   "app-settings",
+  "book-settings",
   "billing",
 ]
 
@@ -227,6 +229,33 @@ function AppSettingsSection() {
   )
 }
 
+// ─── Book settings (placeholder — kitap listesi / düzenleme / silme sonradan) ──
+
+function BookSettingsPlaceholderSection() {
+  const t = useTranslations("dashboard.settings")
+
+  return (
+    <motion.div
+      key="book-settings"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("bookSettings.title")}</CardTitle>
+          <CardDescription>{t("bookSettings.subtitle")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">{t("bookSettings.placeholder")}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 function ProfilePageContent() {
@@ -244,6 +273,7 @@ function ProfilePageContent() {
     { id: "free-cover" as Section, label: t("nav.freeCover"), icon: Gift },
     { id: "notifications" as Section, label: t("nav.notifications"), icon: Bell },
     { id: "app-settings" as Section, label: t("nav.appSettings"), icon: SlidersHorizontal },
+    { id: "book-settings" as Section, label: t("nav.bookSettings"), icon: BookOpen },
     { id: "billing" as Section, label: t("nav.billing"), icon: CreditCard },
   ]
 
@@ -710,6 +740,9 @@ function ProfilePageContent() {
 
       case "app-settings":
         return <AppSettingsSection />
+
+      case "book-settings":
+        return <BookSettingsPlaceholderSection />
 
       case "billing":
         return (

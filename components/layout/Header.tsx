@@ -138,25 +138,27 @@ export function Header() {
         </Link>
 
         {/* Yalnız geniş masaüstü: yan yana linkler; altında çakışma riski yok */}
-        <div className="hidden shrink-0 items-center gap-6 pl-2 xl:flex 2xl:gap-8">
-          {navLinks.map((link, index) => (
-            <motion.div
-              key={link.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Link href={link.href} className="block">
-                <motion.span
-                  className="whitespace-nowrap text-sm font-medium text-gray-800 transition-colors hover:text-primary dark:text-slate-100 lg:text-base"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 400 }}
+        <div className="hidden shrink-0 items-center gap-3 pl-2 xl:flex 2xl:gap-4">
+          {navLinks.map((link, index) => {
+            const Icon = link.icon
+            return (
+              <motion.div
+                key={link.href}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -1 }}
+              >
+                <Link
+                  href={link.href}
+                  className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-primary/15 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:bg-primary/10 dark:text-primary dark:hover:bg-primary/20"
                 >
+                  <Icon className="h-4 w-4 shrink-0" />
                   {t(link.labelKey)}
-                </motion.span>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.div>
+            )
+          })}
         </div>
 
         {/* Logo ile sağ blok arasında kalan alan — nav bu satırda yer kaplamaz, sağa iter */}

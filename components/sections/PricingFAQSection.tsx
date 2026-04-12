@@ -10,7 +10,6 @@ const FAQ_KEYS = [
   "convertHardcover",
   "deliveryTime",
   "editAfterPurchase",
-  "refundPolicy",
   "paymentMethods",
   "priceSameCountries",
 ] as const

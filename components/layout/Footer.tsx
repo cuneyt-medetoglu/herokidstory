@@ -54,7 +54,7 @@ export function Footer() {
     { labelKey: "privacyPolicy" as const, href: "/privacy" },
     { labelKey: "termsOfService" as const, href: "/terms" },
     { labelKey: "cookiePolicy" as const, href: "/cookies" },
-    { labelKey: "refundPolicy" as const, href: isTr ? "/iade-politikasi" : "/refund-policy" },
+    { labelKey: "refundPolicy" as const, href: "/refund-policy" },
     ...(isTr
       ? [{ labelKey: "distanceSales" as const, href: "/mesafeli-satis" }]
       : []),
@@ -289,15 +289,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* TR locale — yasal zorunlu satıcı bilgileri */}
-          {isTr && (
-            <p className="text-center text-xs text-gray-400 dark:text-slate-600">
-              Satıcı: Cüneyt Medetoğlu (Şahıs İşletmesi) · Tunceli Vergi Dairesi VKN: 6130979062 ·{" "}
-              <a href="mailto:info@herokidstory.com" className="hover:text-primary">
-                info@herokidstory.com
-              </a>
-            </p>
-          )}
         </motion.div>
       </div>
 

@@ -1,209 +1,173 @@
-# HeroKidStory — Yasal Dokümanlar: Genel Bakış ve Önceliklendirme
+# HeroKidStory — Yasal Dokümanlar: Genel Bakış
 
-**Oluşturulma:** Nisan 2026  
-**Son Güncelleme:** Nisan 2026  
-**Durum:** Analiz aşaması — Faz 1 taslak hazırlığı başladı  
-**Şirket Tipi:** Şahıs şirketi  
-**Yasal Danışman:** Henüz atanmadı ⚠️
+**Son güncelleme:** Nisan 2026  
+**Şirket:** Şahıs işletmesi (Cüneyt Medetoğlu)  
+**Yasal danışman:** Henüz atanmadı (metinler taslak)
 
 ---
 
-## İş Modeli: Satış Kapsamı (Global vs Türkiye)
+## Bu klasörde tek kaynak
 
-| Ürün | Satış Coğrafyası | Ödeme Altyapısı | Uygulanacak Hukuk |
-|------|-----------------|----------------|-------------------|
-| **E-book (dijital)** | 🌍 Global (tüm dünya) | Stripe (global) + İyzico (TR) | TR: TKHK + KVKK / AB: GDPR + Consumer Rights Directive / ABD: FTC + COPPA |
-| **E-book + Basılı Kitap** | 🇹🇷 Sadece Türkiye | İyzico | TR: TKHK + KVKK + Mesafeli Sözleşmeler Yönetmeliği |
+| Dosya | Ne için? |
+|--------|----------|
+| **`LEGAL_OVERVIEW.md` (bu dosya)** | İş modeli, fazlar, sitede ne var, sonra yapılacaklar — **durum özeti burada.** |
+| **`LEGAL_VERSIONS.md`** | Belge sürümleri (`draft` → `live`) ve güncelleme prosedürü. |
+| **`TASLAK_*.md` + `0*_ANALIZ.md`** | Metin taslakları ve hukuki analiz notları. |
 
-### Bu Ayrımın Yasal Belgelere Etkisi
-
-| Belge | TR Kullanıcılar | Global Kullanıcılar |
-|-------|----------------|---------------------|
-| **Mesafeli Satış Sözleşmesi** | ✅ Zorunlu (TKHK) | ❌ Gerekli değil (TR hukuku sadece TR tüketicileri kapsar) |
-| **Ön Bilgilendirme Formu** | ✅ Zorunlu (TKHK) | ❌ Gerekli değil |
-| **Gizlilik Politikası** | ✅ KVKK zorunlu | ✅ GDPR + COPPA zorunlu |
-| **Kullanım Koşulları (ToS)** | ✅ Önerilir | ✅ Zorunlu (global koruma) |
-| **Çerez Politikası** | ✅ KVKK | ✅ ePrivacy + GDPR |
-| **Terms of Sale (İngilizce)** | — | ✅ Global ticari koruma |
-
-> **Sonuç:** MSS + Ön Bilgilendirme Formu sadece Türk kullanıcılara gösterilecek. Ancak global kullanıcılar için İngilizce bir **Terms of Sale / Purchase Terms** sayfası da gerekecek (Faz 2'de).
+> **Cursor agent (`legal-manager.mdc`):** Satıcı bilgisi, sabit kararlar ve kısa teknik özet orada; **faz ve tamamlanan iş listesi burada tutulur** — iki yerde farklı faz numarası olmaması için agent da bu dosyayı günceller.
 
 ---
 
-## Neden Bu Belgeler Kritik?
+## İş modeli (satış kapsamı)
 
-HeroKidStory:
-- **Şahıs şirketi olarak TR'de ödeme alıyor** → Mesafeli Sözleşmeler Yönetmeliği zorunlu
-- **Global e-book satışı yapıyor** → GDPR + COPPA + İngilizce yasal metinler gerekli
-- **Çocuk fotoğraflarını işliyor** → KVKK + GDPR en üst düzey koruma gerektiriyor
-- **AI ile içerik üretiyor** → Telif hakkı ve sorumluluk sınırlamaları şart
-- **8 dilde hizmet veriyor** → Hem TR hem AB kullanıcıları kapsıyor
-- **Çerez banner'ı zaten mevcut** → Politikanın sayfada olması gerekiyor
-- **ETBİS kaydı zorunlu** → E-ticaret yapan tüm işletmeler (cezası 79K–396K TL)
+| Ürün | Pazar | Ödeme | Not |
+|------|--------|--------|-----|
+| E-kitap (dijital) | Global | Stripe + İyzico | TKHK / GDPR / COPPA vb. |
+| Basılı kitap | Yalnızca TR | İyzico | Mesafeli sözleşmeler (MSS + ön bilgilendirme) |
+
+**MSS + Ön Bilgilendirme Formu** yalnızca `locale === "tr"` ve ilgili checkout akışında.
 
 ---
 
-## Öncelik Sıralaması ve Faz Planı
+## Fazlar — tek tablo (uygulama + doküman)
 
-### 🔴 FAZ 1 — Ödeme Başlamadan ÖNCE Zorunlu (En Yüksek Risk)
+Aşağıdaki fazlar **HeroKidStory iç projesi** için kullanılan isimlendirmedir; yasal zorunluluk sırasıyla birebir örtüşmeyebilir.
 
-| # | Belge | Kapsam | Yasal Dayanak | Analiz | Taslak |
-|---|-------|--------|--------------|--------|--------|
-| 1 | **Mesafeli Satış Sözleşmesi** | 🇹🇷 TR | TKHK 6502, MSS Yönetmeliği | [Analiz](./01_MESAFELI_SATIS_SOZLESMESI_ANALIZ.md) | [Taslak](./TASLAK_MESAFELI_SATIS_SOZLESMESI.md) |
-| 2 | **Ön Bilgilendirme Formu** | 🇹🇷 TR | Aynı yönetmelik Md. 5 | [Analiz](./02_ON_BILGILENDIRME_FORMU_ANALIZ.md) | [Taslak](./TASLAK_ON_BILGILENDIRME_FORMU.md) |
-| 3 | **Gizlilik Politikası** | 🌍 Global | KVKK + GDPR + COPPA | [Analiz](./03_GIZLILIK_POLITIKASI_ANALIZ.md) | Hazırlanacak |
+### Faz 1 — TR tüketici (ödeme öncesi)
 
-### 🟡 FAZ 2 — Site Yayına Girmeden Önce (Yüksek Önem)
+| # | Çıktı | Doküman / kod | Durum |
+|---|--------|---------------|--------|
+| 1.1 | Mesafeli satış sözleşmesi | `TASLAK_MESAFELI_SATIS_SOZLESMESI.md` | Taslak v1.1-draft |
+| 1.2 | Ön bilgilendirme | `TASLAK_ON_BILGILENDIRME_FORMU.md` | Taslak v1.1-draft |
+| 1.3 | MSS sayfası | `app/[locale]/(public)/mesafeli-satis/page.tsx` | TR-only |
+| 1.4 | Checkout onayları | `components/checkout/LegalConsents.tsx`, `CheckoutForm.tsx`, `IyzicoPaymentFlow.tsx` | TR |
+| 1.5 | Sipariş onay alanları | `migrations/034_orders_legal_consent.sql` | Uygulandı |
+| 1.6 | Footer satıcı bilgisi (TR) | `components/layout/Footer.tsx` | Var |
+| 1.7 | i18n (checkout) | `messages/tr.json`, `messages/en.json` (`legalConsents`) | Var |
 
-| # | Belge | Kapsam | Yasal Dayanak | Analiz |
-|---|-------|--------|--------------|--------|
-| 4 | **Kullanım Koşulları / ToS** | 🌍 Global | Borçlar Kanunu + AI hukuku | [Analiz](./04_KULLANIM_KOSULLARI_ANALIZ.md) |
-| 5 | **Çerez Politikası** | 🌍 Global | ePrivacy + KVKK | [Analiz](./05_CEREZ_POLITIKASI_ANALIZ.md) |
-| 6 | **Terms of Sale (EN)** | 🌍 Global | Consumer Rights Directive | Hazırlanacak |
+### Faz 2 — Global yasal yüzey (site metinleri)
 
-### 🔴 FAZ 1 (Ek) — Resmi Kayıtlar (E-ticaret Başlamadan)
+| # | Çıktı | Doküman / kod | Durum |
+|---|--------|---------------|--------|
+| 2.1 | Gizlilik politikası | `TASLAK_GIZLILIK_POLITIKASI.md` + `privacy/page.tsx` → `/privacy` | v1.4.0 |
+| 2.2 | Kullanım koşulları | `TASLAK_KULLANIM_KOSULLARI.md` → `/terms` | v1.1-draft |
+| 2.3 | Çerez politikası | `TASLAK_CEREZ_POLITIKASI.md` → `/cookies` | v1.0-draft |
+| 2.4 | Çerez banner | `components/layout/CookieConsentBanner.tsx` | `/cookies` linki + consent timestamp |
 
-| # | İşlem | Durum | Analiz |
-|---|-------|-------|--------|
-| 4 | **ETBİS Kaydı** | ⏳ Domain yayına alındıktan sonra (herokidstory.com alındı, henüz live değil) | [→ Analiz](./06_ETBIS_KAYDI_ANALIZ.md) |
-| 5 | **VERBİS Kaydı** | ⚠️ Muhtemelen zorunlu (özel nitelikli veri + yurt dışı aktarım) | Avukata danış |
+Analiz dosyaları: `03_…`, `04_…`, `05_…`.
 
----
+### Faz 3 — İade / kalite + kayıt
 
-## Mevcut Durum Tespiti
+| # | Çıktı | Doküman / kod | Durum |
+|---|--------|---------------|--------|
+| 3.1 | İade ve kalite politikası (TR+EN, tek route) | `07_IADE_VE_KALITE_POLITIKASI.md` → `refund-policy/page.tsx` | Sayfa v1.0-draft; `locale === "tr"` → TR metin, aksi → EN |
+| 3.2 | Footer linki | `Footer.tsx` + `footer.legalLinks.refundPolicy` | Tüm dillerde `/refund-policy` |
+| 3.3 | Kayıt — ToS + Gizlilik ayrı onay | `app/[locale]/(public)/auth/register/page.tsx` | İki checkbox |
+| 3.4 | Kayıt sonrası sürüm notu (istemci) | `localStorage`: `tos_version_accepted`, `tos_accepted_at`, `privacy_version_accepted`, `privacy_accepted_at` | Kayıt başarılı + oturum açılınca |
 
-### Footer'da Var Olan Linkler (ama sayfalar boş/yok)
-```
-/privacy   → Gizlilik Politikası
-/terms     → Kullanım Koşulları
-/cookies   → Çerez Politikası
-```
-
-### Eksik Sayfalar ve Eklenmesi Gerekenler
-- `/privacy` — Sayfa yok → 🌍 Global (TR + EN)
-- `/terms` — Sayfa yok → 🌍 Global (TR + EN)
-- `/cookies` — Sayfa yok → 🌍 Global (TR + EN)
-- `/mesafeli-satis` — Sayfa yok → 🇹🇷 Sadece TR kullanıcılara
-- Ön Bilgilendirme → Checkout modal olarak → 🇹🇷 Sadece TR kullanıcılara
-
-### Mevcut Altyapı (Kullanılabilecekler)
-- `CookieConsentBanner.tsx` → Zaten çalışıyor, `/cookies` linkini bekliyor
-- `register/page.tsx` → "Kullanım koşullarını kabul ediyorum" checkbox'ı var (kontrol edilmeli)
-- Footer → 3 legal link mevcut, mesafeli satış linki eklenecek
-- i18n altyapısı → Locale bazlı içerik gösterimi zaten mümkün
+> **Not:** Ayrı `/iade-politikasi` URL’si yok; Türkçe etiket footer’da, içerik aynı route üzerinden.
 
 ---
 
-## HeroKidStory'ye Özel Risk Faktörleri
+## Şu ana kadar tamamlanan özet (kod + taslak)
 
-### 1. Çocuk Verisi (En Yüksek Risk — Global)
-- Fotoğraf yükleme: **Çocuğun biyometrik verisi** sayılabilir
-- KVKK'da özel nitelikli veri kategorisi → Açık rıza zorunlu
-- GDPR'da 16 yaş altı için **ebeveyn onayı** gerekiyor
-- COPPA (ABD): 13 yaş altı çocuk verileri için özel prosedürler
-- Veri saklama süresi ve silme politikası net belirtilmeli
+- Yasal sayfalar: `/privacy`, `/terms`, `/cookies`, `/refund-policy` (çok dilli route), `/mesafeli-satis` (TR).
+- ÖBF: ayrı public URL yok; checkout’ta TR için modal/checkbox ile.
+- Checkout TR: MSS + ön bilgilendirme + dijital feragat onayları; ödeme alanları onaysız kilitli.
+- Veritabanı: `orders` üzerinde yasal onay zaman damgaları ve `contract_version` (migration 034).
 
-### 2. AI ile Üretilen İçerik (Global)
-- Telif hakkı belirsizliği: AI çıktısının sahibi kim?
-- Kullanıcı yüklediği fotoğrafla üretilen içerik → Platform mı, kullanıcı mı?
-- Üçüncü kişilere ait fotoğraf yükleme riski
-- AB AI Act — çocuk verisi yüzünden yüksek risk kategorisi olabilir
-
-### 3. Dijital Ürün İadesi (Global)
-- TR: Mesafeli Sözleşmeler Yönetmeliği Madde 15 istisnası
-- AB: Consumer Rights Directive — benzer dijital içerik istisnası
-- ABD: Eyalete göre değişir, genel olarak "no refund" politikası kabul edilir
-
-### 4. Basılı Kitap Siparişi (Sadece TR)
-- Fiziksel ürün = 14 günlük cayma hakkı (standart)
-- Kişiselleştirilmiş ürün istisnası uygulanabilir
-- Print-on-Demand tedarikçi ilişkisi (sözleşmeye yansıması)
-
-### 5. Çoklu Para Birimi (Global)
-- TRY / USD / EUR / GBP satış yapılıyor
-- Her para birimi için fiyat + KDV/VAT açıklaması gerekli
-- Kur farkı riskleri sözleşmelere yansıtılmalı
+Tüm belge sürümleri: **`LEGAL_VERSIONS.md`**.
 
 ---
 
-## Hazırlık Süreci
+## Test ve görüntüleme rehberi
 
-```
-Adım 1: ✅ Analiz dokümanları oluşturuldu
-        ↓
-Adım 2: 🔄 MSS + Ön Bilgilendirme taslağı hazırlanıyor (şahıs şirketi bilgileriyle)
-        ↓
-Adım 3: Taslakları avukata gönder → Nihai metin
-        ↓
-Adım 4: Gizlilik Politikası taslağı (KVKK + GDPR birlikte)
-        ↓
-Adım 5: Kullanım Koşulları + Çerez Politikası taslağı
-        ↓
-Adım 6: ETBİS + VERBİS kayıtları
-        ↓
-Adım 7: Checkout flow'a onay entegrasyonu
-        ↓
-Adım 8: Tüm sayfalara TR + EN çeviri
-```
+**Önkoşul:** `npm run dev` (varsayılan [http://localhost:3000](http://localhost:3000)). Aşağıdaki URL’lerde `BASE` = `http://localhost:3000` kabul edilir; farklı port/host kullanıyorsan değiştir.
 
----
+### Yasal sayfalar ve HTTP
 
-## Sayfalara Koymak İçin Eksik Listesi
+Aşağıdaki `curl` örnekleri **Git Bash / WSL / macOS / Linux** içindir. Yanıt gövdesini istemiyorsan `-s -o /dev/null -w "%{http_code}\n"` kullan.
 
-### Frontend — Oluşturulacak Sayfalar
+| # | Kapsam | Tarayıcıda aç | `curl` ile durum kodu (localhost:3000) |
+|---|--------|----------------|----------------------------------------|
+| 1 | Gizlilik (TR) | `BASE/tr/privacy` | `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/tr/privacy` → `200` |
+| 2 | Gizlilik (EN) | `BASE/en/privacy` | `.../en/privacy` → `200` |
+| 3 | Kullanım koşulları (TR) | `BASE/tr/terms` | `.../tr/terms` → `200` |
+| 4 | Kullanım koşulları (EN) | `BASE/en/terms` | `.../en/terms` → `200` |
+| 5 | Çerez politikası (TR) | `BASE/tr/cookies` | `.../tr/cookies` → `200` |
+| 6 | Çerez politikası (EN) | `BASE/en/cookies` | `.../en/cookies` → `200` |
+| 7 | İade / refund (TR metin) | `BASE/tr/refund-policy` | `.../tr/refund-policy` → `200` (sayfada “İade ve Kalite”) |
+| 8 | İade / refund (EN metin) | `BASE/en/refund-policy` | `.../en/refund-policy` → `200` (“Refund & Quality”) |
+| 9 | Mesafeli satış (yalnız TR) | `BASE/tr/mesafeli-satis` | `.../tr/mesafeli-satis` → `200` |
+| 10 | Mesafeli satış (EN’de kapalı) | `BASE/en/mesafeli-satis` | `.../en/mesafeli-satis` → `404` (`notFound`) |
 
-| Sayfa | URL | İçerik | Kapsam | Durum |
-|-------|-----|--------|--------|-------|
-| Mesafeli Satış Sözleşmesi | `/mesafeli-satis` | `TASLAK_MESAFELI_SATIS_SOZLESMESI.md` → Sayfaya dönüştür | 🇹🇷 TR | ⏳ Sayfa yok |
-| Gizlilik Politikası | `/privacy` | Avukat onaylı metin | 🌍 Global | ⏳ Sayfa yok |
-| Kullanım Koşulları | `/terms` | Avukat onaylı metin | 🌍 Global | ⏳ Sayfa yok |
-| Çerez Politikası | `/cookies` | `05_CEREZ_POLITIKASI_ANALIZ.md` → Metin | 🌍 Global | ⏳ Sayfa yok |
-| İade Politikası | `/refund-policy` | `07_IADE_VE_KALITE_POLITIKASI.md` §7 (EN) | 🌍 Global | ⏳ Sayfa yok |
-| İade Politikası (TR) | `/iade-politikasi` | `07_IADE_VE_KALITE_POLITIKASI.md` §6 (TR) | 🇹🇷 TR | ⏳ Sayfa yok |
+### Footer ve dil
 
-### Checkout Flow — Eklenecekler (TR Locale)
+| # | Ne kontrol edilir | Nasıl |
+|---|-------------------|--------|
+| 11 | Yasal linkler | Ana sayfa veya uzun bir sayfa; sayfayı aşağı kaydır → footer’da Privacy, Terms, Cookies, Refund / İade linki. |
+| 12 | TR’ye özel | `BASE/tr/...` footer’da ayrıca **Mesafeli Satış Sözleşmesi** + satıcı satırı (ad, VKN, e-posta). |
+| 13 | EN/global | `BASE/en/...` footer’da Mesafeli Satış linki **olmamalı**; diğer yasal linkler olmalı. |
 
-| Bileşen | Açıklama | Durum |
-|---------|---------|-------|
-| MSS Checkbox | "Mesafeli Satış Sözleşmesi'ni okudum" — linke tıklanabilir | ⏳ Yok |
-| ÖBF Modal | Sipariş bilgileriyle dinamik dolan form | ⏳ Yok |
-| Dijital Cayma Onayı | E-book için cayma hakkı feragat checkbox'ı | ⏳ Yok |
-| Basılı İade Onayı | Kişiselleştirilmiş ürün için onay checkbox'ı | ⏳ Yok |
-| Tüm Checkbox Kontrolü | "Ödemeyi Tamamla" butonu tüm onaylar olmadan disabled | ⏳ Yok |
+### Çerez banner (Faz 2.4)
 
-### Footer — Eklenecekler (Yasal Zorunluluk)
+| # | Ne | Nasıl |
+|---|-----|--------|
+| 14 | Banner | Gizli pencere / çerezleri temizle veya `localStorage` içinden `cookie-consent` anahtarlarını sil; siteyi yenile → banner görünmeli. |
+| 15 | “Daha fazla” linki | Bannerdaki politika linki **`/cookies`** (locale önekli: `/tr/cookies`) olmalı. |
+| 16 | Onay kaydı | “Kabul” sonrası DevTools → Application → Local Storage: `cookie-consent-timestamp`, `cookie-consent-version` dolu olmalı. |
 
-| Bilgi | Durum |
-|-------|-------|
-| Satıcı adı (Cüneyt Medetoğlu — Şahıs İşletmesi) | ⏳ Yok |
-| Adres | ⏳ Yok |
-| Vergi Dairesi ve VKN | ⏳ Yok |
-| ETBİS No ve Bakanlık linki | ⏳ ETBİS kaydından sonra |
-| "İade Politikası" linki | ⏳ Yok |
+### Checkout — TR yasal onaylar (Faz 1.4)
 
-### Database — Eklenecek Alanlar
+| # | Ne | Nasıl |
+|---|-----|--------|
+| 17 | Bileşen görünürlüğü | Sepete ürün ekle → **`BASE/tr/checkout`**. **LegalConsents** (MSS, ön bilgi, dijital feragat) blokları görünmeli. |
+| 18 | Ödeme kilidi | Üç onay işaretlenmeden fatura/ödeme adımı kullanılamaz veya gri ( **`legalConsentsAccepted`** ). |
+| 19 | EN checkout | **`BASE/en/checkout`** → aynı TR onay blokları **görünmemeli** (locale `tr` değil). |
 
-```sql
--- orders tablosuna eklenecek
-contract_accepted_at         TIMESTAMPTZ
-contract_version             VARCHAR(20)   -- ör: "1.0"
-preliminary_info_accepted_at TIMESTAMPTZ
-digital_waiver_accepted      BOOLEAN
-contract_sent_at             TIMESTAMPTZ   -- e-posta gönderim zamanı
-```
+### Kayıt — ToS / Gizlilik + localStorage (Faz 3.3–3.4)
 
-### CookieConsentBanner.tsx — Hızlı Düzeltme
+| # | Ne | Nasıl |
+|---|-----|--------|
+| 20 | İki checkbox | **`BASE/tr/auth/register`** (veya `en`): “Kullanım koşulları” ve “Gizlilik” ayrı kutular; ikisi işaretlenmeden gönderim engellenmeli. |
+| 21 | Sürüm anahtarları | Başarılı kayıt + oturum açıldıktan sonra Local Storage: `tos_version_accepted`, `tos_accepted_at`, `privacy_version_accepted`, `privacy_accepted_at`. |
 
-```tsx
-// Satır ~95: href="/privacy" → href="/cookies" olarak değiştir
-// + localStorage'a timestamp ekle:
-localStorage.setItem("cookie-consent-timestamp", new Date().toISOString())
-```
+### Veritabanı (Faz 1.5)
+
+| # | Ne | Nasıl |
+|---|-----|--------|
+| 22 | `orders` kolonları | PostgreSQL’de: `\d orders` veya `SELECT column_name FROM information_schema.columns WHERE table_name = 'orders' AND column_name IN ('preliminary_info_accepted_at','contract_accepted_at','digital_waiver_accepted','contract_version');` — dört alan listelenmeli. |
+
+### Dokümanlar (repo, tarayıcı dışı)
+
+| # | Ne | Nasıl |
+|---|-----|--------|
+| 23 | Taslak metinler | `docs/legal/TASLAK_*.md` dosyalarını editörde aç; sürüm satırı / CHANGELOG var mı bak. |
+| 24 | Sürüm tablosu | `docs/legal/LEGAL_VERSIONS.md` merkezi tablo ile sayfa sürümleri uyumlu mu kontrol et. |
+
+> **Windows / Git Bash:** `curl` yüklü değilse tarayıcıda açmak ve DevTools **Network** sekmesinde isteğin durum koduna bakmak yeterli.
 
 ---
 
-## Önemli Uyarı
+## Sonra yapılacaklar (şimdilik dokümante only — sen takvimini belirlersin)
 
-> Bu dokümanlar **analiz ve rehber** amaçlıdır. **Hukuki tavsiye değildir.**  
-> Tüm yasal metinler uygulamaya konulmadan önce **lisanslı bir avukat tarafından** gözden geçirilmelidir.  
-> Özellikle çocuk verisi işleme ve Türk tüketici hukuku konularında profesyonel destek zorunludur.
+Bunlar **faz 4 değil**, ayrı bir “go-live / uyum” listesi; kod tabanında şu an bloklayıcı iş yok.
+
+| Konu | Ne zaman / not |
+|------|----------------|
+| Avukat incelemesi | Taslakları onaylat; `LEGAL_VERSIONS.md` içinde `draft` → `review` → `approved` |
+| Domain canlı | Production URL sabitlenince footer / metadata gözden geçirilir |
+| ETBİS | Canlı e-ticaret öncesi; rehber: `06_ETBIS_KAYDI_ANALIZ.md` — kayıt sonrası ETBİS no footer’a |
+| VERBİS / yurt dışı aktarım | Avukat görüşü (KVKK) |
+
+---
+
+## Analiz ve risk notları (özet)
+
+Çocuk verisi, AI içerik, dijital iade istisnası, basılı kişiselleştirme: ayrıntılar ilgili `0*_ANALIZ.md` dosyalarında.
+
+---
+
+## Önemli uyarı
+
+Bu klasördeki metinler **analiz ve taslak** amaçlıdır; hukuki tavsiye değildir. Yayına almadan önce uygun meslek mensubu incelemesi önerilir.

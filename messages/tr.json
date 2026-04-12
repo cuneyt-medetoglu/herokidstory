@@ -103,6 +103,8 @@
       "orders": "Siparişler",
       "users": "Kullanıcılar",
       "promoCodes": "İndirim Kodları",
+      "ttsDefaults": "TTS Varsayılanları",
+      "readerDefaults": "Okuyucu Varsayılanları",
       "system": "Sistem",
       "comingSoon": "yakında",
       "backToDashboard": "Ana Dashboard",
@@ -113,6 +115,71 @@
       "title": "Admin Panel",
       "logout": "Çıkış Yap",
       "ariaAdmin": "Admin"
+    },
+    "ttsSettings": {
+      "title": "TTS Varsayılanları",
+      "subtitle": "Tüm kullanıcılar için kitap okuma (TTS) sesi, tonu ve dil kodunu buradan yönetin.",
+      "cardTitle": "Global TTS ayarları",
+      "cardDescription": "Bu değerler sunucuda saklanır ve okuma ekranında kullanılır.",
+      "voiceLabel": "Ses adı",
+      "promptLabel": "Okuma tonu (prompt)",
+      "promptPlaceholder": "Heyecanlı çocuk hikayesi tonunda...",
+      "languageLabel": "Dil kodu (PRD)",
+      "defaultPrompt": "Çocuk hikayesi anlatır gibi enerjik, heyecanlı ve sıcak bir tonda konuş.",
+      "save": "Kaydet (global)",
+      "saving": "Kaydediliyor…",
+      "toastSavedTitle": "Kaydedildi",
+      "toastSavedDesc": "TTS varsayılanları güncellendi.",
+      "toastErrorTitle": "Hata",
+      "toastErrorDesc": "Kayıt başarısız. Lütfen tekrar deneyin.",
+      "toastForbiddenTitle": "Yetkisiz",
+      "toastForbiddenDesc": "Bu işlem yalnızca yöneticiler içindir."
+    },
+    "readerDefaults": {
+      "title": "Okuyucu varsayılanları",
+      "subtitle": "Tüm kullanıcılar için kitap okuma ekranı: animasyon, mobil düzen ve varsayılan otomatik oynatma.",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor…",
+      "toastSavedTitle": "Kaydedildi",
+      "toastSavedDesc": "Okuyucu varsayılanları güncellendi.",
+      "toastErrorTitle": "Hata",
+      "toastErrorDesc": "Kayıt başarısız. Lütfen tekrar deneyin.",
+      "animation": {
+        "title": "Sayfa animasyonu",
+        "subtitle": "Sayfalar arası geçiş efekti",
+        "flip": "Çevirme (3D)",
+        "slide": "Kaydırma",
+        "fade": "Solma",
+        "curl": "Sayfa kıvrımı",
+        "zoom": "Yakınlaştırma",
+        "none": "Yok (anlık)"
+      },
+      "animationSpeed": {
+        "title": "Animasyon hızı",
+        "subtitle": "Geçiş süresi",
+        "slow": "Yavaş",
+        "normal": "Normal",
+        "fast": "Hızlı"
+      },
+      "mobileLayout": {
+        "title": "Mobil görünüm",
+        "subtitle": "Mobilde sayfa düzeni",
+        "stacked": "Yığılmış — resim üstte, metin altta",
+        "flip": "Çevirme — resim tam ekran, metin kaydırarak"
+      },
+      "autoplay": {
+        "title": "Varsayılan otomatik oynatma",
+        "subtitle": "Kitap açıldığında başlangıç modu",
+        "modeLabel": "Mod",
+        "off": "Kapalı",
+        "tts": "TTS senkronize (otomatik okuma)",
+        "timed": "Zamanlı (otomatik sayfa)",
+        "speedLabel": "Zamanlı hız",
+        "speed5": "Hızlı (5 sn / sayfa)",
+        "speed10": "Normal (10 sn / sayfa)",
+        "speed15": "Yavaş (15 sn / sayfa)",
+        "speed20": "Çok yavaş (20 sn / sayfa)"
+      }
     },
     "dashboard": {
       "welcome": "Merhaba, {name}",
@@ -945,7 +1012,7 @@
         "createExampleBook": "Örnek kitap oluştur ({model})",
         "exampleBookAdminHint": "Yalnızca admin — herkese açık örnek. Yukarıdaki hikaye modelini kullanır."
       },
-      "trustBadges": "🔒 Güvenli ödeme • 💯 30 gün para iadesi",
+      "trustBadges": "🔒 Güvenli ödeme • ✨ Kişiselleştirilmiş üretim",
       "createButton": "Ücretsiz Kapak Oluştur",
       "exampleBookLanguage": "Örnek kitap dili",
       "localeLabel": {
@@ -1039,6 +1106,10 @@
     "selectBooksShort": "Seç",
     "createBookShort": "Kitap Oluştur",
     "read": "Oku",
+    "watch": "Sesli Hikaye",
+    "watchModeLoading": "Hazırlanıyor...",
+    "prepareAudioStory": "Sesli Hikaye Hazırla",
+    "retryAudioStory": "Yeniden Oluştur",
     "continue": "Oluşturuluyor...",
     "edit": "Düzenle",
     "addToCartHardcopy": "Sepete Ekle (Basılı)",
@@ -1072,9 +1143,10 @@
     },
     "tooltips": {
       "audio": "Sesli Okuma",
+      "download": "İndir",
       "downloadPdf": "PDF İndir",
-      "share": "Paylaş",
-      "delete": "Sil"
+      "downloadVideo": "Sesli Hikaye İndir (MP4)",
+      "share": "Paylaş"
     },
     "toasts": {
       "loadError": "Hata",
@@ -1089,6 +1161,10 @@
       "pdfFailedTitle": "İndirme Başarısız",
       "pdfFailedDesc": "PDF indirilemedi. Lütfen tekrar deneyin.",
       "pdfSuccess": "PDF başarıyla indirildi",
+      "videoSuccessTitle": "Video İndirildi!",
+      "videoSuccessDesc": "Sesli hikaye videonuz başarıyla indirildi.",
+      "videoFailedTitle": "Video İndirme Başarısız",
+      "videoFailedDesc": "Video indirilemedi. Lütfen tekrar deneyin.",
       "shareSoon": "Paylaşım özelliği yakında kullanılabilir olacak",
       "noBooksSelectedTitle": "Kitap Seçilmedi",
       "noBooksSelectedDesc": "Sepete eklemek için en az bir kitap seçin.",
@@ -1118,6 +1194,7 @@
         "freeCover": "Ücretsiz Kapak Durumu",
         "notifications": "Bildirimler",
         "appSettings": "Ayarlar",
+        "bookSettings": "Kitap Ayarları",
         "billing": "Faturalama"
       },
       "profile": {
@@ -1233,6 +1310,11 @@
         "appSettingsErrorDesc": "Ayarlar kaydedilemedi. Lütfen tekrar deneyin.",
         "accountDeletedTitle": "Hesap Silindi",
         "accountDeletedDesc": "Hesabınız kalıcı olarak silindi"
+      },
+      "bookSettings": {
+        "title": "Kitap Ayarları",
+        "subtitle": "Kitaplarınızı listeleyip düzenleme, silme ve diğer işlemler (yakında).",
+        "placeholder": "Bu bölüm hazırlanıyor. Yakında kitap listeniz ve yönetim araçları burada olacak."
       }
     }
   },
@@ -1367,7 +1449,7 @@
     },
     "trust": {
       "securePayment": "Güvenli ödeme",
-      "moneyBack": "Para iade garantisi",
+      "moneyBack": "Hızlı dijital teslimat",
       "trustedBy": "Binlerce ebeveynin güveni"
     }
   },
@@ -1390,10 +1472,6 @@
       "editAfterPurchase": {
         "question": "Satın alma sonrası kitabımı düzenleyebilir miyim?",
         "answer": "Evet, Kitaplığım bölümünden kitabınızın kişiselleştirmelerinde değişiklik yapabilirsiniz. Yapılan düzenlemeler güncellenmiş bilgilerle E-Kitabınızın yeni bir versiyonunu oluşturur."
-      },
-      "refundPolicy": {
-        "question": "İade politikanız nedir?",
-        "answer": "E-Kitabınızdan tamamen memnun kalmazsanız, satın alma tarihinden itibaren 30 gün içinde %100 para iade garantisi sunuyoruz. İade talebiniz için destek ekibimizle iletişime geçmeniz yeterlidir."
       },
       "paymentMethods": {
         "question": "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
@@ -1591,6 +1669,11 @@
     "parentSettings": "Ebeveyn Ayarları",
     "stopReading": "Okumayı durdur",
     "startReading": "Bu sayfadan başla, sayfaları sırayla oku",
+    "watchMode": "Dinle",
+    "watchModeLoading": "Sesli hikaye hazırlanıyor...",
+    "watchModeLabel": "Sesli hikaye",
+    "prepareAudioStory": "Sesli Hikaye Hazırla",
+    "retryAudioStory": "Yeniden Oluştur",
     "saveFailed": "Kaydetme başarısız",
     "settings": {
       "backToBook": "Kitaba Dön",
@@ -1678,8 +1761,8 @@
   "cookies": {
     "title": "Çerez Tercihleri",
     "customizeTitle": "Çerez Tercihlerini Özelleştirin",
-    "description": "Deneyiminizi geliştirmek için çerezler kullanıyoruz. Hangi çerezlere izin verdiğinizi seçin.",
-    "bannerDescription": "Deneyiminizi geliştirmek, site kullanımını analiz etmek ve pazarlama çalışmalarımıza yardımcı olmak için çerezler kullanıyoruz. 'Tümünü Kabul Et' seçeneğine tıklayarak çerez kullanımımıza onay vermiş olursunuz.",
+    "description": "Platformun düzgün çalışması için yalnızca zorunlu çerezler kullanılmaktadır.",
+    "bannerDescription": "HeroKidStory yalnızca platformun temel işlevleri için gerekli olan zorunlu çerezleri kullanmaktadır. Analitik veya pazarlama amaçlı çerez kullanılmamaktadır.",
     "acceptAll": "Tümünü Kabul Et",
     "decline": "Reddet",
     "customize": "Özelleştir",
@@ -1717,8 +1800,8 @@
     "a5": "E-kitaplar anında indirme için PDF dosyası olarak sunulmaktadır. Basılı kitaplar yüksek kaliteli baskıyla A4 (21x29,7 cm) ciltli olarak gelmektedir.",
     "q6": "Çocuğumun fotoğrafı güvende mi?",
     "a6": "Güvenli şifreleme kullanıyor ve katı gizlilik politikalarına uyuyoruz. Fotoğraflarınız yalnızca kişiselleştirilmiş kitabınızı oluşturmak için kullanılır ve üçüncü taraflarla paylaşılmaz.",
-    "q7": "İade alabilir miyim?",
-    "a7": "Evet, para iade garantisi sunuyoruz. E-kitabınızdan memnun kalmazsanız tam iade için 30 gün içinde bizimle iletişime geçin.",
+    "q7": "Kitabımı indirdikten sonra ne olur?",
+    "a7": "E-kitabınız PDF olarak hesabınıza eklenir; istediğiniz zaman indirebilir ve paylaşabilirsiniz. Basılı sürüm sipariş etmek isterseniz Kitaplığım bölümünden tek tıkla ciltli baskıya geçebilirsiniz.",
     "q8": "Uluslararası gönderim yapıyor musunuz?",
     "a8": "Evet! Dünya genelinde 26'dan fazla ülkeye basılı kitap gönderimi yapıyoruz. Kargo süreleri konuma göre değişir (genellikle 3-5 hafta).",
     "q9": "Birden fazla kopya sipariş edebilir miyim?",
@@ -1782,7 +1865,7 @@
     },
     "trust": {
       "secure": "Güvenli ödeme",
-      "moneyBack": "30 gün para iade garantisi",
+      "moneyBack": "Hızlı dijital teslimat",
       "trustedBy": "Binlerce ebeveynin güveni"
     },
     "miniSteps": {
@@ -1896,6 +1979,7 @@
       "stepCover": "Kapak tasarımı",
       "stepPages": "Sayfa görselleri",
       "stepNarration": "Sesli anlatım",
+      "stepVideo": "Sesli hikaye oluşturuluyor",
       "hardcopyNote": "Baskı siparişiniz alındı. Hazırlandığında bilgilendirileceksiniz.",
       "fetchingOrder": "Sipariş bilgileri alınıyor..."
     },

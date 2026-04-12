@@ -6,7 +6,9 @@ interface TTSOptions {
   voiceId?: string
   speed?: number
   volume?: number
-  language?: string // PRD language code (tr, en, de, fr, es, pt, ru, zh)
+  language?: string
+  /** Pre-generated audio URL — API çağrısını atla, doğrudan oynat */
+  audioUrl?: string
 }
 
 interface UseTTSReturn {
@@ -30,81 +32,113 @@ export function useTTS(): UseTTSReturn {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentWordIndex, setCurrentWordIndex] = useState(-1)
-  const [currentText, setCurrentText] = useState<string>("")
-  const [words, setWords] = useState<string[]>([])
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const currentOptionsRef = useRef<TTSOptions>({})
   const onEndedCallbackRef = useRef<(() => void) | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const wordCountRef = useRef(0)
+  // Eşzamanlı çift-fetch'i önleyen guard (React Strict Mode + hızlı sayfa geçişi)
+  const fetchInProgressRef = useRef(false)
 
-  // Initialize audio element
+  const stopHighlightLoop = useCallback(() => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
+  }, [])
+
+  const highlightTick = useCallback(() => {
+    const el = audioRef.current
+    if (!el || el.paused || el.ended || !el.duration || !wordCountRef.current) return
+
+    const progress = el.currentTime / el.duration
+    const idx = Math.min(
+      Math.floor(progress * wordCountRef.current),
+      wordCountRef.current - 1
+    )
+    setCurrentWordIndex(idx)
+
+    rafRef.current = requestAnimationFrame(highlightTick)
+  }, [])
+
+  const startHighlightLoop = useCallback(() => {
+    stopHighlightLoop()
+    rafRef.current = requestAnimationFrame(highlightTick)
+  }, [highlightTick, stopHighlightLoop])
+
   useEffect(() => {
-    audioRef.current = new Audio()
+    const el = new Audio()
+    audioRef.current = el
+
     const handleEnded = () => {
+      stopHighlightLoop()
       setIsPlaying(false)
       setIsPaused(false)
       setCurrentWordIndex(-1)
-      // Call the onEnded callback if it exists
-      if (onEndedCallbackRef.current) {
-        onEndedCallbackRef.current()
-      }
+      onEndedCallbackRef.current?.()
     }
-    audioRef.current.addEventListener("ended", handleEnded)
-    audioRef.current.addEventListener("error", (e) => {
+    const handlePlay = () => startHighlightLoop()
+    const handlePause = () => stopHighlightLoop()
+
+    el.addEventListener("ended", handleEnded)
+    el.addEventListener("play", handlePlay)
+    el.addEventListener("pause", handlePause)
+    el.addEventListener("error", () => {
       setError("Audio playback error")
       setIsPlaying(false)
       setIsPaused(false)
     })
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("ended", handleEnded)
-        audioRef.current.pause()
-        audioRef.current = null
-      }
+      stopHighlightLoop()
+      el.removeEventListener("ended", handleEnded)
+      el.removeEventListener("play", handlePlay)
+      el.removeEventListener("pause", handlePause)
+      el.pause()
+      audioRef.current = null
     }
-  }, [])
+  }, [startHighlightLoop, stopHighlightLoop])
 
   const play = useCallback(async (text: string, options: TTSOptions = {}) => {
+    // Eşzamanlı çift çağrıyı engelle
+    if (fetchInProgressRef.current) return
+    fetchInProgressRef.current = true
     try {
       setIsLoading(true)
       setError(null)
-      setCurrentText(text)
-      setWords(text.split(/\s+/))
 
-      const { voiceId = "Achernar", speed = 1.0, volume = 1.0, language = "en" } = options
+      const wordList = text.split(/\s+/).filter(Boolean)
+      wordCountRef.current = wordList.length
+
+      const { voiceId = "Achernar", speed = 1.0, volume = 1.0, language = "en", audioUrl: prebuiltUrl } = options
       currentOptionsRef.current = { voiceId, speed, volume, language }
 
-      // Call TTS API
-      const response = await fetch("/api/tts/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text,
-          voiceId,
-          speed,
-          language,
-        }),
-      })
+      // Pre-generated URL varsa API çağrısını atla
+      let resolvedAudioUrl: string
+      if (prebuiltUrl) {
+        resolvedAudioUrl = prebuiltUrl
+      } else {
+        const response = await fetch("/api/tts/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, voiceId, speed, language }),
+        })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to generate speech")
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Failed to generate speech")
+        }
+
+        const data = await response.json()
+        if (!data?.audioUrl || typeof data.audioUrl !== "string") {
+          throw new Error("API did not return a valid audio URL")
+        }
+        resolvedAudioUrl = data.audioUrl
       }
 
-      const data = await response.json()
+      if (!audioRef.current) throw new Error("Audio element not initialized")
 
-      if (!data?.audioUrl || typeof data.audioUrl !== "string") {
-        throw new Error("API did not return a valid audio URL")
-      }
-
-      if (!audioRef.current) {
-        throw new Error("Audio element not initialized")
-      }
-
-      // Set volume/rate first; then set source and wait for load (fixes playback / CORS visibility)
       const el = audioRef.current
       el.volume = Math.max(0, Math.min(1, volume))
       el.playbackRate = speed
@@ -126,45 +160,24 @@ export function useTTS(): UseTTSReturn {
         const tid = setTimeout(() => {
           if (!settled) settle(() => reject(new Error("Ses yükleme zaman aşımı.")))
         }, 15000)
-        el.src = data.audioUrl
+        el.src = resolvedAudioUrl
         el.load()
       })
 
-      // Play audio
-      await audioRef.current.play()
+      await el.play()
 
       setIsPlaying(true)
       setIsPaused(false)
       setCurrentWordIndex(0)
-
-      // Simulate word highlighting (simple approach)
-      // In a more advanced implementation, we could use Web Speech API's word timing
-      const wordCount = words.length
-      const duration = audioRef.current.duration || 0
-      const interval = duration / wordCount
-
-      let wordIndex = 0
-      const highlightInterval = setInterval(() => {
-        if (wordIndex < wordCount && audioRef.current && !audioRef.current.paused) {
-          setCurrentWordIndex(wordIndex)
-          wordIndex++
-        } else {
-          clearInterval(highlightInterval)
-        }
-      }, interval * 1000)
-
-      // Cleanup interval when audio ends
-      audioRef.current.addEventListener("ended", () => {
-        clearInterval(highlightInterval)
-      })
     } catch (err: any) {
       setError(err.message || "Failed to play audio")
       setIsPlaying(false)
       setIsPaused(false)
     } finally {
       setIsLoading(false)
+      fetchInProgressRef.current = false
     }
-  }, [words.length])
+  }, [])
 
   const pause = useCallback(() => {
     if (audioRef.current && isPlaying) {
@@ -181,6 +194,7 @@ export function useTTS(): UseTTSReturn {
   }, [isPaused])
 
   const stop = useCallback(() => {
+    stopHighlightLoop()
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current.currentTime = 0
@@ -188,21 +202,17 @@ export function useTTS(): UseTTSReturn {
       setIsPaused(false)
       setCurrentWordIndex(-1)
     }
-  }, [])
+  }, [stopHighlightLoop])
 
   const setVolume = useCallback((volume: number) => {
     const validVolume = Math.max(0, Math.min(1, volume))
-    if (audioRef.current) {
-      audioRef.current.volume = validVolume
-    }
+    if (audioRef.current) audioRef.current.volume = validVolume
     currentOptionsRef.current.volume = validVolume
   }, [])
 
   const setSpeed = useCallback((speed: number) => {
     const validSpeed = Math.max(0.25, Math.min(4.0, speed))
-    if (audioRef.current) {
-      audioRef.current.playbackRate = validSpeed
-    }
+    if (audioRef.current) audioRef.current.playbackRate = validSpeed
     currentOptionsRef.current.speed = validSpeed
   }, [])
 
@@ -225,4 +235,3 @@ export function useTTS(): UseTTSReturn {
     onEnded,
   }
 }
-

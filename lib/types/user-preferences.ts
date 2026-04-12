@@ -6,13 +6,12 @@
  *
  * DB helpers live in lib/db/user-preferences.ts (server-only).
  *
- * Şu an yalnızca çocuk modu saklanır; diğer alanlar kaldırıldı.
+ * Şu an yalnızca çocuk modu saklanır.
  */
 
 export interface UserPreferences {
   /**
    * Kid Mode — simplifies the UI when a child uses the device alone.
-   * Uygulama genelinde davranış henüz bağlanmadı; yalnızca tercih olarak saklanır.
    */
   kidMode: boolean
 }

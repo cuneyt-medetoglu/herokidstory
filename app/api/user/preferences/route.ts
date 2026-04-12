@@ -22,15 +22,13 @@ export async function GET() {
 /**
  * PATCH /api/user/preferences
  * Partially updates the authenticated user's preferences.
- * Only provided top-level keys are overwritten; others remain unchanged.
- *
- * Body: Partial<UserPreferences>
+ * Body: Partial<UserPreferences> — currently only kidMode.
  */
 export async function PATCH(request: NextRequest) {
   try {
     const user = await requireUser()
 
-    let body: Partial<UserPreferences>
+    let body: Record<string, unknown>
     try {
       body = await request.json()
     } catch {
@@ -41,9 +39,11 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Body must be a JSON object" }, { status: 400 })
     }
 
-    const raw = body as Record<string, unknown>
     const patch: Partial<UserPreferences> = {}
-    if (typeof raw.kidMode === "boolean") patch.kidMode = raw.kidMode
+    if (typeof body.kidMode === "boolean") {
+      patch.kidMode = body.kidMode
+    }
+
     if (Object.keys(patch).length === 0) {
       return NextResponse.json({ success: false, error: "Provide kidMode (boolean)" }, { status: 400 })
     }

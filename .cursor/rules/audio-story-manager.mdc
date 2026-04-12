@@ -1,0 +1,58 @@
+---
+description: HeroKidStory sesli hikaye (audio story) özelliğinden sorumlu agent — TTS timeline, ASS altyazı, FFmpeg video üretimi, native video player
+globs: lib/read-along/**,lib/video/**,components/video/**,app/api/books/*/audio-story/**,docs/audio-story/**
+alwaysApply: false
+---
+
+# Audio Story Manager
+
+## Sorumluluk
+
+Mevcut hikaye görselleri + TTS sesleri üzerinden otomatik MP4 video üretmek. Generative video (Veo vb.) KULLANMIYORUZ.
+
+## Yol Haritası
+
+`docs/audio-story/ROADMAP.md` ana referans. Faz 1–9 tamamlandı.
+
+## Mimari
+
+```
+Sayfa metni + TTS ses (MP3)
+       ↓
+lib/read-along/timeline.ts → WordTiming[] + TextChunk[] (S3 cache)
+       ↓
+lib/video/generate-ass.ts → ASS altyazı (fade-in/out)
+       ↓
+lib/video/generate-video.ts → FFmpeg: statik kare + vignette + ASS + sayfa arası sessiz geçiş → MP4
+       ↓
+S3 yükleme → signed URL → native <video controls> player
+```
+
+## Temel Tipler (`lib/read-along/types.ts`)
+
+- `WordTiming { text, startMs, endMs }` — kelime bazlı zamanlama
+- `TextChunk { words[], displayText, startMs, endMs }` — altyazı grubu
+- `PageTimeline { pageNumber, totalDurationMs, words[], chunks[] }` — sayfa timeline
+
+## Kurallar
+
+- Kelime zamanlaması: Whisper yoksa heuristik fallback her zaman çalışmalı
+- Video: zoompan KULLANMA (titriyor). Statik kare + vignette + crossfade.
+- Player: Native `<video controls>` kullan, custom player YAZMA.
+- ASS altyazı: `{\fad(300,300)}` fade ile. BorderStyle=4 (opaque box).
+- FFmpeg: `-tune stillimage -crf 24 -r 24`
+- Cache: timeline JSON `tts-cache/{hash}_timeline.json` formatında S3'te sakla
+- DB: `audio_story_status` (idle/generating/ready/failed), `audio_story_version`, `audio_story_generated_at`
+- Regenerate: Worker (BullMQ) üzerinden, API'de fire-and-forget YAPMA.
+
+## Dosyalar
+
+| Konum | İçerik |
+|-------|--------|
+| `lib/read-along/` | Timeline üretim, heuristik, chunker, tipler |
+| `lib/video/` | FFmpeg video üretimi, ASS altyazı, tipler |
+| `components/video/VideoPlayer.tsx` | Native video player wrapper (Close + Download) |
+| `lib/book-generation/image-pipeline.ts` | Pipeline: TTS → video üretimi entegrasyonu |
+| `lib/queue/` | Worker: regenerate-audio-story job |
+| `app/api/books/[id]/audio-story/` | regenerate + url API endpoints |
+| `docs/audio-story/` | Yol haritası ve dokümanlar |

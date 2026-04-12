@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import {
   ArrowLeft,
@@ -15,7 +14,6 @@ import {
   Share2,
   Maximize,
   Minimize,
-  Settings,
   X,
   ChevronLeft,
   RotateCcw,
@@ -23,31 +21,17 @@ import {
   BookOpen,
   Volume2,
   VolumeX,
+  Headphones,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { BookPage } from "./book-page"
 import { PageThumbnails } from "./page-thumbnails"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import { useTTS } from "@/hooks/useTTS"
+import { VideoPlayer } from "@/components/video/VideoPlayer"
 import { getTtsPrefs } from "@/lib/tts-prefs"
+import { DEFAULT_READER_DEFAULTS } from "@/lib/types/reader-defaults"
 
 type AnimationType = "flip" | "slide" | "fade" | "curl" | "zoom" | "none"
 type AnimationSpeed = "slow" | "normal" | "fast"
@@ -58,11 +42,12 @@ interface BookViewerProps {
   onClose?: () => void
   /** When true, fetch from /api/examples/[id] (public); when false, from /api/books/[id] (requires auth). */
   useExampleApi?: boolean
+  /** When "watch", auto-start watch (İzle) mode after book loads. */
+  initialMode?: "watch"
 }
 
-export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewerProps) {
+export function BookViewer({ bookId, onClose, useExampleApi = false, initialMode }: BookViewerProps) {
   const t = useTranslations("bookViewer")
-  const router = useRouter()
   const [book, setBook] = useState<any>(null)
   const [isLoadingBook, setIsLoadingBook] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -75,7 +60,6 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
   const [showThumbnails, setShowThumbnails] = useState(false)
   const [isLandscape, setIsLandscape] = useState(false)
   const [direction, setDirection] = useState(0)
-  const [selectedVoice, setSelectedVoice] = useState("Achernar")
   const [ttsSpeed, setTtsSpeed] = useState(1.0)
   const [ttsVolume, setTtsVolume] = useState(1)
   const [isMuted, setIsMuted] = useState(false)
@@ -84,19 +68,17 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
   const [autoplayCountdown, setAutoplayCountdown] = useState(0)
   const [mobileLayoutMode, setMobileLayoutMode] = useState<MobileLayoutMode>("stacked")
   const [showTextOnMobile, setShowTextOnMobile] = useState(false)
-  const [ttsSettings, setTtsSettings] = useState<{ voiceName: string; prompt: string; languageCode: string } | null>(null)
-  const [canEditTts, setCanEditTts] = useState(false)
-  const [ttsAdminPrompt, setTtsAdminPrompt] = useState("")
-  const [ttsAdminVoice, setTtsAdminVoice] = useState("Achernar")
-  const [ttsAdminLanguage, setTtsAdminLanguage] = useState("tr")
-  const [ttsAdminSaving, setTtsAdminSaving] = useState(false)
-  const [showTtsAdminDialog, setShowTtsAdminDialog] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // TTS hook (must be called unconditionally)
   const { isPlaying, isPaused, isLoading, play, pause, resume, stop, setVolume, onEnded } = useTTS()
+
+  // Sesli Hikaye — regeneration state (idle/failed kitaplar için)
+  const [audioStoryRegenerating, setAudioStoryRegenerating] = useState(false)
+
+  // Read-along mode
 
   const totalPages = book?.pages?.length ?? 0
   const isBookmarked = bookmarkedPages.has(currentPage)
@@ -163,24 +145,27 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
           const pages = [...bookData.story_data.pages]
           const imagesMap = new Map()
           
-          // Build map from images_data
+          // Build map from images_data (imageUrl + audioUrl)
+          const audioUrlsMap = new Map<number, string>()
           if (bookData.images_data && Array.isArray(bookData.images_data)) {
             bookData.images_data.forEach((img: any) => {
               if (img.pageNumber) {
                 imagesMap.set(img.pageNumber, img.imageUrl || null)
+                if (img.audioUrl) audioUrlsMap.set(img.pageNumber, img.audioUrl)
               }
             })
           }
           
           mergedPages = pages.map((page: any, index: number) => {
             const pageNum = page.pageNumber || index + 1
-            // Use imageUrl from page, or fallback to images_data
             const imageUrl = page.imageUrl || imagesMap.get(pageNum) || null
+            const audioUrl = audioUrlsMap.get(pageNum) || null
             
             return {
               pageNumber: pageNum,
               text: page.text || '',
-              imageUrl: imageUrl,
+              imageUrl,
+              audioUrl,
             }
           })
         }
@@ -189,6 +174,10 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
           id: bookData.id,
           title: bookData.title || bookData.story_data?.title || 'Untitled',
           pages: mergedPages,
+          video_url: bookData.video_url || null,
+          audio_story_status: (bookData.audio_story_status as 'idle' | 'generating' | 'ready' | 'failed') ?? 'idle',
+          audio_story_version: bookData.audio_story_version ?? 0,
+          language: bookData.language || 'tr',
         }
         
         console.log('[BookViewer] ✅ Transformed book:')
@@ -244,16 +233,7 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
     return () => window.removeEventListener("resize", checkOrientation)
   }, [])
 
-  // Auto-enable flip mode on mobile/tablet (portrait mode)
-  useEffect(() => {
-    if (!isLandscape) {
-      // Mobile/Tablet portrait mode → auto-enable flip mode
-      setMobileLayoutMode("flip")
-    } else {
-      // Desktop landscape mode → use stacked (default)
-      setMobileLayoutMode("stacked")
-    }
-  }, [isLandscape])
+  // mobileLayoutMode and other reader UI defaults load from global reader_defaults (GET /api/reader-defaults).
 
   // Reset showTextOnMobile when page changes (always show image first on new page)
   useEffect(() => {
@@ -267,29 +247,28 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
     setTtsVolume(prefs.volume)
   }, [])
 
+  // Global reader defaults (admin-managed)
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/reader-defaults")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data?.success) return
+        const d = data.defaults ?? DEFAULT_READER_DEFAULTS
+        setAnimationType(d.animationType)
+        setAnimationSpeed(d.animationSpeed)
+        setMobileLayoutMode(d.mobileLayoutMode)
+        setAutoplayMode(d.defaultAutoplayMode)
+        setAutoplaySpeed(d.defaultAutoplaySpeed)
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+
   // Apply mute state to audio volume
   useEffect(() => {
     setVolume(isMuted ? 0 : ttsVolume)
   }, [isMuted, ttsVolume, setVolume])
-
-  // Fetch global TTS settings (read-only display) and whether current user can edit (admin)
-  useEffect(() => {
-    let cancelled = false
-    Promise.all([
-      fetch("/api/tts/settings").then((r) => (r.ok ? r.json() : null)),
-      fetch("/api/tts/settings/can-edit").then((r) => (r.ok ? r.json() : { canEdit: false })),
-    ]).then(([settings, canEditRes]) => {
-      if (cancelled) return
-      if (settings) {
-        setTtsSettings({ voiceName: settings.voiceName, prompt: settings.prompt, languageCode: settings.languageCode })
-        setTtsAdminVoice(settings.voiceName)
-        setTtsAdminPrompt(settings.prompt)
-        setTtsAdminLanguage(settings.languageCode)
-      }
-      setCanEditTts(!!canEditRes?.canEdit)
-    })
-    return () => { cancelled = true }
-  }, [])
 
   // Fullscreen handling
   const toggleFullscreen = useCallback(async () => {
@@ -489,6 +468,59 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
     }
   }, [autoplayMode, isPlaying, isPaused, pause, resume])
 
+  // Sesli hikaye: status 'ready' + video_url doluysa doğrudan oynatılabilir
+  const audioStoryStatus = book?.audio_story_status ?? 'idle'
+  const hasVideo = audioStoryStatus === 'ready' && !!book?.video_url
+  const [videoMode, setVideoMode] = useState(false)
+
+  // Auto-start watch mode if initialMode="watch" and video is ready
+  const initialModeTriggered = useRef(false)
+  const stopRef = useRef(stop)
+  stopRef.current = stop
+
+  useEffect(() => {
+    if (initialMode === "watch" && book && !initialModeTriggered.current) {
+      initialModeTriggered.current = true
+      stopRef.current()
+      setAutoplayMode("off")
+      if (hasVideo) {
+        setVideoMode(true)
+      }
+      // Sesli hikaye hazır değilse (idle/generating/failed) normal kitap görünümüne düşüyoruz
+    }
+  }, [initialMode, book, hasVideo]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // "Dinle" butonuna tıklanınca
+  const handleReadAlongStart = useCallback(async () => {
+    if (!book) return
+    stop()
+    setAutoplayMode("off")
+    if (hasVideo) {
+      setVideoMode(true)
+      return
+    }
+    // Sesli hikaye henüz hazır değil (idle/failed) → regenerate başlat
+    if (audioStoryStatus === 'idle' || audioStoryStatus === 'failed') {
+      setAudioStoryRegenerating(true)
+      try {
+        const res = await fetch(`/api/books/${book.id}/audio-story/regenerate`, { method: 'POST' })
+        if (res.ok || res.status === 409) {
+          // 202 → üretim başladı; 409 → zaten üretiliyor. Her iki durumda da reload ile bekle
+          window.location.reload()
+        }
+      } catch {
+        setAudioStoryRegenerating(false)
+      }
+    }
+  }, [book, hasVideo, audioStoryStatus, stop])
+
+  const handleReadAlongClose = useCallback(() => {
+    setVideoMode(false)
+    if (initialMode === "watch" && onClose) {
+      onClose()
+    }
+  }, [initialMode, onClose])
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -578,18 +610,36 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
     stop()
     if (autoplayMode === "tts" && book?.pages) {
       const timer = setTimeout(() => {
-        const currentPageText = book.pages[currentPage]?.text
-        if (currentPageText) {
-          play(currentPageText, {
+        const pageData = book.pages[currentPage]
+        if (pageData?.text) {
+          play(pageData.text, {
             speed: ttsSpeed,
             volume: isMuted ? 0 : ttsVolume,
             language: book?.language || "en",
+            // Önceden üretilmiş URL varsa API çağrısını atla
+            audioUrl: pageData.audioUrl || undefined,
           })
         }
       }, 500)
       return () => clearTimeout(timer)
     }
   }, [currentPage, stop, autoplayMode, book?.pages, book?.language, play, ttsSpeed, ttsVolume, isMuted])
+
+  // Video mode fullscreen player (pre-generated MP4)
+  if (videoMode && hasVideo) {
+    return (
+      <div ref={containerRef} className="fixed inset-0 z-50">
+        <VideoPlayer
+          videoUrl={book.video_url}
+          bookId={book.id}
+          title={book.title}
+          onClose={handleReadAlongClose}
+          autoPlay
+          className="h-full w-full"
+        />
+      </div>
+    )
+  }
 
   // Show loading state
   if (isLoadingBook) {
@@ -806,160 +856,6 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
             {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Settings">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Autoplay Mode</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAutoplayMode("off")}>
-                <span className={cn(autoplayMode === "off" && "font-semibold")}>Off</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAutoplayMode("tts")}>
-                <span className={cn(autoplayMode === "tts" && "font-semibold")}>TTS Synced (Auto-read)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAutoplayMode("timed")}>
-                <span className={cn(autoplayMode === "timed" && "font-semibold")}>Timed (Auto-turn pages)</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Autoplay Speed (Timed)</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAutoplaySpeed(5)}>
-                <span className={cn(autoplaySpeed === 5 && "font-semibold")}>Fast (5s per page)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAutoplaySpeed(10)}>
-                <span className={cn(autoplaySpeed === 10 && "font-semibold")}>Normal (10s per page)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAutoplaySpeed(15)}>
-                <span className={cn(autoplaySpeed === 15 && "font-semibold")}>Slow (15s per page)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAutoplaySpeed(20)}>
-                <span className={cn(autoplaySpeed === 20 && "font-semibold")}>Very Slow (20s per page)</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Mobile Layout</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setMobileLayoutMode("stacked")}>
-                <span className={cn(mobileLayoutMode === "stacked" && "font-semibold")}>Stacked (Default)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setMobileLayoutMode("flip")}>
-                <span className={cn(mobileLayoutMode === "flip" && "font-semibold")}>Flip Mode</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Page Animation</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAnimationType("flip")}>
-                <span className={cn(animationType === "flip" && "font-semibold")}>Flip (3D)</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationType("slide")}>
-                <span className={cn(animationType === "slide" && "font-semibold")}>Slide</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationType("fade")}>
-                <span className={cn(animationType === "fade" && "font-semibold")}>Fade</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationType("curl")}>
-                <span className={cn(animationType === "curl" && "font-semibold")}>Page Curl</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationType("zoom")}>
-                <span className={cn(animationType === "zoom" && "font-semibold")}>Zoom</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationType("none")}>
-                <span className={cn(animationType === "none" && "font-semibold")}>None (Instant)</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Animation Speed</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAnimationSpeed("slow")}>
-                <span className={cn(animationSpeed === "slow" && "font-semibold")}>Slow</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationSpeed("normal")}>
-                <span className={cn(animationSpeed === "normal" && "font-semibold")}>Normal</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAnimationSpeed("fast")}>
-                <span className={cn(animationSpeed === "fast" && "font-semibold")}>Fast</span>
-              </DropdownMenuItem>
-              {canEditTts && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>TTS varsayılanları (Admin)</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowTtsAdminDialog(true)} className="cursor-pointer">
-                    Ses / ton / dil düzenle (global)
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Dialog open={showTtsAdminDialog} onOpenChange={setShowTtsAdminDialog}>
-            <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
-              <DialogHeader>
-                <DialogTitle>TTS varsayılanları (herkese uygulanır)</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="tts-admin-voice">Ses adı</Label>
-                  <Input
-                    id="tts-admin-voice"
-                    value={ttsAdminVoice}
-                    onChange={(e) => setTtsAdminVoice(e.target.value)}
-                    placeholder="Achernar"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="tts-admin-prompt">Okuma tonu (prompt)</Label>
-                  <Textarea
-                    id="tts-admin-prompt"
-                    value={ttsAdminPrompt}
-                    onChange={(e) => setTtsAdminPrompt(e.target.value)}
-                    placeholder="Heyecanlı çocuk hikayesi tonunda..."
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="tts-admin-lang">Dil kodu (PRD)</Label>
-                  <Input
-                    id="tts-admin-lang"
-                    value={ttsAdminLanguage}
-                    onChange={(e) => setTtsAdminLanguage(e.target.value)}
-                    placeholder="tr, en, de, fr, es, pt, ru, zh"
-                  />
-                </div>
-                <Button
-                  disabled={ttsAdminSaving}
-                  onClick={async () => {
-                    setTtsAdminSaving(true)
-                    try {
-                      const res = await fetch("/api/tts/settings", {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          voiceName: ttsAdminVoice.trim() || "Achernar",
-                          prompt: ttsAdminPrompt.trim() || "Çocuk hikayesi anlatır gibi enerjik, heyecanlı ve sıcak bir tonda konuş.",
-                          languageCode: ttsAdminLanguage.trim() || "tr",
-                        }),
-                      })
-                      if (!res.ok) throw new Error("Kaydetme başarısız")
-                      const data = await res.json()
-                      setTtsSettings({ voiceName: data.voiceName, prompt: data.prompt, languageCode: data.languageCode })
-                      setShowTtsAdminDialog(false)
-                    } catch (e) {
-                      console.error(e)
-                    } finally {
-                      setTtsAdminSaving(false)
-                    }
-                  }}
-                >
-                  {ttsAdminSaving ? "Kaydediliyor…" : "Kaydet (global)"}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-
           <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9" aria-label="Close book">
             <X className="h-4 w-4" />
           </Button>
@@ -1091,6 +987,51 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
           )}
         </Button>
 
+        {/* Sesli Hikaye CTA — duruma göre farklı buton */}
+        {audioStoryStatus === 'ready' && (
+          <Button
+            onClick={handleReadAlongStart}
+            className="h-11 min-h-[44px] px-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-transform active:scale-95 md:h-12"
+            size="sm"
+            aria-label={t("watchModeLabel")}
+          >
+            <Headphones className="mr-1 h-4 w-4" />
+            <span className="text-xs font-semibold">{t("watchMode")}</span>
+          </Button>
+        )}
+        {(audioStoryStatus === 'generating' || audioStoryRegenerating) && (
+          <Button
+            disabled
+            className="h-11 min-h-[44px] px-3 bg-gradient-to-r from-purple-400 to-pink-400 text-white opacity-70 md:h-12"
+            size="sm"
+          >
+            <div className="mr-1 h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <span className="text-xs font-semibold">{t("watchModeLoading")}</span>
+          </Button>
+        )}
+        {audioStoryStatus === 'idle' && !audioStoryRegenerating && (
+          <Button
+            onClick={handleReadAlongStart}
+            className="h-11 min-h-[44px] px-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-transform active:scale-95 md:h-12"
+            size="sm"
+            aria-label={t("prepareAudioStory")}
+          >
+            <Headphones className="mr-1 h-4 w-4" />
+            <span className="text-xs font-semibold">{t("prepareAudioStory")}</span>
+          </Button>
+        )}
+        {audioStoryStatus === 'failed' && !audioStoryRegenerating && (
+          <Button
+            onClick={handleReadAlongStart}
+            className="h-11 min-h-[44px] px-3 bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 transition-transform active:scale-95 md:h-12"
+            size="sm"
+            aria-label={t("retryAudioStory")}
+          >
+            <Headphones className="mr-1 h-4 w-4" />
+            <span className="text-xs font-semibold">{t("retryAudioStory")}</span>
+          </Button>
+        )}
+
         {/* Mute */}
         <Button
           variant="outline"
@@ -1148,17 +1089,6 @@ export function BookViewer({ bookId, onClose, useExampleApi = false }: BookViewe
           <Share2 className="h-5 w-5 md:h-6 md:w-6" />
         </Button>
 
-        {/* Parent Settings - Subtle link for parents */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push(`/books/${bookId}/settings`)}
-          className="hidden text-xs text-muted-foreground hover:text-foreground md:flex"
-          aria-label="Parent Settings"
-        >
-          <Settings className="h-3 w-3 mr-1" />
-          <span className="hidden lg:inline">{t("parentSettings")}</span>
-        </Button>
       </footer>
     </div>
   )

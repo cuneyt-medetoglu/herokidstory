@@ -51,11 +51,11 @@ const STEPS: Array<{
   threshold: number
   labelKey: string
 }> = [
-  { key: "story_generating", threshold: 15, labelKey: "stepStory" },
-  { key: "master_generating", threshold: 30, labelKey: "stepCharacter" },
-  { key: "cover_generating", threshold: 50, labelKey: "stepCover" },
-  { key: "pages_generating", threshold: 90, labelKey: "stepPages" },
-  { key: "tts_generating", threshold: 100, labelKey: "stepNarration" },
+  { key: "story_generating",  threshold: 15,  labelKey: "stepStory" },
+  { key: "master_generating", threshold: 30,  labelKey: "stepCharacter" },
+  { key: "cover_generating",  threshold: 50,  labelKey: "stepCover" },
+  { key: "pages_generating",  threshold: 80,  labelKey: "stepPages" },
+  { key: "video_generating",  threshold: 100, labelKey: "stepVideo" },
 ]
 
 // ============================================================================
@@ -137,8 +137,12 @@ function SuccessContent() {
   // Geri sayım (tamamlanınca yönlendirme için)
   const [countdown, setCountdown] = useState(REDIRECT_COUNTDOWN_S)
 
-  const { title, progress, step, isDone, isError, isLoading, lastGenerationError } =
+  const { title, progress, step: rawStep, isDone, isError, isLoading, lastGenerationError } =
     useBookGenerationStatus(bookId)
+  const step: GenerationStep =
+    rawStep === "watch_preparing" || rawStep === "tts_generating"
+      ? "video_generating"
+      : rawStep
 
   // 1. Sepeti temizle
   useEffect(() => {

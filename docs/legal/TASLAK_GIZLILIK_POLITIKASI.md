@@ -1,17 +1,27 @@
-# GİZLİLİK POLİTİKASI — TASLAK
+<!--
+  HK-LEGAL-DOC: privacy-policy
+  semver: 1.4.0
+  last-update: 2026-04-11
+  consumer-facing: app/[locale]/(public)/privacy/page.tsx (TR/EN; kullanıcıya semver/taslak etiketi gösterilmez)
+  Bu .md: iç hukuk / avukat incelemesi ve CHANGELOG özeti; metin page.tsx ile senkron tutulmalıdır.
+-->
 
-**Kapsam:** 🌍 Global — TR kullanıcılar (KVKK) + AB kullanıcılar (GDPR) + ABD çocuk kullanıcılar (COPPA)  
-**Versiyon:** 1.1-draft  
-**Son Güncelleme:** 11/04/2026  
-**URL:** `/privacy`  
-**Dil:** TR + EN (iki versiyon — sayfada locale'e göre gösterilecek)
+# Gizlilik Politikası
 
-### Değişiklik Geçmişi (CHANGELOG)
+**Kapsam:** Türkiye (KVKK), Avrupa Ekonomik Alanı / Birleşik Krallık (GDPR), ABD (COPPA ile uyumlu uygulamalar)  
+**Versiyon (repo):** 1.4.0  
+**Son güncelleme:** 11/04/2026  
+**Yayın URL:** `/privacy` (locale: `tr` / `en` / …)
+
+### Değişiklik geçmişi (CHANGELOG)
 
 | Versiyon | Tarih | Statü | Değişiklik |
 |---------|-------|-------|-----------|
 | 1.0-draft | 11/04/2026 | 📝 draft | İlk taslak — gerçek veri modeline göre |
 | 1.1-draft | 11/04/2026 | 📝 draft | Fotoğraf saklanmıyor olarak güncellendi; OpenAI mekanizması kapatıldı; hesap silme aktif olarak güncellendi |
+| 1.2-draft | 11/04/2026 | 📝 draft | Hesap silme sonrası veri silme: 30 gün ifadesi kaldırıldı; hesap kapatılınca anında silinir |
+| 1.3.0 | 11/04/2026 | 📝 draft | Kullanıcı arayüzünden taslak/semver kaldırıldı; Stripe, yurt dışı aktarım, yetkili merci, otomatik karar yok, ihlal bildirimi ayrımı; EN’de KVKK bölümü; `page.tsx` ile hizalama |
+| 1.4.0 | 11/04/2026 | 📝 draft | AB m.27 temsilcisi yok (şeffaf ifade); Stripe küresel ödeme kesin ifade; referans fotoğraf / özel nitelik + minimizasyon netliği |
 
 ---
 
@@ -167,7 +177,7 @@ Yasal yükümlülük, mahkeme kararı veya yetkili kamu otoritesinin talebi hali
 
 | Veri Kategorisi | Saklama Süresi | Dayanak |
 |----------------|---------------|---------|
-| Hesap bilgileri (e-posta, ad, tercihler) | Hesap aktif olduğu sürece; hesap silindiğinde 30 gün içinde kalıcı silinir | Sözleşme ifası |
+| Hesap bilgileri (e-posta, ad, tercihler) | Hesap aktif olduğu sürece; hesap silindiğinde **anında** kalıcı silinir | Sözleşme ifası |
 | Çocuk karakter verileri (ad, yaş, özellikler) | Kullanıcı karakteri veya hesabı silene kadar | Sözleşme ifası |
 | Referans fotoğraf | **Kitap üretimi tamamlandıktan sonra otomatik silinir** | Veri minimizasyonu |
 | Üretilen kitap görselleri ve PDF'ler | Kullanıcı kitabı siler veya hesabı kapatana kadar | Sözleşme ifası |
@@ -237,7 +247,7 @@ AB mevzuatı kapsamında 16 yaş altı çocuklar için ebeveyn onayı zorunludur
 
 Hesabınızı silebilirsiniz: **Dashboard → Ayarlar → Hesabımı Sil**
 
-Hesabınızı sildiğinizde şunlar gerçekleşir:
+Hesabınızı sildiğinizde şunlar gerçekleşir (işlem tamamlandığı anda; ayrı bir bekleme süresi yoktur):
 - E-posta, ad, tercihler ve profil bilgileri silinir
 - Oluşturduğunuz tüm kitaplar ve görseller silinir
 - Tüm karakter verileri (ad, yaş, fiziksel özellikler) silinir
@@ -306,17 +316,8 @@ KVKK kapsamındaki başvurularınızda kimliğinizi doğrulayan bir belge ekleme
 
 ---
 
-## 📋 DURUM: AÇIK KALANLAR
-
-| # | Konu | Durum |
-|---|------|-------|
-| 1 | VERBİS kaydı — özel nitelikli veri yok (fotoğraf silinecek), ancak yurt dışı aktarım (AWS/OpenAI/Google) var → küçük işletme istisnası değerlendirmeye alınmalı | ⏳ Sonraya bırakıldı |
-
-## 💻 TEKNİK EKSİKLER
-
-| Görev | Öncelik | Durum |
-|-------|---------|-------|
-| Karakter oluşturma adımına çocuk verisi + OpenAI onay checkbox'ı | Yüksek | ⏳ Yapılacak |
-| Kitap üretimi tamamlandığında referans fotoğrafı otomatik silme | Yüksek | ⏳ Worker'a eklenecek |
-| `/privacy` sayfası oluşturma (bu taslak + EN çeviri) | Orta | Onay bekleniyor |
-| Hesap silme (cascade: characters + books + S3) | Orta | UI var, backend tamamlanacak |
+<!--
+  İç takip (markdown önizlemesinde gizlenmez — GitHub’da görünür; istersen bu bloğu sil veya ayrı issue’ya taşı):
+  - VERBİS / KVKK temsilcisi: avukat değerlendirmesi
+  - Karakter adımı OpenAI onayı, foto silme worker, hesap silme backend: ürün ekibi issue listesi
+-->

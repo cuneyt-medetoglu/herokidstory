@@ -4,7 +4,7 @@
  * Types and defaults are in lib/types/user-preferences.ts (client-safe).
  * This file uses pg (Node.js) and must only be imported in server code.
  *
- * preferences JSONB şu an yalnızca `{ "kidMode": boolean }` şeklinde tutulur.
+ * preferences JSONB shape: { kidMode: boolean }
  */
 
 import { pool } from "./pool"
@@ -22,9 +22,6 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
   return resolvePreferences(row?.preferences ?? null)
 }
 
-/**
- * Güncelleme sonrası kolonda yalnızca `kidMode` kalır (eski ebook vb. anahtarlar silinir).
- */
 export async function updateUserPreferences(
   userId: string,
   patch: Partial<UserPreferences>

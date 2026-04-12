@@ -104,19 +104,26 @@ export async function generateTts(
     ttsDefaults = await getTtsSettings()
   } catch (_) {}
 
+  // If caller explicitly specifies a language (e.g. book creation), that language wins.
+  // DB defaults are only a fallback when no language is given.
+  const hasExplicitLanguage =
+    typeof options.language === "string" && options.language.trim().length > 0
+  const language = hasExplicitLanguage
+    ? options.language!.trim()
+    : (ttsDefaults?.language_code ?? "en")
+
   const voiceId =
     (typeof options.voiceId === "string" && options.voiceId.trim() ? options.voiceId.trim() : null) ??
     ttsDefaults?.voice_name ??
     "Achernar"
-  const language =
-    (typeof options.language === "string" && options.language.trim() ? options.language.trim() : null) ??
-    ttsDefaults?.language_code ??
-    "en"
   const rawSpeed =
     typeof options.speed === "number" ? options.speed : (ttsDefaults?.speaking_rate ?? 1.0)
+
+  // When a specific language is provided by the caller, always use the language-appropriate
+  // prompt so that DB global defaults (which may be in a different language) don't override.
   const prompt =
     (typeof options.prompt === "string" && options.prompt.trim() ? options.prompt.trim() : null) ??
-    ttsDefaults?.prompt ??
+    (hasExplicitLanguage ? getPromptForLanguage(language) : ttsDefaults?.prompt) ??
     getPromptForLanguage(language)
   const modelName = ttsDefaults?.model_name ?? "gemini-2.5-pro-tts"
 

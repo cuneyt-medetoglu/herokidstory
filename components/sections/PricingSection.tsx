@@ -9,7 +9,7 @@ import {
   BookOpen,
   Package,
   Shield,
-  RefreshCw,
+  Zap,
   Users,
   Sparkles,
   ArrowRight,
@@ -291,7 +291,7 @@ export function PricingSection() {
               <span>{t("trust.secure")}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <RefreshCw className="h-4 w-4 text-primary" />
+              <Zap className="h-4 w-4 text-primary" />
               <span>{t("trust.moneyBack")}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">

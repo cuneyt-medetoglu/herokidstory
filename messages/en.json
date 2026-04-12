@@ -103,6 +103,8 @@
       "orders": "Orders",
       "users": "Users",
       "promoCodes": "Promo Codes",
+      "ttsDefaults": "TTS Defaults",
+      "readerDefaults": "Reader Defaults",
       "system": "System",
       "comingSoon": "coming soon",
       "backToDashboard": "Main Dashboard",
@@ -113,6 +115,71 @@
       "title": "Admin Panel",
       "logout": "Log Out",
       "ariaAdmin": "Admin"
+    },
+    "ttsSettings": {
+      "title": "TTS Defaults",
+      "subtitle": "Manage the global voice, tone, and language code used for book reading (TTS).",
+      "cardTitle": "Global TTS settings",
+      "cardDescription": "These values are stored on the server and used in the reader.",
+      "voiceLabel": "Voice name",
+      "promptLabel": "Reading tone (prompt)",
+      "promptPlaceholder": "Energetic children's story tone...",
+      "languageLabel": "Language code (PRD)",
+      "defaultPrompt": "Speak in an energetic, exciting, and warm tone like telling a children's story.",
+      "save": "Save (global)",
+      "saving": "Saving…",
+      "toastSavedTitle": "Saved",
+      "toastSavedDesc": "TTS defaults were updated.",
+      "toastErrorTitle": "Error",
+      "toastErrorDesc": "Could not save. Please try again.",
+      "toastForbiddenTitle": "Forbidden",
+      "toastForbiddenDesc": "Only administrators can change these settings."
+    },
+    "readerDefaults": {
+      "title": "Reader defaults",
+      "subtitle": "Global book reader UI for all users: page animation, mobile layout, and default autoplay.",
+      "save": "Save",
+      "saving": "Saving…",
+      "toastSavedTitle": "Saved",
+      "toastSavedDesc": "Reader defaults were updated.",
+      "toastErrorTitle": "Error",
+      "toastErrorDesc": "Could not save. Please try again.",
+      "animation": {
+        "title": "Page animation",
+        "subtitle": "Transition between pages",
+        "flip": "Flip (3D)",
+        "slide": "Slide",
+        "fade": "Fade",
+        "curl": "Page curl",
+        "zoom": "Zoom",
+        "none": "None (instant)"
+      },
+      "animationSpeed": {
+        "title": "Animation speed",
+        "subtitle": "Transition duration",
+        "slow": "Slow",
+        "normal": "Normal",
+        "fast": "Fast"
+      },
+      "mobileLayout": {
+        "title": "Mobile layout",
+        "subtitle": "Layout on phones and tablets",
+        "stacked": "Stacked — image on top, text below",
+        "flip": "Flip — image full screen, swipe for text"
+      },
+      "autoplay": {
+        "title": "Default autoplay",
+        "subtitle": "When a book opens",
+        "modeLabel": "Mode",
+        "off": "Off",
+        "tts": "TTS synced (auto-read)",
+        "timed": "Timed (auto-turn pages)",
+        "speedLabel": "Timed interval",
+        "speed5": "Fast (5s per page)",
+        "speed10": "Normal (10s per page)",
+        "speed15": "Slow (15s per page)",
+        "speed20": "Very slow (20s per page)"
+      }
     },
     "dashboard": {
       "welcome": "Hello, {name}",
@@ -945,7 +1012,7 @@
         "createExampleBook": "Create example book ({model})",
         "exampleBookAdminHint": "Admin only – public example. Uses selected story model above."
       },
-      "trustBadges": "🔒 Secure payment • 💯 30-day money-back guarantee",
+      "trustBadges": "🔒 Secure payment • ✨ Personalised just for your child",
       "createButton": "Create Free Cover",
       "exampleBookLanguage": "Example book language",
       "localeLabel": {
@@ -1039,6 +1106,10 @@
     "selectBooksShort": "Select",
     "createBookShort": "Create Book",
     "read": "Read",
+    "watch": "Audio Story",
+    "watchModeLoading": "Preparing...",
+    "prepareAudioStory": "Prepare Audio Story",
+    "retryAudioStory": "Retry",
     "continue": "Creating...",
     "edit": "Edit",
     "addToCartHardcopy": "Add to Cart (Hardcopy)",
@@ -1072,9 +1143,10 @@
     },
     "tooltips": {
       "audio": "Audio",
+      "download": "Download",
       "downloadPdf": "Download PDF",
-      "share": "Share",
-      "delete": "Delete"
+      "downloadVideo": "Download Audio Story (MP4)",
+      "share": "Share"
     },
     "toasts": {
       "loadError": "Error",
@@ -1089,6 +1161,10 @@
       "pdfFailedTitle": "Download Failed",
       "pdfFailedDesc": "Failed to download PDF. Please try again.",
       "pdfSuccess": "PDF downloaded successfully",
+      "videoSuccessTitle": "Video Downloaded!",
+      "videoSuccessDesc": "Your audio story video has been downloaded successfully.",
+      "videoFailedTitle": "Video Download Failed",
+      "videoFailedDesc": "Failed to download video. Please try again.",
       "shareSoon": "Share functionality will be available soon",
       "noBooksSelectedTitle": "No Books Selected",
       "noBooksSelectedDesc": "Please select at least one book to add to cart.",
@@ -1118,6 +1194,7 @@
         "freeCover": "Free Cover Status",
         "notifications": "Notifications",
         "appSettings": "Settings",
+        "bookSettings": "Book settings",
         "billing": "Billing"
       },
       "profile": {
@@ -1233,6 +1310,11 @@
         "appSettingsErrorDesc": "Could not save settings. Please try again.",
         "accountDeletedTitle": "Account Deleted",
         "accountDeletedDesc": "Your account has been permanently deleted"
+      },
+      "bookSettings": {
+        "title": "Book settings",
+        "subtitle": "List, edit, delete, and manage your books (coming soon).",
+        "placeholder": "This area is being prepared. Your book list and management tools will appear here."
       }
     }
   },
@@ -1367,7 +1449,7 @@
     },
     "trust": {
       "securePayment": "Secure payment",
-      "moneyBack": "Money-back guarantee",
+      "moneyBack": "Instant digital delivery",
       "trustedBy": "Trusted by thousands of parents"
     }
   },
@@ -1390,10 +1472,6 @@
       "editAfterPurchase": {
         "question": "Can I edit my book after purchase?",
         "answer": "Yes, you can make changes to your book's personalization from your My Library section. Any edits will generate a new version of your E-Book with the updated information."
-      },
-      "refundPolicy": {
-        "question": "What is the refund policy?",
-        "answer": "We offer a 100% money-back guarantee within 30 days of purchase if you're not completely satisfied with your E-Book. Simply contact our support team to request a refund."
       },
       "paymentMethods": {
         "question": "What payment methods do you accept?",
@@ -1591,6 +1669,11 @@
     "parentSettings": "Parent Settings",
     "stopReading": "Stop reading",
     "startReading": "Play pages in order starting from this page",
+    "watchMode": "Listen",
+    "watchModeLoading": "Preparing audio story...",
+    "watchModeLabel": "Audio story",
+    "prepareAudioStory": "Prepare Audio Story",
+    "retryAudioStory": "Retry",
     "saveFailed": "Save failed",
     "settings": {
       "backToBook": "Back to Book",
@@ -1678,8 +1761,8 @@
   "cookies": {
     "title": "Cookie Preferences",
     "customizeTitle": "Customize Cookie Preferences",
-    "description": "We use cookies to enhance your experience. Choose which cookies you allow.",
-    "bannerDescription": "We use cookies to enhance your experience, analyze site usage, and assist in our marketing efforts. By clicking 'Accept All', you consent to our use of cookies.",
+    "description": "Only essential cookies are used for the platform to function properly.",
+    "bannerDescription": "HeroKidStory uses only essential cookies required for basic platform functionality. No analytics or marketing cookies are used.",
     "acceptAll": "Accept All",
     "decline": "Decline",
     "customize": "Customize",
@@ -1717,8 +1800,8 @@
     "a5": "E-books are available as PDF files for instant download. Printed books come as hardcover, A4 format (21x29.7 cm) with high-quality printing.",
     "q6": "Is my child's photo secure?",
     "a6": "We use secure encryption and follow strict privacy policies. Your photos are used solely for creating your personalized book and are not shared with third parties.",
-    "q7": "Can I get a refund?",
-    "a7": "Yes, we offer a money-back guarantee. If you're not satisfied with your e-book, contact us within 30 days for a full refund.",
+    "q7": "What happens after I download my book?",
+    "a7": "Your e-book is saved as a PDF in your account and can be downloaded or shared anytime. If you'd like a printed copy, you can convert it to a hardcover edition with one click from your My Library section.",
     "q8": "Do you ship internationally?",
     "a8": "Yes! We ship printed books to over 26 countries worldwide. Shipping times vary by location (typically 3-5 weeks).",
     "q9": "Can I order multiple copies?",
@@ -1782,7 +1865,7 @@
     },
     "trust": {
       "secure": "Secure payment",
-      "moneyBack": "30-day money-back guarantee",
+      "moneyBack": "Instant digital delivery",
       "trustedBy": "Trusted by thousands of parents"
     },
     "miniSteps": {
@@ -1896,6 +1979,7 @@
       "stepCover": "Cover design",
       "stepPages": "Page illustrations",
       "stepNarration": "Narration audio",
+      "stepVideo": "Creating audio story",
       "hardcopyNote": "Your print order has been received. You will be notified when it is ready.",
       "fetchingOrder": "Fetching order details..."
     },

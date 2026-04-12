@@ -25,6 +25,20 @@ export interface Book {
   cover_image_path?: string
   pdf_url?: string // Generated PDF URL
   pdf_path?: string // PDF storage path
+  video_url?: string // Pre-generated audio story MP4 (public URL)
+  video_path?: string // S3 key for audio story video
+  /**
+   * Sesli hikaye üretim durumu.
+   * - idle      : henüz üretilmemiş
+   * - generating: pipeline'da üretiliyor
+   * - ready     : hazır, video_url dolu
+   * - failed    : üretim başarısız
+   */
+  audio_story_status: 'idle' | 'generating' | 'ready' | 'failed'
+  /** Her başarılı üretimde artar. Edit → "Yeniden Oluştur" versiyonu izlemek için. */
+  audio_story_version: number
+  /** Son başarılı üretim zamanı */
+  audio_story_generated_at?: Date
   status: 'draft' | 'generating' | 'completed' | 'failed' | 'archived'
   generation_metadata: any
   view_count: number
@@ -69,6 +83,11 @@ export interface UpdateBookInput {
   /** `null` ile alanları DB’de temizle (ör. PDF cache silme) */
   pdf_url?: string | null
   pdf_path?: string | null
+  video_url?: string | null
+  video_path?: string | null
+  audio_story_status?: 'idle' | 'generating' | 'ready' | 'failed'
+  audio_story_version?: number
+  audio_story_generated_at?: Date | null
   is_favorite?: boolean
   generation_metadata?: any
   edit_quota_used?: number
@@ -274,6 +293,26 @@ export async function updateBook(
       fields.push(`pdf_path = $${paramCount++}`)
       values.push(input.pdf_path)
     }
+    if (input.video_url !== undefined) {
+      fields.push(`video_url = $${paramCount++}`)
+      values.push(input.video_url)
+    }
+    if (input.video_path !== undefined) {
+      fields.push(`video_path = $${paramCount++}`)
+      values.push(input.video_path)
+    }
+    if (input.audio_story_status !== undefined) {
+      fields.push(`audio_story_status = $${paramCount++}`)
+      values.push(input.audio_story_status)
+    }
+    if (input.audio_story_version !== undefined) {
+      fields.push(`audio_story_version = $${paramCount++}`)
+      values.push(input.audio_story_version)
+    }
+    if (input.audio_story_generated_at !== undefined) {
+      fields.push(`audio_story_generated_at = $${paramCount++}`)
+      values.push(input.audio_story_generated_at)
+    }
     if (input.is_favorite !== undefined) {
       fields.push(`is_favorite = $${paramCount++}`)
       values.push(input.is_favorite)
@@ -340,6 +379,75 @@ export async function updateBookProgressAtLeast(
     return { error: null }
   } catch (error) {
     console.error('Error updating book progress (monotonic):', error)
+    return { error: error as Error }
+  }
+}
+
+// ============================================================================
+// Audio Story helpers
+// ============================================================================
+
+/**
+ * Sesli hikaye üretimi başladığında çağrılır.
+ * Durumu 'generating' yap; sürüm değişmez (henüz başarılı değil).
+ */
+export async function markAudioStoryGenerating(
+  bookId: string,
+): Promise<{ error: Error | null }> {
+  try {
+    await pool.query(
+      `UPDATE books SET audio_story_status = 'generating', updated_at = NOW() WHERE id = $1::uuid`,
+      [bookId],
+    )
+    return { error: null }
+  } catch (error) {
+    console.error('Error marking audio story generating:', error)
+    return { error: error as Error }
+  }
+}
+
+/**
+ * Sesli hikaye başarıyla üretildiğinde çağrılır.
+ * Durumu 'ready', video_url, version++ ve generated_at günceller.
+ */
+export async function markAudioStoryReady(
+  bookId: string,
+  videoUrl: string,
+  videoPath: string,
+): Promise<{ error: Error | null }> {
+  try {
+    await pool.query(
+      `UPDATE books SET
+        audio_story_status = 'ready',
+        audio_story_version = COALESCE(audio_story_version, 0) + 1,
+        audio_story_generated_at = NOW(),
+        video_url = $2,
+        video_path = $3,
+        updated_at = NOW()
+      WHERE id = $1::uuid`,
+      [bookId, videoUrl, videoPath],
+    )
+    return { error: null }
+  } catch (error) {
+    console.error('Error marking audio story ready:', error)
+    return { error: error as Error }
+  }
+}
+
+/**
+ * Sesli hikaye üretimi başarısız olduğunda çağrılır.
+ */
+export async function markAudioStoryFailed(
+  bookId: string,
+): Promise<{ error: Error | null }> {
+  try {
+    await pool.query(
+      `UPDATE books SET audio_story_status = 'failed', updated_at = NOW() WHERE id = $1::uuid`,
+      [bookId],
+    )
+    return { error: null }
+  } catch (error) {
+    console.error('Error marking audio story failed:', error)
     return { error: error as Error }
   }
 }

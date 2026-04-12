@@ -6,23 +6,17 @@ alwaysApply: false
 
 # ⚖️ HeroKidStory Legal Manager Agent
 
-Sen HeroKidStory'nin tüm yasal belgelerinden ve hukuki uyum süreçlerinden sorumlu agentsın.
+Sen HeroKidStory yasal belgeleri ve uyum notlarından sorumlusun.
 
-## 📁 Temel Dosyalar
+## Okuma sırası (her görevde)
 
-```
-docs/legal/
-  LEGAL_OVERVIEW.md                      ← Ana harita, faz planı, satıcı bilgileri
-  TASLAK_MESAFELI_SATIS_SOZLESMESI.md    ← 🔴 FAZ 1 — MSS taslağı (satıcı bilgileri dolu)
-  TASLAK_ON_BILGILENDIRME_FORMU.md       ← 🔴 FAZ 1 — ÖBF taslağı (satıcı bilgileri dolu)
-  01_MESAFELI_SATIS_SOZLESMESI_ANALIZ.md ← TR kapsam, cayma hakkı istisnası
-  02_ON_BILGILENDIRME_FORMU_ANALIZ.md    ← Checkout modal tasarımı
-  03_GIZLILIK_POLITIKASI_ANALIZ.md       ← KVKK + GDPR + COPPA, çocuk verisi
-  04_KULLANIM_KOSULLARI_ANALIZ.md        ← ToS, AI telif, kullanıcı lisansı
-  05_CEREZ_POLITIKASI_ANALIZ.md          ← CookieConsentBanner eksikleri
-  06_ETBIS_KAYDI_ANALIZ.md               ← 🔴 Zorunlu kayıt, başvuru adımları
-  07_IADE_VE_KALITE_POLITIKASI.md        ← TR+EN site metni hazır
-```
+1. Bu dosya — satıcı bilgisi ve **değişmez kurallar** aşağıda.
+2. **`docs/legal/LEGAL_OVERVIEW.md`** — fazlar, tamamlanan işler, “sonra” listesi, **§ Test ve görüntüleme rehberi** (URL + curl + manuel kontrol tablosu).
+3. **`docs/legal/LEGAL_VERSIONS.md`** — belge sürümleri ve `draft` → `live` prosedürü.
+
+> Faz numaraları, sayfa URL’leri ve “ne yapıldı” özeti **yalnızca `LEGAL_OVERVIEW.md` ile tutulur**; bu agent dosyasında uzun faz tabloları tekrarlanmaz (çift kayıt önlenir).
+
+---
 
 ## 🏢 Satıcı Bilgileri (Güncel)
 
@@ -40,91 +34,48 @@ docs/legal/
 
 ## 🗺️ Satış Coğrafyası
 
-| Ürün | Pazar | Ödeme | Uygulanacak Hukuk |
-|------|-------|-------|------------------|
-| E-book | 🌍 Global | Stripe + İyzico | TR: TKHK + KVKK / AB: GDPR / ABD: FTC + COPPA |
-| Basılı Kitap | 🇹🇷 Sadece TR | İyzico | TR: TKHK + Mesafeli Sözleşmeler Yönetmeliği |
+| Ürün | Pazar | Ödeme |
+|------|-------|-------|
+| E-book | Global | Stripe + İyzico |
+| Basılı kitap | Yalnızca TR | İyzico |
 
-**Kritik:** MSS + ÖBF sadece TR kullanıcılara gösterilir (locale === 'tr' kontrolü).
+**MSS + ÖBF** yalnızca `locale === 'tr'` (checkout + `/mesafeli-satis`).
 
-## 🔴 FAZ 1 — Acil Bekleyen İşler
+## 💡 Temel Kararlar (Değişmez)
 
-| # | İş | Durum |
-|---|-----|-------|
-| 1 | **ETBİS Kaydı** — etbis.eticaret.gov.tr | ⏳ Yapılmadı |
-| 2 | **MSS + ÖBF avukat onayı** — taslaklar hazır | ⏳ Avukatta değil |
-| 3 | **`/mesafeli-satis` Next.js sayfası** | ⏳ Sayfa yok |
-| 4 | **Checkout flow — onay checkbox'ları** | ⏳ Entegrasyon yok |
-| 5 | **Footer — şirket + ETBİS bilgileri** | ⏳ Eklenmedi |
+| Karar | Değer |
+|-------|-------|
+| İade | Genelde iade yok (dijital + kişiselleştirilmiş basılı); üretim/kargo hatasında yeniden üretim veya iade — ayrıntı `07_IADE_VE_KALITE_POLITIKASI.md` |
+| Hesap silme | Tamamlanınca **anında** silme; fatura/sipariş yasal saklama (ör. VUK) |
+| İnaktif hesap | Otomatik silme yok |
+| Referans fotoğraf | Üretim sonrası silinir; yalnızca AI illüstrasyonu kalır |
+| AI telif | Kullanıcıya kişisel kullanım lisansı; ticari satış yasak (ToS’ta) |
+| Yaş | 18+ ebeveyn |
+| Uyuşmazlık | TR hukuku, Tunceli mahkemeleri (ToS) |
+| GDPR Madde 27 (AB temsilcisi) | Atanmıyor; EEA/UK kullanıcılar veri sorumlusuna (`info@…`, TR adresi) başvurur — gizlilik politikasında açıklandı |
+| Küresel ödeme | TR: İyzico; uluslararası kart: Stripe (PCI-DSS) — gizlilik politikasında kesin ifade |
+| Çocuk referans fotoğrafı | Arşivlenmez; üretim sonrası silinir; yalnızca AI illüstrasyonu kalır |
 
-## 🟡 FAZ 2 — Bekleyen İşler
+---
 
-| # | İş | Durum |
-|---|-----|-------|
-| 6 | Gizlilik Politikası `/privacy` sayfası | ⏳ Sayfa yok |
-| 7 | Kullanım Koşulları `/terms` sayfası | ⏳ Sayfa yok |
-| 8 | Çerez Politikası `/cookies` sayfası | ⏳ Sayfa yok |
-| 9 | İade Politikası `/refund-policy` sayfası | ⏳ Sayfa yok (TR+EN metin hazır) |
-| 10 | `orders` tablosuna onay alanları — DB migration | ⏳ Yapılmadı |
+## ⚙️ Kod giriş noktaları (kısa)
 
-## ⚙️ Teknik Entegrasyon Planı
+| Konu | Dosya |
+|------|--------|
+| TR checkout onayları | `components/checkout/LegalConsents.tsx`, `CheckoutForm.tsx` |
+| Ödeme kilidi | `components/payment/IyzicoPaymentFlow.tsx` (`legalConsentsAccepted`) |
+| Footer + satıcı (TR) | `components/layout/Footer.tsx` |
+| Çerez banner | `components/layout/CookieConsentBanner.tsx` |
+| Kayıt ToS/Gizlilik + localStorage sürüm | `app/[locale]/(public)/auth/register/page.tsx` |
+| Yasal sayfalar | `app/[locale]/(public)/{privacy,terms,cookies,refund-policy,mesafeli-satis}/` |
+| Sipariş onay kolonları | `migrations/034_orders_legal_consent.sql` |
 
-### Checkout'a Eklenecekler (TR Locale)
-```tsx
-// Sadece TR kullanıcılar için göster
-{locale === 'tr' && (
-  <>
-    <Checkbox required>
-      <Link href="/mesafeli-satis">Mesafeli Satış Sözleşmesi</Link>'ni okudum
-    </Checkbox>
-    <Checkbox required>
-      Ön Bilgilendirme Formu'nu okudum  {/* Inline modal */}
-    </Checkbox>
-    {isDigital && (
-      <Checkbox required>
-        Dijital içerik tesliminin başlatılmasına onay veriyorum,
-        cayma hakkımın ortadan kalkacağını kabul ediyorum.
-      </Checkbox>
-    )}
-  </>
-)}
-```
+---
 
-### DB: `orders` Tablosuna Eklenecek Alanlar
-```sql
-contract_accepted_at        TIMESTAMPTZ
-contract_version            VARCHAR(20)
-preliminary_info_accepted_at TIMESTAMPTZ
-digital_waiver_accepted     BOOLEAN
-contract_sent_at            TIMESTAMPTZ
-```
+## 📌 Değişmez Kurallar
 
-### Footer'a Eklenecek Bilgiler
-```tsx
-// Footer.tsx — Yasal bilgiler bölümü
-// ETBİS No alındıktan sonra eklenir
-Cüneyt Medetoğlu — Şahıs İşletmesi
-Vergi Dairesi: Tunceli | VKN: 6130979062
-ETBİS No: [KAYIT SONRASI]
-```
-
-## ⚖️ İade Politikası Özeti
-
-**İade yok:** E-book (dijital teslim), Basılı kitap (kişiselleştirilmiş).
-**İade var:** Baskı/üretim hatası, kargo hasarı, sistem hatası, sipariş yanlış uygulandıysa.
-**Başvuru süresi:** Teslimden itibaren 14 gün, fotoğraflı belgeleme ile.
-**Site metni hazır:** `07_IADE_VE_KALITE_POLITIKASI.md` §6 (TR) ve §7 (EN).
-
-## 🤝 Diğer Agent'larla İşbirliği
-
-- **@project-manager** → ROADMAP'taki legal maddelerini işaretle
-- **@database-manager** → `orders` tablosu onay alanları migration
-- **@localization-agent** → Legal metinlerin TR + EN i18n anahtarları
-
-## 📌 Kurallar
-
-1. Taslakları doğrudan canlıya alma — avukat onayı önce
-2. MSS + ÖBF sadece TR locale'e göster
-3. TC Kimlik No asla public dokümana yazılmaz (sadece VKN: 6130979062)
-4. Belge güncellendiğinde versiyonu ve tarihi güncelle
-5. ETBİS kaydı olmadan ödeme sistemi aktive edilmez
+1. Taslak → avukat → canlı akışı: `LEGAL_VERSIONS.md` statüleri.
+2. MSS + ÖBF sadece TR locale.
+3. TC Kimlik No public dokümanda yok; kamuya VKN: `6130979062`.
+4. Belge değişince: `TASLAK_*.md` (CHANGELOG) + `LEGAL_VERSIONS.md` + ilgili `page.tsx` dosya başındaki `@semver` (kullanıcıya **gösterilmez**; yalnız geliştirici / repo).
+5. ETBİS / domain / avukat zamanlaması: **`LEGAL_OVERVIEW.md` → “Sonra yapılacaklar”**; agent bu takvimi dayatmaz.

@@ -1,10 +1,14 @@
+/**
+ * @legal-document mesafeli-satis-sozlesmesi
+ * @registry HK-LEGAL-MSS
+ * @semver 1.2.0
+ * @last-substantive-update 2026-04-11
+ * @sync docs/legal/TASLAK_MESAFELI_SATIS_SOZLESMESI.md — güncellemelerde her iki yeri eşle.
+ * Kullanıcı arayüzünde semver / taslak etiketi gösterilmez.
+ */
 import type { ReactNode } from "react"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-
-// ============================================================================
-// Metadata
-// ============================================================================
 
 export const metadata: Metadata = {
   title: "Mesafeli Satış Sözleşmesi — HeroKidStory",
@@ -13,16 +17,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 }
 
-// ============================================================================
-// Versiyon bilgisi — her güncelleme sonrası değiştirilecek
-// ============================================================================
-
-const CONTRACT_VERSION = "1.1-draft"
-const LAST_UPDATED     = "11 Nisan 2026"
-
-// ============================================================================
-// Satıcı sabiti
-// ============================================================================
+const LAST_UPDATED = "11 Nisan 2026"
 
 const SELLER = {
   name:    "Cüneyt Medetoğlu",
@@ -34,10 +29,6 @@ const SELLER = {
   vd:      "Tunceli Vergi Dairesi",
   web:     "https://herokidstory.com",
 }
-
-// ============================================================================
-// Sayfa — sadece TR locale
-// ============================================================================
 
 export default function MesafeliSatisSozlesmesiPage({
   params: { locale },
@@ -52,18 +43,18 @@ export default function MesafeliSatisSozlesmesiPage({
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-background dark:from-slate-900 dark:to-slate-950">
       <div className="container mx-auto max-w-3xl px-4 py-12">
 
-        {/* Başlık */}
-        <div className="mb-8">
-          <div className="mb-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
-            ⚠️ TASLAK — Avukat onayı bekleniyor · v{CONTRACT_VERSION}
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 md:text-4xl">
+        <header className="mb-10 border-b border-slate-200 pb-8 dark:border-slate-700">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 md:text-4xl">
             Mesafeli Satış Sözleşmesi
           </h1>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            6502 sayılı TKHK ve Mesafeli Sözleşmeler Yönetmeliği kapsamında · Son güncelleme: {LAST_UPDATED}
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+            Son güncelleme: {LAST_UPDATED}
           </p>
-        </div>
+          <p className="mt-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            Bu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler
+            Yönetmeliği kapsamında hazırlanmıştır.
+          </p>
+        </header>
 
         <div className="space-y-8 text-slate-700 dark:text-slate-300">
 
@@ -287,11 +278,6 @@ export default function MesafeliSatisSozlesmesiPage({
                 <p className="text-xs text-slate-500">Şahıs İşletmesi — herokidstory.com</p>
               </div>
             </div>
-          </div>
-
-          {/* Uyarı notu */}
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
-            ⚠️ Bu metin <strong>v{CONTRACT_VERSION}</strong> taslak sürümdür. Avukat onayından önce hukuki bağlayıcılığı yoktur.
           </div>
 
         </div>

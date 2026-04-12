@@ -1,10 +1,10 @@
 # İade ve Kalite Politikası — Analiz + Site Metni
 
-**Öncelik:** 🟡 FAZ 2 — Hem TR hem Global (footer + /refund-policy sayfası)  
-**Kapsam:** 🌍 Global — Tüm kullanıcılar  
-**URL:** `/refund-policy` (EN) + `/iade-politikasi` (TR) — veya `/terms` altında bölüm  
-**Durum:** Taslak hazır, avukat onayı önerilir  
-**Son Güncelleme:** 11/04/2026
+**Öncelik:** Faz 3 (uygulama tamam — metin taslak)  
+**Kapsam:** Tüm kullanıcılar  
+**URL:** Tek route `/refund-policy` — `locale === "tr"` iken TR metin, aksi halde EN metin (`refund-policy/page.tsx`)  
+**Durum:** Taslak; avukat onayı sonra  
+**Son güncelleme:** Nisan 2026
 
 ---
 
@@ -218,10 +218,9 @@ Basılı kitap satın alımında:
 
 ## 9. Sonraki Adımlar
 
-- [ ] `/refund-policy` ve `/iade-politikasi` sayfaları oluşturulacak (veya `/terms` içine alt bölüm)
-- [ ] Footer'a "İade Politikası" linki eklenecek
-- [ ] Checkout flow'daki checkbox metnine "İade Politikasını Oku" linki eklenecek
-- [ ] Bölüm 6 ve 7'deki metinler i18n'e alınacak
+- [x] `/refund-policy` sayfası (TR+EN, tek route) — `app/[locale]/(public)/refund-policy/page.tsx`
+- [x] Footer'da iade politikası linki
+- [ ] Checkout checkbox metinlerinde "İade Politikası" linkinin `LegalConsents` içinde net olması (isteğe bağlı ince ayar)
 - [ ] Avukat incelemesi: Özellikle "14 gün" süre ve "kullanıcı sorumluluğu" maddeleri
 
 ---

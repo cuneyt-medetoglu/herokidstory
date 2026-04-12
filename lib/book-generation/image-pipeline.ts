@@ -13,7 +13,14 @@
 
 import OpenAI from 'openai'
 import { uploadFile, getPublicUrl, getObjectBuffer } from '@/lib/storage/s3'
-import { getBookById, updateBook, updateBookProgressAtLeast } from '@/lib/db/books'
+import {
+  getBookById,
+  updateBook,
+  updateBookProgressAtLeast,
+  markAudioStoryGenerating,
+  markAudioStoryReady,
+  markAudioStoryFailed,
+} from '@/lib/db/books'
 import { PAGE_COUNT_DEBUG_FALLBACK } from '@/lib/constants/book-config'
 import { generateStoryPrompt, buildStorySystemPrompt, buildStoryResponseSchema } from '@/lib/prompts/story/base'
 import {
@@ -1485,7 +1492,7 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
   // ----------------------------------------------------------------
   if (!storyData?.pages?.length) {
     console.log('[Pipeline] ⚠️  No story pages - skipping page image generation')
-    await updateBook(bookId, { status: 'completed', progress_percent: 90, progress_step: 'tts_generating' })
+    await updateBook(bookId, { status: 'completed', progress_percent: 80, progress_step: 'tts_generating' })
   } else {
     try {
       const pages = storyData.pages
@@ -1838,8 +1845,8 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
             )
             if (pageIndex !== -1) pages[pageIndex].imageUrl = storageImageUrl
 
-            // Per-page progress: 40% → 90% (monotonic DB update: paralel tamamlanmada yüzde geri atlamasın)
-            const pageProgress = Math.round(50 + ((i + 1) / totalPages) * 40)
+            // Per-page progress: 40% → 80% (monotonic DB update: paralel tamamlanmada yüzde geri atlamasın)
+            const pageProgress = Math.round(40 + ((i + 1) / totalPages) * 40)
             await updateBookProgressAtLeast(bookId, pageProgress, 'pages_generating')
 
             return { pageNumber, imageUrl: storageImageUrl, storagePath: s3Key, prompt: fullPrompt }
@@ -1891,11 +1898,12 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
     return
   }
 
-  await reportProgress(90, 'tts_generating')
+  await reportProgress(80, 'video_generating')
 
   // ----------------------------------------------------------------
   // 4. TTS
   // ----------------------------------------------------------------
+  const ttsAudioUrls: Map<number, string> = new Map()
   if (storyData?.pages?.length) {
     const bookLanguage = language || 'tr'
     const pages = storyData.pages
@@ -1907,26 +1915,26 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
       let ttsFail = 0
       let ttsFinished = 0
 
-      const basePercent = 90
-      const spanPercent = 10
+      const basePercent = 80
+      const spanPercent = 9
       const totalTts = ttsPages.length
 
       await Promise.all(
         ttsPages.map(async (p: any, idx: number) => {
           const pageIndex = idx + 1
           try {
-            await generateTts(p.text.trim(), { language: bookLanguage, userId, bookId })
+            const result = await generateTts(p.text.trim(), { language: bookLanguage, userId, bookId })
+            ttsAudioUrls.set(p.pageNumber || pageIndex, result.audioUrl)
             ttsSuccess++
           } catch (err) {
             ttsFail++
             console.warn(`[Pipeline] TTS page ${pageIndex}/${totalTts} failed:`, (err as Error)?.message || err)
           } finally {
-            // Paralel TTS tamamlanma sırası deterministic değildir; progress'i "tamamlanan adet" ile monotonik tut.
             ttsFinished += 1
             const perPageProgress = basePercent + Math.round((ttsFinished / totalTts) * spanPercent)
-            await updateBookProgressAtLeast(bookId, perPageProgress, 'tts_generating')
+            await updateBookProgressAtLeast(bookId, perPageProgress, 'video_generating')
             if (ctx.onProgress) {
-              await ctx.onProgress(perPageProgress, 'tts_generating')
+              await ctx.onProgress(perPageProgress, 'video_generating')
             }
           }
         })
@@ -1936,6 +1944,74 @@ export async function runImagePipeline(ctx: PipelineContext): Promise<void> {
         `[Pipeline] ✅ TTS done: ${ttsSuccess}/${ttsPages.length} pages (${ttsFail} failed) — ${ttsTotalMs}ms`
       )
     }
+  }
+
+  // TTS URL'lerini images_data'ya kalıcı olarak kaydet — okuma modu + regenerate için kullanılır
+  if (ttsAudioUrls.size > 0) {
+    try {
+      const { data: currentBookForTts } = await getBookById(bookId)
+      if (currentBookForTts?.images_data && Array.isArray(currentBookForTts.images_data)) {
+        const updatedImagesData = currentBookForTts.images_data.map((img: any) => {
+          const audioUrl = ttsAudioUrls.get(img.pageNumber)
+          return audioUrl ? { ...img, audioUrl } : img
+        })
+        await updateBook(bookId, { images_data: updatedImagesData })
+        console.log(`[Pipeline] 💾 TTS URL'leri images_data'ya kaydedildi: ${ttsAudioUrls.size} sayfa`)
+      }
+    } catch (err) {
+      console.warn('[Pipeline] TTS URL kaydetme başarısız (devam ediliyor):', (err as Error)?.message)
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // 5. Video Generation — MP4 with motion + karaoke subtitles
+  // ----------------------------------------------------------------
+  await reportProgress(90, 'video_generating')
+
+  if (storyData?.pages?.length && ttsAudioUrls.size > 0 && process.env.SKIP_VIDEO_GENERATION !== '1') {
+    const bookLanguage = language || 'tr'
+    const videoPages = storyData.pages
+      .filter((p: any) => p?.text?.trim())
+      .map((p: any, idx: number) => {
+        const pageNumber = p.pageNumber || idx + 1
+        const audioUrl = ttsAudioUrls.get(pageNumber)
+        const imageUrl = p.imageUrl || ''
+        return { pageNumber, text: p.text.trim(), imageUrl, audioUrl: audioUrl || '' }
+      })
+      .filter((p: any) => p.audioUrl && p.imageUrl)
+
+    if (videoPages.length > 0) {
+      console.log(`[Pipeline] 🎬 Sesli hikaye oluşturuluyor: ${videoPages.length} sayfa...`)
+      const videoStartTime = Date.now()
+      await markAudioStoryGenerating(bookId)
+      try {
+        const { generateBookVideo } = await import('@/lib/video/generate-video')
+        const videoResult = await generateBookVideo({
+          bookId,
+          userId,
+          pages: videoPages,
+          language: bookLanguage,
+          onProgress: async (videoPercent) => {
+            const pipelinePercent = 90 + Math.round((videoPercent / 100) * 9)
+            await updateBookProgressAtLeast(bookId, pipelinePercent, 'video_generating')
+            if (ctx.onProgress) {
+              await ctx.onProgress(pipelinePercent, 'video_generating')
+            }
+          },
+        })
+        await markAudioStoryReady(bookId, videoResult.publicUrl, videoResult.s3Key)
+        const videoTotalMs = Date.now() - videoStartTime
+        console.log(
+          `[Pipeline] ✅ Sesli hikaye hazır: ${(videoResult.fileSizeBytes / 1024 / 1024).toFixed(1)}MB, ` +
+          `${(videoResult.durationMs / 1000).toFixed(1)}s — ${videoTotalMs}ms`
+        )
+      } catch (err) {
+        console.error(`[Pipeline] ❌ Sesli hikaye oluşturulamadı (kitap yine tamamlanacak):`, (err as Error)?.message || err)
+        await markAudioStoryFailed(bookId)
+      }
+    }
+  } else if (process.env.SKIP_VIDEO_GENERATION === '1') {
+    console.log(`[Pipeline] ⏭️ Sesli hikaye atlandı (SKIP_VIDEO_GENERATION=1)`)
   }
 
   await reportProgress(100, 'completed')

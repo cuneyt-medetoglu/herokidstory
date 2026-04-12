@@ -19,6 +19,8 @@ export type GenerationStep =
   | 'cover_generating'
   | 'pages_generating'
   | 'tts_generating'
+  | 'video_generating'
+  | 'watch_preparing'
   | 'completed'
   | 'failed'
   | ''
@@ -182,7 +184,9 @@ export function getStepLabel(step: GenerationStep, locale: string = 'tr'): strin
     master_generating: { tr: 'Karakter illüstrasyonu oluşturuluyor...', en: 'Creating character illustrations...' },
     cover_generating: { tr: 'Kapak tasarlanıyor...', en: 'Designing the cover...' },
     pages_generating: { tr: 'Sayfa görselleri oluşturuluyor...', en: 'Generating page illustrations...' },
-    tts_generating: { tr: 'Sesli anlatım hazırlanıyor...', en: 'Preparing narration audio...' },
+    tts_generating: { tr: 'Sesli hikaye hazırlanıyor...', en: 'Preparing audio story...' },
+    video_generating: { tr: 'Sesli hikaye hazırlanıyor...', en: 'Preparing audio story...' },
+    watch_preparing: { tr: 'Sesli hikaye hazırlanıyor...', en: 'Preparing audio story...' },
     completed: { tr: 'Kitabınız hazır!', en: 'Your book is ready!' },
     failed: { tr: 'Bir hata oluştu', en: 'An error occurred' },
     '': { tr: 'Hazırlanıyor...', en: 'Preparing...' },

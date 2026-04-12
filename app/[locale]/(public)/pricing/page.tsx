@@ -7,7 +7,7 @@ import {
   Check,
   Download,
   Shield,
-  Award,
+  Zap,
   Heart,
   BookOpen,
   Palette,
@@ -363,7 +363,7 @@ export default function PricingPage() {
               </div>
               <span className="hidden md:inline">•</span>
               <div className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-primary" />
+                <Zap className="h-4 w-4 text-primary" />
                 <span>{t("trust.moneyBack")}</span>
               </div>
               <span className="hidden md:inline">•</span>

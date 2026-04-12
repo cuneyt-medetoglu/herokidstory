@@ -96,20 +96,15 @@ Açıkça yasaklanan durumlar:
 - [ ] Otomatik scraping / bot kullanımı
 - [ ] Diğer kullanıcıların hesaplarına izinsiz erişim
 
-### 2.5 Hesap Askıya Alma ve Fesih
+### 2.5 Hesap Silme ve Platform Tarafından Kapatma
 
-```
-HeroKidStory şu durumlarda hesabı askıya alabilir veya silebilir:
-- Kullanım koşulları ihlali
-- Kötüye kullanım şüphesi
-- Uzun süre inaktif hesap (uyarıyla)
-- Ödeme ihlali
+**Karar (Nisan 2026 — `TASLAK_KULLANIM_KOSULLARI.md` v1.1):**
 
-Fesih durumunda:
-- Tamamlanan kitaplara X gün içinde erişim sağlanır
-- Ödenen ücretler iade edilmez (tamamlanan hizmetler için)
-- Kişisel veriler KVKK kapsamında işlenir
-```
+- **Hesap silme:** Kullanıcı hesabını sildiğinde Platform üzerinden kitap ve içeriğe erişim **anında** biter; ayrı bir "fesih sonrası indirme süresi" yoktur.
+- **İnaktif hesap:** Uzun süre giriş yapılmaması nedeniyle otomatik hesap silme **uygulanmaz**; ToS'ta böyle bir madde yoktur.
+- **Platform tarafından kapatma:** İhlal, kötüye kullanım veya ödeme dolandırıcılığı şüphesi gibi hallerde askıya alma veya kapatma; erişim yine **anında** sona erer.
+- **İade:** Tamamlanmış hizmetler için ödenen ücretler genel olarak iade edilmez; istisnalar İade Politikası'nda.
+- **Veri:** Kişisel veriler KVKK / Gizlilik Politikası kapsamında işlenir.
 
 ---
 

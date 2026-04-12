@@ -1,6 +1,6 @@
 # Read-Along “Video” Deneyimi: Motion Design + Karaoke Metin (Veo Alternatifi)
 
-**Durum:** Analiz / ürün–teknik yön  
+**Durum:** ~~Analiz~~ → Tamamlandı. Güncel dokümanlar: `docs/audio-story/ROADMAP.md`  
 **Tarih:** 30 Mart 2026  
 **İlgili:** Post-MVP özellik; PRD’de “video hikayeler” MVP dışı — bu doküman **generative video (Veo) yerine** sürdürülebilir bir yol önerir.  
 **Takip:** `@project-manager` — ROADMAP / notlar, faz ve ürün önceliği. Hikaye çıktı şeması veya prompt genişlemesi gerekirse `@prompt-manager` (şema, `lib/prompts/story/base.ts` sürümü); kalite metrikleri aşağıda.

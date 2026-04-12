@@ -1,6 +1,6 @@
 # HeroKidStory — Yasal Belge Versiyon Takibi
 
-**Son Güncelleme:** Nisan 2026
+**Son güncelleme:** Nisan 2026 — `LEGAL_OVERVIEW.md` ile senkron
 
 ---
 
@@ -36,14 +36,14 @@ draft → review → approved → live → archived
 
 ## Merkezi Belge Tablosu
 
-| # | Belge | Dosya | Versiyon | Statü | Son Değişiklik |
-|---|-------|-------|---------|-------|---------------|
-| 1 | Mesafeli Satış Sözleşmesi | `TASLAK_MESAFELI_SATIS_SOZLESMESI.md` | 1.1-draft | 📝 draft | Nisan 2026 |
-| 2 | Ön Bilgilendirme Formu | `TASLAK_ON_BILGILENDIRME_FORMU.md` | 1.1-draft | 📝 draft | Nisan 2026 |
-| 3 | Gizlilik Politikası | `TASLAK_GIZLILIK_POLITIKASI.md` | 1.1-draft | 📝 draft | Nisan 2026 |
-| 4 | Kullanım Koşulları | — | — | ⏳ hazırlanacak | — |
-| 5 | Çerez Politikası | — | — | ⏳ hazırlanacak | — |
-| 6 | İade ve Kalite Politikası | `07_IADE_VE_KALITE_POLITIKASI.md` | 1.0-draft | 📝 draft | Nisan 2026 |
+| # | Belge | Dosya | Versiyon (`@semver`) | Son Değişiklik |
+|---|-------|-------|----------------------|---------------|
+| 1 | Mesafeli Satış Sözleşmesi | `TASLAK_MESAFELI_SATIS_SOZLESMESI.md` + `mesafeli-satis/page.tsx` | 1.2.0 | Nisan 2026 |
+| 2 | Ön Bilgilendirme Formu | `TASLAK_ON_BILGILENDIRME_FORMU.md` | 1.1.0 | Nisan 2026 |
+| 3 | Gizlilik Politikası | `TASLAK_GIZLILIK_POLITIKASI.md` + `privacy/page.tsx` | 1.4.0 | Nisan 2026 |
+| 4 | Kullanım Koşulları | `TASLAK_KULLANIM_KOSULLARI.md` + `terms/page.tsx` | 1.2.0 | Nisan 2026 |
+| 5 | Çerez Politikası | `TASLAK_CEREZ_POLITIKASI.md` + `cookies/page.tsx` | 1.1.0 | Nisan 2026 |
+| 6 | İade ve Kalite Politikası | `07_IADE_VE_KALITE_POLITIKASI.md` + `refund-policy/page.tsx` | 1.1.0 | Nisan 2026 |
 
 ### Statü Göstergeleri
 
@@ -57,19 +57,18 @@ draft → review → approved → live → archived
 
 ---
 
-## Canlıdaki Aktif Versiyonlar (Site)
+## Sitede yayında olan belgeler
 
-> Henüz site yayına alınmadı. Bu tablo site launch sonrası doldurulacak.
+> Versiyonlar yalnızca `page.tsx` JSDoc bloğunda (`@semver`) takip edilir; kullanıcı arayüzünde görünmez.
 
-| Sayfa URL | Belge | Versiyon | Yayın Tarihi |
-|-----------|-------|---------|-------------|
-| `/mesafeli-satis` | MSS | — | — |
-| `/on-bilgilendirme` | ÖBF | — | — |
-| `/privacy` | Gizlilik Politikası | — | — |
-| `/terms` | Kullanım Koşulları | — | — |
-| `/cookies` | Çerez Politikası | — | — |
-| `/iade-politikasi` | İade Politikası (TR) | — | — |
-| `/refund-policy` | Refund Policy (EN) | — | — |
+| Sayfa URL | Belge | `@semver` | Not |
+|-----------|-------|-----------|-----|
+| `/mesafeli-satis` | MSS | 1.2.0 | Yalnızca TR locale |
+| *(checkout)* | ÖBF | 1.1.0 | Ayrı sayfa yok; TR checkout modali |
+| `/privacy` | Gizlilik Politikası | 1.4.0 | TR + EN |
+| `/terms` | Kullanım Koşulları | 1.2.0 | TR + EN |
+| `/cookies` | Çerez Politikası | 1.1.0 | TR + EN |
+| `/refund-policy` | İade ve Kalite | 1.1.0 | TR/EN tek route |
 
 ---
 

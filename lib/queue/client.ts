@@ -63,3 +63,26 @@ export async function enqueueBookGeneration(data: BookGenerationJobData): Promis
   console.log(`[Queue] 📥 Job enqueued: ${job.id} for book ${data.bookId}`)
   return job.id ?? ''
 }
+
+// ============================================================================
+// Sesli Hikaye Regenerate Job
+// ============================================================================
+
+export interface AudioStoryJobData {
+  bookId: string
+  userId: string
+  language: string
+}
+
+/**
+ * Sesli hikaye (yeniden) oluşturma işini kuyruğa ekler.
+ * API route bu fonksiyonu çağırır ve hemen 202 döner.
+ */
+export async function enqueueAudioStoryRegenerate(data: AudioStoryJobData): Promise<string> {
+  const job = await bookGenerationQueue.add('regenerate-audio-story', data, {
+    attempts: 2,
+    backoff: { type: 'exponential', delay: 5000 },
+  })
+  console.log(`[Queue] 📥 Audio story job enqueued: ${job.id} for book ${data.bookId}`)
+  return job.id ?? ''
+}

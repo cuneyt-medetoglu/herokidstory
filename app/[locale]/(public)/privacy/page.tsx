@@ -1,41 +1,33 @@
+/**
+ * @legal-document privacy-policy
+ * @registry HK-LEGAL-PRIVACY
+ * @semver 1.4.0
+ * @last-substantive-update 2026-04-11
+ * @sync docs/legal/TASLAK_GIZLILIK_POLITIKASI.md — güncellemelerde her iki yeri eşle.
+ * Kullanıcı arayüzünde semver / taslak etiketi gösterilmez.
+ */
 import type { ReactNode } from "react"
 import type { Metadata } from "next"
 import { Link } from "@/i18n/navigation"
 
-// ============================================================================
-// Metadata
-// ============================================================================
-
 export const metadata: Metadata = {
-  title: "Privacy Policy / Gizlilik Politikası — HeroKidStory",
+  title: "Gizlilik Politikası — HeroKidStory",
   description:
-    "HeroKidStory privacy policy covering KVKK, GDPR and COPPA compliance for our personalized children's storybook platform.",
+    "HeroKidStory gizlilik politikası: kişisel verilerin işlenmesi, haklarınız ve veri güvenliği.",
   robots: { index: true },
 }
 
-// ============================================================================
-// Versiyon
-// ============================================================================
-
-const POLICY_VERSION  = "1.1-draft"
 const LAST_UPDATED_TR = "11 Nisan 2026"
-const LAST_UPDATED_EN = "April 11, 2026"
-
-// ============================================================================
-// Satıcı sabiti
-// ============================================================================
+const LAST_UPDATED_EN = "11 April 2026"
 
 const SELLER = {
-  name:    "Cüneyt Medetoğlu",
-  title:   "Şahıs İşletmesi",
-  address: "Atatürk Mah. Merkez İsimsiz91 Sk. Dema İnş B Blok No: 4/1 İç Kapı No: 3 Merkez / Tunceli, Türkiye",
-  email:   "info@herokidstory.com",
-  web:     "https://herokidstory.com",
-}
-
-// ============================================================================
-// Sayfa — Global (TR + EN)
-// ============================================================================
+  name: "Cüneyt Medetoğlu",
+  title: "Şahıs İşletmesi",
+  address:
+    "Atatürk Mah. Merkez İsimsiz91 Sk. Dema İnş B Blok No: 4/1 İç Kapı No: 3 Merkez / Tunceli, Türkiye",
+  email: "info@herokidstory.com",
+  web: "https://herokidstory.com",
+} as const
 
 export default function PrivacyPolicyPage({
   params: { locale },
@@ -47,604 +39,697 @@ export default function PrivacyPolicyPage({
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-background dark:from-slate-900 dark:to-slate-950">
       <div className="container mx-auto max-w-3xl px-4 py-12">
-
-        {/* Başlık / Title */}
-        <div className="mb-8">
-          <div className="mb-3 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
-            ⚠️ {isTr ? "TASLAK — Henüz avukat tarafından onaylanmamıştır" : "DRAFT — Not yet reviewed by legal counsel"} · v{POLICY_VERSION}
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 md:text-4xl">
+        <header className="mb-10 border-b border-slate-200 pb-8 dark:border-slate-700">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 md:text-4xl">
             {isTr ? "Gizlilik Politikası" : "Privacy Policy"}
           </h1>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
             {isTr
-              ? `KVKK · GDPR · COPPA kapsamında · Son güncelleme: ${LAST_UPDATED_TR}`
-              : `KVKK · GDPR · COPPA · Last updated: ${LAST_UPDATED_EN}`}
+              ? `Son güncelleme: ${LAST_UPDATED_TR}`
+              : `Last updated: ${LAST_UPDATED_EN}`}
           </p>
-        </div>
+          <p className="mt-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            {isTr
+              ? "Bu Politika, HeroKidStory hizmetini kullanırken kişisel verilerinizin nasıl işlendiğini açıklar. Veri sorumlusu ve iletişim bilgileri aşağıda yer almaktadır."
+              : "This Policy explains how HeroKidStory processes personal data when you use our services. The data controller and contact details are set out below."}
+          </p>
+        </header>
 
         {isTr ? <PrivacyTR /> : <PrivacyEN />}
-
       </div>
     </main>
   )
 }
 
-// ============================================================================
-// TR içerik
-// ============================================================================
-
 function PrivacyTR() {
   return (
-    <div className="space-y-8 text-slate-700 dark:text-slate-300">
-
-      <Section title="1. Giriş">
+    <div className="space-y-10 text-slate-700 dark:text-slate-300">
+      <Section title="1. Kapsam ve yasal dayanak">
         <p>
-          HeroKidStory, yapay zeka destekli kişiselleştirilmiş çocuk hikaye kitapları
-          oluşturma hizmeti sunan bir platformdur. Bu Gizlilik Politikası; hangi kişisel
-          verileri topladığımızı, neden topladığımızı, nasıl kullandığımızı ve bu veriler
-          üzerindeki haklarınızı açıklamaktadır.
+          Bu Gizlilik Politikası, HeroKidStory platformuna (web sitesi ve bağlı dijital hizmetler)
+          erişim ve kullanımınız sırasında işlenen kişisel veriler için geçerlidir. Politika;
+          6698 sayılı Kişisel Verilerin Korunması Kanunu («<strong>KVKK</strong>»), Avrupa Ekonomik
+          Alanı ve Birleşik Krallık&apos;taki kullanıcılar bakımından Genel Veri Koruma Tüzüğü
+          («<strong>GDPR</strong>») ile Birleşik Devletler&apos;de ebeveyn onayına ilişkin
+          uygulamalarda Çocukların Çevrimiçi Gizliliğinin Korunması Yasası («<strong>COPPA</strong>
+          ») çerçevesinde hazırlanmıştır.
         </p>
-        <InfoTable rows={[
-          ["Veri Sorumlusu",  SELLER.name],
-          ["İşletme Türü",    SELLER.title],
-          ["Adres",           SELLER.address],
-          ["E-posta",         SELLER.email],
-          ["Web Sitesi",      SELLER.web],
-        ]} />
+        <InfoTable
+          rows={[
+            ["Veri sorumlusu", SELLER.name],
+            ["İşletme türü", SELLER.title],
+            ["Adres", SELLER.address],
+            ["E-posta", SELLER.email],
+            ["İnternet sitesi", SELLER.web],
+          ]}
+        />
         <Note>
-          HeroKidStory 2–10 yaş hedef kitlesi için tasarlanmıştır. Platform yalnızca
-          <strong> ebeveynler ve yasal veliler</strong> tarafından kullanılabilir.
-          Çocuklar doğrudan kayıt yapamaz.
+          Hizmet, 2–10 yaş aralığındaki çocuklar için kişiselleştirilmiş içerik üretir; platform
+          yalnızca <strong>18 yaşını doldurmuş ebeveyn veya yasal veli</strong> tarafından
+          kullanılabilir. Çocuklar doğrudan hesap oluşturamaz.
         </Note>
       </Section>
 
-      <Section title="2. Toplanan Veriler">
-        <SubSection title="2.1 Hesap ve Profil Verileri (Ebeveyn/Kullanıcı)">
-          <InfoTable rows={[
-            ["E-posta adresi",    "Kayıt / Google / Facebook OAuth — kimlik doğrulama, bildirimler"],
-            ["Şifre",             "bcrypt hash olarak saklanır; düz metin asla saklanmaz"],
-            ["Ad Soyad",          "Profil / ödeme formu — hesap yönetimi, fatura"],
-            ["Profil fotoğrafı",  "Opsiyonel — Google/Facebook OAuth otomatik alır"],
-            ["Uygulama tercihleri", "Çocuk modu, dil, tema — kullanıcı deneyimi"],
-          ]} />
+      <Section title="2. İşlenen kişisel veriler">
+        <SubSection title="2.1 Hesap ve profil (ebeveyn / kullanıcı)">
+          <InfoTable
+            rows={[
+              ["E-posta", "Kayıt veya Google / Facebook OAuth — kimlik doğrulama, bildirimler"],
+              ["Şifre", "Yalnızca tek yönlü hash (bcrypt); düz metin saklanmaz"],
+              ["Ad ve soyad", "Profil ve ödeme / fatura süreçleri"],
+              ["Profil fotoğrafı", "İsteğe bağlı; OAuth ile aktarılabilir"],
+              ["Uygulama tercihleri", "Dil, tema, çocuk modu vb."],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="2.2 Çocuk Karakter Verileri">
-          <p>Bu veriler ebeveyn/veli tarafından, çocuk adına sağlanmaktadır.</p>
-          <InfoTable rows={[
-            ["Ad",                    "Karakter formu — hikayede kullanım"],
-            ["Yaş",                   "Karakter formu — yaş grubu içeriği"],
-            ["Cinsiyet",              "Karakter formu — karakter özellikleri"],
-            ["Saç rengi, göz rengi",  "Karakter formu — AI görsel prompt"],
-            ["AI karakter açıklaması","Otomatik üretilir — tutarlı karakter temsili"],
-          ]} />
-          <Callout type="info" title="Referans Fotoğraf Hakkında">
-            Karakter oluşturma sırasında referans fotoğraf yüklenebilir. Bu fotoğraf
-            <strong> yalnızca illüstrasyon üretimi sırasında geçici olarak işlenir</strong> —
-            kitap üretimi tamamlandıktan sonra sistemden kalıcı olarak silinir.
-            Platformda saklanan görsel, gerçek fotoğrafın değil; yapay zeka tarafından
-            üretilmiş çizgi film tarzı illüstrasyonun kendisidir.
+        <SubSection title="2.2 Çocuk karakter bilgileri">
+          <p>Bu bilgiler, çocuk adına yalnızca ebeveyn veya veli tarafından girilir.</p>
+          <InfoTable
+            rows={[
+              ["Ad", "Hikâyede kullanım"],
+              ["Yaş", "Yaş grubuna uygun içerik"],
+              ["Cinsiyet", "Karakter tasviri"],
+              ["Saç ve göz rengi", "Görsel üretim parametreleri"],
+              ["Yapay zekâ ile oluşturulan karakter betimlemesi", "Tutarlı görsel stil"],
+            ]}
+          />
+          <Callout type="info" title="Referans fotoğraf">
+            İsteğe bağlı yüklenen referans fotoğraf, yalnızca illüstrasyon üretimi süresince
+            işlenir; üretim tamamlandıktan sonra sistemlerimizden kalıcı olarak silinir.
+            Saklanan görsel, çocuğun biyometrik olarak tanınabilir fotoğrafı değil; yapay zekâ
+            ile üretilmiş çizgi film tarzı illüstrasyondur.
           </Callout>
         </SubSection>
 
-        <SubSection title="2.3 Sipariş ve Ödeme Verileri">
-          <InfoTable rows={[
-            ["Fatura adı/soyadı",    "Ödeme formu — fatura düzenleme"],
-            ["Fatura adresi",        "Ödeme formu — fatura ve muhasebe"],
-            ["Kargo adresi",         "Basılı kitap siparişlerinde — teslimat"],
-            ["Sipariş bilgileri",    "Otomatik — sipariş yönetimi, fatura"],
-            ["Ödeme referans no",    "İyzico tarafından iletilir — muhasebe"],
-          ]} />
+        <SubSection title="2.3 Sipariş, fatura ve teslimat">
+          <InfoTable
+            rows={[
+              ["Fatura unvanı ve adresi", "Fatura düzenleme ve muhasebe"],
+              ["Teslimat adresi", "Basılı ürün siparişlerinde kargo"],
+              ["Sipariş içeriği ve tutarı", "Sipariş yönetimi"],
+              ["Ödeme referansı", "Ödeme kuruluşundan iletilen işlem referansı"],
+            ]}
+          />
           <Note>
-            Kredi/banka kartı bilgileri HeroKidStory tarafından <strong>görülmez veya saklanmaz.</strong>{" "}
-            Tüm ödeme işlemleri İyzico&apos;nun PCI-DSS uyumlu altyapısında gerçekleştirilir.
+            Ödeme kartı numarası, son kullanma tarihi veya güvenlik kodu HeroKidStory
+            sunucularında <strong>işlenmez ve saklanmaz</strong>. Türkiye&apos;ye yönelik
+            tahsilatlar BDDK lisanslı <strong>İyzico A.Ş.</strong> üzerinden; Türkiye dışından
+            yapılan kartla ödemeler ise <strong>Stripe, Inc.</strong> ve bağlı ödeme kuruluşları
+            tarafından PCI-DSS uyumlu ortamda tahsil edilir — kart verisi doğrudan bize
+            iletilmez.
           </Note>
         </SubSection>
 
-        <SubSection title="2.4 Teknik Veriler (Otomatik)">
-          <InfoTable rows={[
-            ["IP adresi",           "Her oturumda — güvenlik, para birimi tespiti"],
-            ["Tarayıcı / cihaz",    "Otomatik — teknik uyumluluk"],
-            ["Oturum verileri",     "NextAuth — kimlik doğrulama"],
-            ["Çerezler",            "Oturum, tercihler (onayınıza göre)"],
-            ["Hata logları",        "Otomatik — teknik sorun giderme"],
-          ]} />
+        <SubSection title="2.4 Otomatik olarak toplanan teknik veriler">
+          <InfoTable
+            rows={[
+              ["IP adresi", "Güvenlik ve para birimi / bölge tespiti"],
+              ["Tarayıcı ve cihaz bilgisi", "Uyumluluk ve güvenlik"],
+              ["Oturum bilgisi", "Kimlik doğrulama (NextAuth)"],
+              ["Çerezler", "Çerez Politikasına tabi"],
+              ["Hata ve güvenlik logları", "Arıza giderme ve kötüye kullanımın önlenmesi"],
+            ]}
+          />
         </SubSection>
       </Section>
 
-      <Section title="3. Verilerin Kullanım Amaçları">
-        <InfoTable rows={[
-          ["Hesap oluşturma ve yönetimi",           "E-posta, şifre, ad — Sözleşme ifası"],
-          ["Kişiselleştirilmiş kitap üretimi",      "Karakter verileri, geçici fotoğraf — Açık rıza"],
-          ["Sipariş ve fatura işleme",              "Fatura bilgileri — Sözleşme ifası + Kanuni"],
-          ["Ödeme işleme",                          "İyzico'ya iletilir — Sözleşme ifası"],
-          ["Kargo ve teslimat",                     "Kargo adresi — Sözleşme ifası"],
-          ["Sipariş bildirimleri",                  "E-posta — Sözleşme ifası"],
-          ["Güvenlik / dolandırıcılık önleme",      "IP, cihaz — Meşru menfaat"],
-          ["Para birimi tespiti",                   "IP adresi — Meşru menfaat"],
-          ["Yasal yükümlülükler",                   "Fatura kayıtları — Kanuni yükümlülük"],
-        ]} />
+      <Section title="3. İşleme amaçları ve hukuki sebepler">
+        <InfoTable
+          rows={[
+            ["Hesap açma ve yönetimi", "Sözleşmenin kurulması ve ifası (KVKK m. 5/2-c; GDPR m. 6(1)(b))"],
+            ["Kişiselleştirilmiş kitap üretimi", "Açık rıza — özellikle yapay zekâ ve yurt dışı aktarım (KVKK m. 5/1, m. 9; GDPR m. 6(1)(a), m. 9(2)(a))"],
+            ["Sipariş, fatura ve teslimat", "Sözleşmenin ifası ve hukuki yükümlülük (KVKK m. 5/2-ç; GDPR m. 6(1)(b)(c))"],
+            ["Ödeme tahsili", "Ödeme kuruluşuna iletim — sözleşmenin ifası"],
+            ["Bildirimler", "Sözleşmenin ifası veya meşru menfaat"],
+            ["Güvenlik ve dolandırıcılığın önlenmesi", "Meşru menfaat (KVKK m. 5/2-f; GDPR m. 6(1)(f))"],
+            ["Vergi ve muhasebe kayıtları", "Hukuki yükümlülük (ör. VUK m. 253)"],
+          ]}
+        />
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Referans fotoğraf yalnızca illüstrasyon üretimi için geçici işlenir; biyometrik şablon
+          veya kimlik doğrulama amaçlı kalıcı veri tabanı oluşturulmaz, üretim tamamlandıktan sonra
+          orijinal görüntü kalıcı olarak silinir. Saklanan yalnızca yapay zekâ ile üretilmiş
+          çizgi film tarzı illüstrasyondur. Görüntü işleme, özel nitelikli kişisel veri
+          niteliği doğurabilecek hallerde dahi ebeveynin açık rızası, aydınlatma ve veri
+          minimizasyonu ile sınırlandırılır (KVKK m. 6 ve m. 10; GDPR m. 9(2)(a)).
+        </p>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Yasal anlamda veya benzer şekilde önemli sonuçlar doğuran, tamamen otomatik karar verme
+          veya bu sonucu üretecek şekilde profilleme yapılmamaktadır.
+        </p>
       </Section>
 
-      <Section title="4. Verilerin Paylaşımı">
-        <p>Kişisel verileriniz ticari amaçla üçüncü taraflara <strong>satılmamaktadır.</strong></p>
+      <Section title="4. Verilerin aktarılması">
+        <p>
+          Kişisel verileriniz, hizmetin sunulması için gerekli ve ölçülü olduğu ölçüde seçilmiş
+          işleyenlere aktarılır; <strong>profil oluşturma veya üçüncü kişilere satış amacıyla</strong>{" "}
+          ticari olarak devredilmez.
+        </p>
 
-        <SubSection title="4.1 Ödeme Hizmeti">
-          <InfoTable rows={[
-            ["İyzico (TR)", "Ad/soyad, fatura adresi, tutar — BDDK lisanslı, KVKK uyumlu"],
-          ]} />
+        <SubSection title="4.1 Ödeme kuruluşları">
+          <InfoTable
+            rows={[
+              ["İyzico A.Ş. (Türkiye)", "Kimlik ve fatura bilgisi, işlem tutarı — tahsilat"],
+              ["Stripe, Inc. ve bağlı kuruluşlar (ABD / ilgili bölge)", "Küresel kart ödemelerinde — kart verisi doğrudan bize iletilmez"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.2 Barındırma ve Altyapı">
-          <InfoTable rows={[
-            ["Amazon AWS (ABD)", "Şifreli hesap ve sipariş verileri — sunucu barındırma"],
-            ["Amazon S3 (ABD)",  "Üretilen görseller ve PDF'ler — dosya depolama"],
-            ["Vercel (ABD/Global)", "IP, istek logları — CDN"],
-          ]} />
-          <Note>Orijinal çocuk fotoğrafları S3&apos;te saklanmaz — üretim sonrası silinir.</Note>
+        <SubSection title="4.2 Barındırma ve içerik dağıtımı">
+          <InfoTable
+            rows={[
+              ["Amazon Web Services (AWS)", "Uygulama ve veri tabanı barındırma (ör. ABD bölgesi)"],
+              ["Amazon S3", "Üretilen görseller ve PDF dosyaları — orijinal referans fotoğrafı saklanmaz"],
+              ["Vercel Inc.", "CDN ve istek günlükleri"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.3 Yapay Zeka Hizmetleri">
-          <InfoTable rows={[
-            ["OpenAI (ABD)",        "Referans fotoğraf (geçici) + hikaye parametreleri — AI illüstrasyon + metin"],
-            ["Google Gemini (ABD)", "Hikaye metni (geçici) — TTS sesli okuma üretimi"],
-          ]} />
-          <Callout type="info" title="OpenAI Aktarımı Hakkında">
-            Referans fotoğraf, illüstrasyon üretimi için OpenAI API&apos;sine iletilir.
-            OpenAI&apos;ın API politikasına göre bu veriler model eğitiminde kullanılmaz.
-            Üretim tamamlandıktan sonra fotoğraf hem HeroKidStory&apos;den hem de API sürecinden silinir.
-            Bu aktarım için karakter oluşturma sırasında açık onayınız alınmaktadır.
+        <SubSection title="4.3 Yapay zekâ ve ses üretimi">
+          <InfoTable
+            rows={[
+              ["OpenAI", "Geçici referans görüntü ve metin parametreleri — illüstrasyon ve metin üretimi"],
+              ["Google (Gemini)", "Metin tabanlı sesli okuma (TTS) üretimi için geçici metin işleme"],
+            ]}
+          />
+          <Callout type="info" title="OpenAI ve model eğitimi">
+            OpenAI API&apos;sine iletilen içerik, OpenAI&apos;nin ticari API koşulları uyarınca
+            modellerini eğitmek için kullanılmaz. Üretim tamamlandıktan sonra referans görüntü
+            platformumuzdan kaldırılır; işlem zinciri içinde üçüncü tarafta tutulmaması için
+            teknik ve sözleşmesel önlemler uygulanır. İlgili aktarım için karakter oluşturma
+            adımında açık rıza alınır.
           </Callout>
         </SubSection>
 
-        <SubSection title="4.4 Kimlik Doğrulama">
-          <InfoTable rows={[
-            ["Google OAuth (ABD)",   "E-posta, ad, profil fotoğrafı — yalnızca Google ile girişte"],
-            ["Facebook OAuth (ABD)", "E-posta, ad — yalnızca Facebook ile girişte"],
-          ]} />
+        <SubSection title="4.4 Kimlik doğrulama ve e-posta">
+          <InfoTable
+            rows={[
+              ["Google LLC / Meta Platforms, Inc.", "Yalnızca seçilen OAuth giriş yönteminde gerekli kimlik öğeleri"],
+              ["Resend veya benzeri iletişim sağlayıcısı", "İşlem ve hesap bildirimleri"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.5 E-posta Hizmeti">
-          <InfoTable rows={[
-            ["Resend (ABD/EU)", "E-posta adresi, sipariş bilgileri — sipariş onayı, bildirimler"],
-          ]} />
+        <SubSection title="4.5 Yurt dışına aktarım">
+          <p className="text-sm leading-relaxed">
+            Bazı işleyenler Türkiye veya Avrupa Ekonomik Alanı dışında yerleşiktir. Aktarım;
+            açık rızanız (özellikle yapay zekâ işlemleri), sözleşmenin ifası, ilgili işleyenle
+            akdedilen veri işleme sözleşmeleri ve Avrupa Komisyonu&apos;nun standart sözleşme
+            maddeleri veya GDPR&apos;da öngörülen diğer uygun güvenceler ile KVKK&apos;nın 9.
+            maddesi kapsamında gerçekleştirilir. Ayrıntılı çerez bilgisi için{" "}
+            <Link href="/cookies" className="text-primary underline underline-offset-2">
+              Çerez Politikası
+            </Link>
+            na başvurabilirsiniz.
+          </p>
+        </SubSection>
+
+        <SubSection title="4.6 Yetkili merciler">
+          <p className="text-sm leading-relaxed">
+            Kanunda öngörülen hallerde veya bağlayıcı idari veya yargı kararıyla, verileriniz
+            yetkili kamu kurum ve kuruluşlarıyla paylaşılabilir.
+          </p>
         </SubSection>
       </Section>
 
-      <Section title="5. Veri Saklama Süreleri">
-        <InfoTable rows={[
-          ["Hesap bilgileri",             "Hesap aktif olduğu sürece; silme sonrası 30 gün içinde kalıcı silinir"],
-          ["Çocuk karakter verileri",     "Kullanıcı veya hesap silinene kadar"],
-          ["Referans fotoğraf",           "Kitap üretimi tamamlandıktan sonra otomatik silinir"],
-          ["Üretilen görseller / PDF",    "Kullanıcı kitabı siler veya hesabı kapatana kadar"],
-          ["Sipariş ve fatura kayıtları", "10 yıl (VUK Madde 253 — yasal zorunluluk)"],
-          ["IP ve teknik loglar",         "90 gün"],
-          ["AI üretim logları",           "1 yıl (maliyet takibi)"],
-          ["E-posta kayıtları",           "3 yıl"],
-        ]} />
+      <Section title="5. Saklama süreleri">
+        <InfoTable
+          rows={[
+            ["Hesap ve profil", "Hesap aktif olduğu sürece; hesap silinince derhal silinir"],
+            ["Karakter ve kitap içeriği", "Siz silinceye veya hesap kapanıncaya kadar"],
+            ["Referans fotoğraf", "Üretim tamamlanınca otomatik silinir"],
+            ["Sipariş ve fatura kayıtları", "VUK m. 253 uyarınca on yıl"],
+            ["IP ve güvenlik logları", "Tipik olarak 90 gün"],
+            ["Maliyet ve üretim logları", "Tipik olarak bir yıl"],
+            ["E-posta iletişim kayıtları", "Tipik olarak üç yıl"],
+          ]}
+        />
         <Note>
-          Hesabınızı silseniz dahi fatura ve sipariş kayıtları Türk Vergi Usul Kanunu gereği
-          10 yıl saklanmak zorundadır. Bu kayıtlar yalnızca ad/soyad ve fatura adresi gibi
-          sipariş için zorunlu olan verileri içerir.
+          Hesap silinse dahi fatura ve sipariş kayıtlarındaki asgari veriler (ör. unvan, adres,
+          tutar, tarih) vergi mevzuatı gereği saklanmaya devam eder.
         </Note>
       </Section>
 
-      <Section title="6. Çocukların Gizliliği">
-        <SubSection title="6.1 Fotoğraf Tasarım Tercihi">
-          <p>
-            HeroKidStory, çocuk fotoğraflarını uzun süreli depolamamayı bilinçli bir gizlilik
-            önlemi olarak benimsemiştir. Orijinal fotoğraf yalnızca AI üretim sürecinde anlık
-            olarak kullanılır ve üretim tamamlandıktan sonra kalıcı olarak silinir.
+      <Section title="6. Çocukların gizliliği ve yaş beyanı">
+        <SubSection title="6.1 Tasarım ilkesi">
+          <p className="text-sm leading-relaxed">
+            Çocuğa ait referans fotoğrafı <strong>arşivlenmez veya galeri olarak tutulmaz</strong>
+            : yalnızca üretim oturumu boyunca işlenir, illüstrasyon oluşturulduktan sonra
+            orijinal dosya silinir. Platformda kalan, çocuğun gerçek fotoğrafı değil; üretilmiş
+            çizgi film tarzı illüstrasyondur. Bu yaklaşım, gereksiz görüntü saklamayı önleyen
+            veri minimizasyonu tedbiridir.
           </p>
         </SubSection>
-        <SubSection title="6.2 Çocuk Verisi Onayı">
-          <p>
-            Karakter oluşturmada çocuğa ait veri işlemeden önce ebeveyn/veliden açık onay alınır:
+        <SubSection title="6.2 Ebeveyn rızası (örnek metin)">
+          <p className="text-sm">
+            Karakter oluşturma sırasında, çocuğa ait verilerin işlenmesi ve yurt dışına
+            aktarılması için açık onay metni sunulur; örnek ifade:
           </p>
-          <blockquote className="mt-2 rounded-lg border-l-4 border-primary/40 bg-slate-100 px-4 py-3 text-sm italic dark:bg-slate-800">
-            &quot;Çocuğuma ait fotoğraf ve bilgilerin, kişiselleştirilmiş hikaye kitabı üretimi
-            amacıyla OpenAI&apos;a geçici olarak iletileceğini, üretim sonrası orijinal fotoğrafın
-            silineceğini anlıyor ve onay veriyorum.&quot;
+          <blockquote className="mt-2 rounded-lg border-l-4 border-primary/50 bg-slate-100 px-4 py-3 text-sm italic text-slate-800 dark:bg-slate-800/80 dark:text-slate-200">
+            «Çocuğuma ait fotoğraf ve bilgilerin, kişiselleştirilmiş hikâye kitabı üretimi amacıyla
+            yapay zekâ hizmet sağlayıcısına geçici olarak aktarılacağını; üretim sonrasında
+            orijinal fotoğrafın silineceğini anlıyor ve onaylıyorum.»
           </blockquote>
         </SubSection>
-        <SubSection title="6.3 COPPA (ABD Kullanıcıları)">
-          <p>
-            13 yaş altı çocuklara ait tüm veriler yalnızca ebeveyn açık onayıyla işlenmektedir.
-            Veri silinmesi talebi için:{" "}
-            <a href="mailto:info@herokidstory.com" className="text-primary underline underline-offset-2">
-              info@herokidstory.com
-            </a>
+        <SubSection title="6.3 Kayıt ve yaş">
+          <p className="text-sm leading-relaxed">
+            Kayıt sırasında 18 yaşını doldurduğunuzu beyan etmeniz gerekir. COPPA kapsamında 13
+            yaş altı çocuklara ait veriler yalnızca ebeveyn rızasıyla işlenir; silme talepleri{" "}
+            <a href={`mailto:${SELLER.email}`} className="text-primary underline underline-offset-2">
+              {SELLER.email}
+            </a>{" "}
+            üzerinden değerlendirilir.
           </p>
         </SubSection>
-        <SubSection title="6.4 GDPR Çocuk Verileri (AB Kullanıcıları)">
-          <p>16 yaş altı çocuklar için ebeveyn onayı zorunludur. HeroKidStory bu onayı karakter oluşturma adımında almaktadır.</p>
+        <SubSection title="6.4 AB kullanıcıları">
+          <p className="text-sm leading-relaxed">
+            GDPR uyarınca 16 yaş altı için ebeveyn veya veli onayı zorunludur; bu onay karakter
+            adımında toplanır.
+          </p>
         </SubSection>
       </Section>
 
-      <Section title="7. Haklarınız">
-        <SubSection title="KVKK Madde 11 — Türk Kullanıcılar">
-          <ul className="space-y-1.5 text-sm list-disc pl-4">
-            <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
-            <li>İşlenmişse buna ilişkin bilgi talep etme</li>
-            <li>İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme</li>
-            <li>Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
-            <li>Eksik veya yanlış işlenmiş verilerin düzeltilmesini isteme</li>
-            <li>KVKK Madde 7 çerçevesinde silinmesini veya yok edilmesini isteme</li>
-            <li>Otomatik sistemler ile analiz edilmesi sonucu ortaya çıkan karara itiraz etme</li>
-            <li>Kanuna aykırı işlenmesi sebebiyle zarara uğranılması halinde giderim talep etme</li>
+      <Section title="7. Haklarınız ve başvuru">
+        <SubSection title="7.1 KVKK (Türkiye&apos;de ikamet edenler)">
+          <p className="mb-2 text-sm">KVKK m. 11 kapsamında özetle:</p>
+          <ul className="space-y-1.5 text-sm list-disc pl-5">
+            <li>İşlenip işlenmediğini öğrenme ve bilgi talep etme</li>
+            <li>İşlenme amacını ve amaca uygun kullanılıp kullanılmadığını öğrenme</li>
+            <li>Yurt içi / yurt dışı aktarılan üçüncü kişileri bilme</li>
+            <li>Eksik veya yanlış işlenmişse düzeltilmesini isteme</li>
+            <li>Kanunda öngörülen şartlarla silinmesini veya yok edilmesini isteme</li>
+            <li>Otomatik sistemlerle analize itiraz ve zararın giderilmesini talep etme</li>
           </ul>
         </SubSection>
-        <SubSection title="GDPR — AB Kullanıcıları">
-          <ul className="space-y-1.5 text-sm list-disc pl-4">
-            <li><strong>Erişim</strong> — işlenen verilerinizin kopyasını talep etme</li>
-            <li><strong>Düzeltme</strong> — yanlış verilerin düzeltilmesini isteme</li>
-            <li><strong>Silme</strong> — belirli koşullarda verilerinizin silinmesi</li>
-            <li><strong>Kısıtlama</strong> — işlemenin kısıtlanmasını talep etme</li>
-            <li><strong>Taşınabilirlik</strong> — verilerinizi yapılandırılmış formatta alma</li>
-            <li><strong>İtiraz</strong> — meşru menfaate dayalı işlemelere itiraz</li>
-            <li><strong>Rızayı geri çekme</strong> — rıza verdiğiniz her işlem için onayı geri alma</li>
-            <li><strong>Şikayet</strong> — ülkenizdeki Veri Koruma Otoritesi&apos;ne başvurma</li>
+        <SubSection title="7.2 GDPR (EEA / Birleşik Krallık)">
+          <ul className="space-y-1.5 text-sm list-disc pl-5">
+            <li>Erişim, düzeltme, silme, işlemeyi kısıtlama, taşınabilirlik</li>
+            <li>Meşru menfaate dayalı işlemeye itiraz ve rızayı geri çekme</li>
+            <li>Şikâyet: ikamet ettiğiniz ülkedeki denetleyici otoriteye başvuru</li>
           </ul>
         </SubSection>
-        <SubSection title="Hesap Silme">
-          <p>
-            <strong>Dashboard → Ayarlar → Hesabımı Sil</strong> adımlarını izleyerek
-            hesabınızı silebilirsiniz. Silme işleminde şunlar gerçekleşir:
+        <SubSection title="7.3 Hesabın kapatılması">
+          <p className="text-sm leading-relaxed">
+            <strong>Kontrol Paneli → Ayarlar → Hesap</strong> bölümünden <strong>Hesabı Sil</strong>{" "}
+            seçeneğini kullanarak hesabınızı kapatabilirsiniz. İşlem tamamlandığında hesap,
+            kitaplar, karakterler ve saklanan üretim dosyaları derhal silinir. Vergi mevzuatı
+            gereği sipariş ve fatura kayıtları asgari içerikle saklanmaya devam eder.
           </p>
-          <ul className="mt-2 space-y-1 text-sm list-disc pl-4">
-            <li>E-posta, ad, tercihler ve profil bilgileri silinir</li>
-            <li>Oluşturduğunuz tüm kitaplar ve görseller silinir</li>
-            <li>Tüm karakter verileri silinir</li>
-            <li>Referans fotoğraf zaten üretim sonrası silinmiş olduğundan ayrıca işlem gerekmez</li>
-            <li className="text-slate-500">
-              <em>İstisna: Sipariş ve fatura kayıtları VUK Madde 253 gereği 10 yıl saklanmaya devam eder</em>
-            </li>
-          </ul>
         </SubSection>
-        <SubSection title="Başvuru Yöntemi">
-          <p>
-            <strong>E-posta:</strong>{" "}
-            <a href="mailto:info@herokidstory.com" className="text-primary underline underline-offset-2">
-              info@herokidstory.com
+        <SubSection title="7.4 Başvuru usulü">
+          <p className="text-sm leading-relaxed">
+            Taleplerinizi{" "}
+            <a href={`mailto:${SELLER.email}`} className="text-primary underline underline-offset-2">
+              {SELLER.email}
             </a>{" "}
-            — konu satırına &quot;KVKK Başvurusu&quot; yazınız.
-            Başvurular <strong>30 iş günü</strong> içinde yanıtlanır.
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Türk kullanıcılar: Kişisel Verileri Koruma Kurulu&apos;na (kvkk.gov.tr) şikayet hakkınız saklıdır.
+            adresine, konu satırında «KVKK / GDPR Başvurusu» ibaresiyle iletiniz. Kimliğinizi
+            doğrulamak için ek bilgi veya belge isteme hakkımız saklıdır. Başvurular, ilgili
+            mevzuatta öngörülen süreler içinde (KVKK için en geç otuz gün) sonuçlandırılır.
+            Türkiye&apos;de Kişisel Verileri Koruma Kurulu&apos;na şikâyet hakkınız saklıdır.
           </p>
         </SubSection>
       </Section>
 
       <Section title="8. Güvenlik">
-        <ul className="space-y-1.5 text-sm list-disc pl-4">
-          <li>Veriler AWS&apos;de AES-256 şifreli olarak saklanır</li>
-          <li>Aktarımda TLS/HTTPS kullanılır</li>
-          <li>Şifreler bcrypt ile hashlenir, düz metin asla saklanmaz</li>
-          <li>Ödeme verileri PCI-DSS uyumlu İyzico altyapısında işlenir</li>
-          <li>Erişim kontrolleri ve rol tabanlı yetkilendirme uygulanır</li>
+        <ul className="space-y-1.5 text-sm list-disc pl-5">
+          <li>Veri aktarımında TLS (HTTPS); saklamada şifreleme ve erişim kontrolleri</li>
+          <li>Şifreler tek yönlü hash ile saklanır</li>
+          <li>Ödeme kartı verisi yalnızca sertifikalı ödeme kuruluşlarında işlenir</li>
+          <li>Çalışan ve taşeron erişimleri «gerekli olduğu kadar» ilkesiyle sınırlıdır; işleyenlerle gizlilik / veri işleme taahhütleri kullanılır</li>
         </ul>
         <Note>
-          Güvenlik ihlali durumunda KVKK ve GDPR kapsamında 72 saat içinde yetkili kurumlara
-          ve etkilenen kullanıcılara bildirim yapılacaktır.
+          Kişisel veri ihlali tespitinde, yasal yükümlülükler çerçevesinde denetleyici otoriteye
+          bildirim süreleri (GDPR: yetkili otoriteye genel olarak 72 saat) ile etkilenen
+          kişilere, risk yüksekliğine bağlı olarak gecikmeksizin bildirim sağlanır.
         </Note>
       </Section>
 
       <Section title="9. Çerezler">
-        <p>
-          Çerez kullanımı hakkında ayrıntılı bilgi için:{" "}
+        <p className="text-sm">
+          Ayrıntılar için{" "}
           <Link href="/cookies" className="text-primary underline underline-offset-2">
             Çerez Politikası
           </Link>
+          na bakınız.
         </p>
-        <InfoTable rows={[
-          ["Zorunlu çerezler",  "Oturum yönetimi, güvenlik — her zaman aktif"],
-          ["Tercih çerezleri",  "Dil, tema, kullanıcı tercihleri"],
-          ["Analitik çerezler", "Yalnızca onay vermeniz halinde"],
-        ]} />
       </Section>
 
-      <Section title="10. Politika Değişiklikleri">
-        <p>
-          Önemli değişikliklerde &quot;Son Güncelleme&quot; tarihi güncellenir ve kayıtlı
-          kullanıcılara e-posta bildirimi yapılır. Politikayı kullanmaya devam etmek,
-          güncellenmiş versiyonu kabul ettiğiniz anlamına gelir.
+      <Section title="10. Politikanın güncellenmesi">
+        <p className="text-sm leading-relaxed">
+          Bu metin güncellenebilir. Önemli değişikliklerde «Son güncelleme» tarihi yenilenir;
+          kayıtlı kullanıcılara e-posta veya uygulama içi bildirimle duyuru yapılabilir. Mevzuatın
+          gerektirdiği hallerde ayrıca bilgilendirme veya açık rıza talep edilir.
         </p>
       </Section>
 
       <Section title="11. İletişim">
-        <InfoTable rows={[
-          ["E-posta",      "info@herokidstory.com"],
-          ["Adres",        SELLER.address],
-          ["Yanıt Süresi", "30 iş günü"],
-        ]} />
+        <InfoTable
+          rows={[
+            ["E-posta", SELLER.email],
+            ["Posta adresi", SELLER.address],
+          ]}
+        />
       </Section>
-
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
-        ⚠️ Bu metin <strong>v{POLICY_VERSION}</strong> taslak sürümdür.
-      </div>
     </div>
   )
 }
 
-// ============================================================================
-// EN içerik
-// ============================================================================
-
 function PrivacyEN() {
   return (
-    <div className="space-y-8 text-slate-700 dark:text-slate-300">
-
-      <Section title="1. Introduction">
+    <div className="space-y-10 text-slate-700 dark:text-slate-300">
+      <Section title="1. Scope and legal framework">
         <p>
-          HeroKidStory is a platform offering AI-powered personalized children&apos;s storybooks.
-          This Privacy Policy explains what personal data we collect, why we collect it,
-          how we use it, and your rights over that data.
+          This Privacy Policy describes how HeroKidStory (&quot;we&quot;, &quot;us&quot;,
+          &quot;our&quot;) processes personal data when you access or use our website and related
+          digital services. It is designed to align with the Turkish Personal Data Protection Law
+          No. 6698 (&quot;<strong>KVKK</strong>&quot;) for users in Türkiye, the UK General Data
+          Protection Regulation and EU GDPR for users in the United Kingdom and European
+          Economic Area, and with COPPA-aligned practices for child-related data where U.S. law
+          applies.
         </p>
-        <InfoTable rows={[
-          ["Data Controller", SELLER.name],
-          ["Business Type",   SELLER.title],
-          ["Address",         SELLER.address],
-          ["Email",           SELLER.email],
-          ["Website",         SELLER.web],
-        ]} />
+        <InfoTable
+          rows={[
+            ["Data controller", SELLER.name],
+            ["Legal form", SELLER.title],
+            ["Registered / postal address", SELLER.address],
+            ["Contact email", SELLER.email],
+            ["Website", SELLER.web],
+          ]}
+        />
         <Note>
-          HeroKidStory is designed for children aged 2–10. The platform is used exclusively
-          by <strong>parents or legal guardians.</strong> Children cannot register directly.
+          The service produces personalized content for children aged approximately 2–10, but
+          the platform may only be used by <strong>parents or legal guardians aged 18 or over</strong>.
+          Children cannot create accounts.
+        </Note>
+        <Note>
+          We do not have an establishment in the United Kingdom or the European Economic Area and
+          have <strong>not appointed a representative in the Union</strong> under Article 27
+          GDPR. If you are in the EEA or UK, you may exercise your rights by contacting the data
+          controller at the email and postal address above, and you may lodge a complaint with
+          your local supervisory authority.
         </Note>
       </Section>
 
-      <Section title="2. Data We Collect">
-        <SubSection title="2.1 Account and Profile Data (Parent/User)">
-          <InfoTable rows={[
-            ["Email address",   "Registration / Google / Facebook OAuth — authentication, notifications"],
-            ["Password",        "Stored as bcrypt hash — plain text is never stored"],
-            ["Full name",       "Profile / payment form — account management, invoicing"],
-            ["Profile photo",   "Optional — auto-imported from Google/Facebook OAuth"],
-            ["App preferences", "Kid mode, language, theme — user experience"],
-          ]} />
+      <Section title="2. Categories of personal data">
+        <SubSection title="2.1 Account and profile (parent / user)">
+          <InfoTable
+            rows={[
+              ["Email address", "Registration or Google / Facebook OAuth — authentication, notices"],
+              ["Password", "Stored only as a one-way hash (bcrypt); never in plain text"],
+              ["Name", "Profile, billing and invoicing"],
+              ["Profile image", "Optional; may be imported via OAuth"],
+              ["Preferences", "Language, theme, kid mode, etc."],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="2.2 Child Character Data">
-          <p>This data is provided by a parent/guardian on behalf of the child.</p>
-          <InfoTable rows={[
-            ["Name",                   "Character form — used in the story"],
-            ["Age",                    "Character form — age-appropriate content"],
-            ["Gender",                 "Character form — character attributes"],
-            ["Hair color, eye color",  "Character form — AI visual prompt"],
-            ["AI character description","Auto-generated — consistent character representation"],
-          ]} />
-          <Callout type="info" title="About the Reference Photo">
-            A reference photo may be uploaded during character creation. This photo is
-            <strong> temporarily processed only during illustration generation</strong> —
-            after book production is complete, the original photo is permanently deleted
-            from our systems. What is stored in your library is the AI-generated cartoon
-            illustration, not the original photo.
+        <SubSection title="2.2 Child character information">
+          <p>Entered solely by a parent or guardian on the child&apos;s behalf.</p>
+          <InfoTable
+            rows={[
+              ["Name", "Used in the narrative"],
+              ["Age", "Age-appropriate content"],
+              ["Gender", "Character depiction"],
+              ["Hair and eye colour", "Illustration parameters"],
+              ["AI-generated character description", "Consistent visual style"],
+            ]}
+          />
+          <Callout type="info" title="Reference photograph">
+            An optional reference photo is processed only for the duration of illustration
+            generation and is permanently deleted from our systems once production is complete.
+            What remains in your library is an AI-generated cartoon-style illustration, not the
+            original photograph.
           </Callout>
         </SubSection>
 
-        <SubSection title="2.3 Order and Payment Data">
-          <InfoTable rows={[
-            ["Billing name",      "Payment form — invoice generation"],
-            ["Billing address",   "Payment form — invoicing and accounting"],
-            ["Shipping address",  "Payment form (printed books only) — delivery"],
-            ["Order details",     "Automatic — order management, invoicing"],
-            ["Payment reference", "Provided by Iyzico — accounting"],
-          ]} />
+        <SubSection title="2.3 Orders, billing and delivery">
+          <InfoTable
+            rows={[
+              ["Billing name and address", "Invoicing and accounting"],
+              ["Delivery address", "Printed product fulfilment where applicable"],
+              ["Order contents and amount", "Order management"],
+              ["Payment reference", "Transaction reference from the payment processor"],
+            ]}
+          />
           <Note>
-            Credit/debit card details are <strong>never seen or stored</strong> by HeroKidStory.
-            All payments are processed through Iyzico&apos;s PCI-DSS compliant infrastructure.
+            Card numbers, expiry dates and security codes are <strong>never processed or stored</strong>{" "}
+            on HeroKidStory servers. Payments for customers using our Turkish checkout flows are
+            processed by <strong>Iyzico A.Ş.</strong> (BDDK-licensed). <strong>International card
+            payments</strong> are processed by <strong>Stripe, Inc.</strong> and its affiliates in
+            a PCI-DSS compliant environment; card data is tokenised or handled entirely on
+            Stripe&apos;s systems.
           </Note>
         </SubSection>
 
-        <SubSection title="2.4 Technical Data (Automatic)">
-          <InfoTable rows={[
-            ["IP address",         "Every session — security, currency detection"],
-            ["Browser / device",   "Automatic — technical compatibility"],
-            ["Session data",       "NextAuth — authentication"],
-            ["Cookies",            "Session, preferences (subject to your consent)"],
-            ["Error logs",         "Automatic — technical debugging"],
-          ]} />
+        <SubSection title="2.4 Technical data collected automatically">
+          <InfoTable
+            rows={[
+              ["IP address", "Security and currency / region detection"],
+              ["Browser and device data", "Compatibility and security"],
+              ["Session data", "Authentication (NextAuth)"],
+              ["Cookies", "As described in the Cookie Policy"],
+              ["Error and security logs", "Troubleshooting and abuse prevention"],
+            ]}
+          />
         </SubSection>
       </Section>
 
-      <Section title="3. How We Use Your Data">
-        <InfoTable rows={[
-          ["Account creation and management",    "Email, password, name — Contract performance"],
-          ["Personalized book production",       "Character data, temporary photo — Explicit consent"],
-          ["Order processing and invoicing",     "Billing data — Contract + Legal obligation"],
-          ["Payment processing",                 "Forwarded to Iyzico — Contract performance"],
-          ["Delivery",                           "Shipping address — Contract performance"],
-          ["Order notifications",                "Email — Contract performance"],
-          ["Security / fraud prevention",        "IP, device — Legitimate interest"],
-          ["Currency detection",                 "IP address — Legitimate interest"],
-          ["Legal obligations",                  "Invoice records — Legal obligation"],
-        ]} />
+      <Section title="3. Purposes and legal bases">
+        <InfoTable
+          rows={[
+            ["Account administration", "Performance of a contract (GDPR Art. 6(1)(b))"],
+            ["Personalized book production", "Explicit consent — including AI processing and transfers (Art. 6(1)(a), Art. 9(2)(a) where applicable)"],
+            ["Orders, invoices and delivery", "Contract and legal obligation (Art. 6(1)(b)(c))"],
+            ["Payment collection", "Transmission to payment processors — contract"],
+            ["Notifications", "Contract or legitimate interests"],
+            ["Fraud prevention and security", "Legitimate interests (Art. 6(1)(f))"],
+            ["Tax and accounting records", "Legal obligation"],
+          ]}
+        />
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          We do not perform solely automated decision-making, including profiling, that produces
+          legal or similarly significant effects concerning you.
+        </p>
       </Section>
 
-      <Section title="4. Data Sharing">
-        <p>Your personal data is <strong>never sold</strong> to third parties for commercial purposes.</p>
+      <Section title="4. Recipients and disclosures">
+        <p>
+          We share personal data only with selected processors where necessary to provide the
+          service and in proportion to that need. We do <strong>not</strong> sell personal data.
+        </p>
 
-        <SubSection title="4.1 Payment Processing">
-          <InfoTable rows={[["Iyzico (Turkey)", "Name, billing address, amount — BDDK licensed, KVKK compliant"]]} />
+        <SubSection title="4.1 Payment processors">
+          <InfoTable
+            rows={[
+              ["Iyzico A.Ş. (Türkiye)", "Identity and billing data, transaction amount"],
+              ["Stripe, Inc. and affiliates", "International card payments — card data is not sent to our servers"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.2 Hosting and Infrastructure">
-          <InfoTable rows={[
-            ["Amazon AWS (USA)",    "Encrypted account and order data — server hosting"],
-            ["Amazon S3 (USA)",     "Generated images and PDFs — file storage"],
-            ["Vercel (USA/Global)", "IP, request logs — CDN"],
-          ]} />
-          <Note>Original child photos are not stored in S3 — they are deleted after production.</Note>
+        <SubSection title="4.2 Hosting and content delivery">
+          <InfoTable
+            rows={[
+              ["Amazon Web Services (AWS)", "Application and database hosting (e.g. US regions)"],
+              ["Amazon S3", "Generated images and PDFs — original reference photos are not stored"],
+              ["Vercel Inc.", "CDN and request logs"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.3 AI Services">
-          <InfoTable rows={[
-            ["OpenAI (USA)",        "Reference photo (temporary) + story params — AI illustration + text"],
-            ["Google Gemini (USA)", "Story text (temporary) — TTS audio generation"],
-          ]} />
-          <Callout type="info" title="About OpenAI Transfer">
-            The reference photo is sent to the OpenAI API for illustration generation.
-            Per OpenAI&apos;s API policy, data sent via the API is not used to train their models.
-            Once production is complete, the photo is permanently deleted from HeroKidStory
-            and is no longer accessible via the API pipeline.
-            Your explicit consent for this transfer is obtained during character creation.
+        <SubSection title="4.3 AI and audio">
+          <InfoTable
+            rows={[
+              ["OpenAI", "Temporary reference image and text parameters for illustration and text generation"],
+              ["Google (Gemini)", "Temporary text processing for text-to-speech"],
+            ]}
+          />
+          <Callout type="info" title="OpenAI API use">
+            Content sent via the commercial API is not used to train OpenAI&apos;s models under
+            applicable API terms. After production, the reference image is removed from our
+            systems; contractual and technical measures address retention by subprocessors.
+            Explicit consent is obtained at character creation for this processing and transfer.
           </Callout>
         </SubSection>
 
-        <SubSection title="4.4 Authentication">
-          <InfoTable rows={[
-            ["Google OAuth (USA)",   "Email, name, profile photo — Google login users only"],
-            ["Facebook OAuth (USA)", "Email, name — Facebook login users only"],
-          ]} />
+        <SubSection title="4.4 Authentication and email">
+          <InfoTable
+            rows={[
+              ["Google LLC / Meta Platforms, Inc.", "Elements required for the OAuth method you choose"],
+              ["Resend (or similar provider)", "Transactional email"],
+            ]}
+          />
         </SubSection>
 
-        <SubSection title="4.5 Email Service">
-          <InfoTable rows={[["Resend (USA/EU)", "Email address, order info — order confirmations, notifications"]]} />
+        <SubSection title="4.5 International transfers">
+          <p className="text-sm leading-relaxed">
+            Some processors are located outside your country of residence (including the United
+            States). Transfers rely, as applicable, on your explicit consent (notably for AI
+            processing), performance of the contract, our agreements with processors, and EU
+            Standard Contractual Clauses or other safeguards recognised under GDPR Chapter V.
+            For cookie details, see our{" "}
+            <Link href="/cookies" className="text-primary underline underline-offset-2">
+              Cookie Policy
+            </Link>
+            .
+          </p>
+        </SubSection>
+
+        <SubSection title="4.6 Public authorities">
+          <p className="text-sm leading-relaxed">
+            We may disclose data where required by applicable law or by a competent court or
+            administrative order.
+          </p>
         </SubSection>
       </Section>
 
-      <Section title="5. Data Retention">
-        <InfoTable rows={[
-          ["Account data",          "While account is active; permanently deleted within 30 days of account deletion"],
-          ["Child character data",  "Until user deletes character or closes account"],
-          ["Reference photo",       "Automatically deleted after book production completes"],
-          ["Generated images / PDFs","Until user deletes book or closes account"],
-          ["Order and invoice data", "10 years (Turkish Tax Law obligation — VUK Article 253)"],
-          ["IP and technical logs",  "90 days"],
-          ["AI production logs",     "1 year (cost tracking)"],
-          ["Email records",          "3 years"],
-        ]} />
+      <Section title="5. Retention">
+        <InfoTable
+          rows={[
+            ["Account and profile", "While the account exists; deleted immediately on account deletion"],
+            ["Characters and book content", "Until you delete them or close the account"],
+            ["Reference photograph", "Deleted automatically after production completes"],
+            ["Order and invoice records", "Ten years where required by Turkish tax law (VUK Art. 253)"],
+            ["IP and security logs", "Typically 90 days"],
+            ["Production and cost logs", "Typically one year"],
+            ["Email correspondence logs", "Typically three years"],
+          ]}
+        />
         <Note>
-          Even after account deletion, invoice and order records must be retained for 10 years
-          under Turkish Tax Procedure Law. These records contain only the minimum data
-          required for invoicing (name and billing address).
+          After account deletion, minimum invoice and order data (e.g. name, address, amount,
+          date) may be retained to meet tax and accounting obligations.
         </Note>
       </Section>
 
-      <Section title="6. Children's Privacy">
-        <SubSection title="6.1 Photo Design Choice">
-          <p>
-            HeroKidStory has made a deliberate privacy decision not to store child photos
-            long-term. The original photo is used only momentarily during the AI generation
-            process and is permanently deleted once production is complete.
+      <Section title="6. Children, consent and age">
+        <SubSection title="6.1 Data minimisation for photos">
+          <p className="text-sm leading-relaxed">
+            We <strong>do not archive or keep a gallery</strong> of the child&apos;s reference
+            photo: it is used only during the production session to generate illustrations, then
+            the original file is permanently deleted. What remains is the AI-generated cartoon
+            illustration, not the real photograph — a deliberate minimisation measure.
           </p>
         </SubSection>
-        <SubSection title="6.2 Child Data Consent">
-          <p>Before processing child data, we obtain explicit consent from the parent/guardian during character creation:</p>
-          <blockquote className="mt-2 rounded-lg border-l-4 border-primary/40 bg-slate-100 px-4 py-3 text-sm italic dark:bg-slate-800">
-            &quot;I understand and consent that my child&apos;s photo and information will be
-            temporarily transferred to an AI service (OpenAI) for the purpose of generating
-            a personalized storybook, and that the original photo will be deleted after production.&quot;
+        <SubSection title="6.2 Parental consent (illustrative wording)">
+          <p className="text-sm">
+            Before processing a child&apos;s data and transferring it for AI illustration, we
+            present wording along the following lines:
+          </p>
+          <blockquote className="mt-2 rounded-lg border-l-4 border-primary/50 bg-slate-100 px-4 py-3 text-sm italic text-slate-800 dark:bg-slate-800/80 dark:text-slate-200">
+            &quot;I understand that my child&apos;s photo and information will be transferred
+            temporarily to an AI service provider to generate a personalized storybook, and that
+            the original photo will be deleted after production.&quot;
           </blockquote>
         </SubSection>
-        <SubSection title="6.3 COPPA (US Users)">
-          <p>
-            All processing of data related to children under 13 is performed with explicit
-            parental consent. US parents may request deletion of their child&apos;s data by
-            contacting{" "}
-            <a href="mailto:info@herokidstory.com" className="text-primary underline underline-offset-2">
-              info@herokidstory.com
-            </a>.
+        <SubSection title="6.3 Registration age and COPPA">
+          <p className="text-sm leading-relaxed">
+            You must confirm that you are at least 18 years old when registering. Processing of
+            data relating to children under 13 in the United States is based on verifiable
+            parental consent; deletion requests may be sent to{" "}
+            <a href={`mailto:${SELLER.email}`} className="text-primary underline underline-offset-2">
+              {SELLER.email}
+            </a>
+            .
           </p>
         </SubSection>
-        <SubSection title="6.4 GDPR Child Data (EU Users)">
-          <p>Parental consent is required for children under 16 in EU member states. HeroKidStory obtains this consent during character creation.</p>
+        <SubSection title="6.4 EU / UK children">
+          <p className="text-sm leading-relaxed">
+            Under GDPR, parental authorisation is required for children below the digital consent
+            age in your member state (commonly 16, or lower if provided by local law). We collect
+            this at character creation.
+          </p>
         </SubSection>
       </Section>
 
-      <Section title="7. Your Rights">
-        <SubSection title="GDPR Rights (EU Users)">
-          <ul className="space-y-1.5 text-sm list-disc pl-4">
-            <li><strong>Access</strong> — request a copy of your data</li>
-            <li><strong>Rectification</strong> — correct inaccurate data</li>
-            <li><strong>Erasure</strong> — request deletion under certain conditions</li>
-            <li><strong>Restriction</strong> — restrict processing</li>
-            <li><strong>Portability</strong> — receive your data in a structured format</li>
-            <li><strong>Objection</strong> — object to legitimate interest processing</li>
-            <li><strong>Withdraw consent</strong> — at any time, for consent-based processing</li>
-            <li><strong>Lodge a complaint</strong> — with your national Data Protection Authority</li>
+      <Section title="7. Your rights and how to exercise them">
+        <SubSection title="7.1 GDPR (EEA and UK users)">
+          <ul className="space-y-1.5 text-sm list-disc pl-5">
+            <li>Access, rectification, erasure, restriction, data portability</li>
+            <li>Object to processing based on legitimate interests; withdraw consent at any time where processing is consent-based</li>
+            <li>Lodge a complaint with your supervisory authority</li>
           </ul>
         </SubSection>
-        <SubSection title="Account Deletion">
-          <p>
-            Go to <strong>Dashboard → Settings → Delete My Account</strong>.
-            Upon deletion: all account data, books, images, and character data are permanently
-            deleted. Invoice records are retained for 10 years as required by law.
+        <SubSection title="7.2 KVKK (users in Türkiye)">
+          <p className="text-sm leading-relaxed">
+            If you are habitually resident in the Republic of Türkiye, Articles 10 and 11 of
+            Law No. 6698 grant you rights including information, access, correction, deletion where
+            conditions are met, and the right to complain to the Turkish Personal Data Protection
+            Authority. Submit requests to{" "}
+            <a href={`mailto:${SELLER.email}`} className="text-primary underline underline-offset-2">
+              {SELLER.email}
+            </a>{" "}
+            with the subject line &quot;KVKK / GDPR Request&quot;. We respond without undue delay
+            and in any event within the statutory period (including, for KVKK applications, up to
+            thirty days where applicable).
           </p>
         </SubSection>
-        <SubSection title="How to Exercise Your Rights">
-          <p>
-            Email:{" "}
-            <a href="mailto:info@herokidstory.com" className="text-primary underline underline-offset-2">
-              info@herokidstory.com
-            </a>{" "}
-            — subject: &quot;GDPR Request&quot;. Response within <strong>30 days.</strong>
+        <SubSection title="7.3 Account deletion">
+          <p className="text-sm leading-relaxed">
+            Go to <strong>Dashboard → Settings → Account</strong> and use the{" "}
+            <strong>Delete account</strong> control. When deletion completes, account data,
+            books, characters and stored deliverables are removed immediately, subject to
+            retention of minimum invoice and order records as required by law.
+          </p>
+        </SubSection>
+        <SubSection title="7.4 Identity verification">
+          <p className="text-sm leading-relaxed">
+            To protect your privacy, we may request reasonable additional information to verify
+            your identity before fulfilling rights requests.
           </p>
         </SubSection>
       </Section>
 
       <Section title="8. Security">
-        <ul className="space-y-1.5 text-sm list-disc pl-4">
-          <li>Data stored encrypted (AES-256) on AWS infrastructure</li>
-          <li>TLS/HTTPS encryption in transit</li>
-          <li>Passwords hashed with bcrypt — plain text never stored</li>
-          <li>Payment data processed via PCI-DSS compliant Iyzico</li>
-          <li>Role-based access controls applied</li>
+        <ul className="space-y-1.5 text-sm list-disc pl-5">
+          <li>TLS (HTTPS) in transit; encryption and access controls at rest where appropriate</li>
+          <li>Passwords stored using one-way hashing</li>
+          <li>Card data processed only by certified payment providers</li>
+          <li>Staff and vendor access on a least-privilege basis; written processor commitments</li>
         </ul>
         <Note>
-          In the event of a security breach, we will notify relevant authorities and
-          affected users within 72 hours as required by GDPR and KVKK.
+          In the event of a personal data breach, we will notify supervisory authorities within
+          statutory timeframes (including, under GDPR, without undue delay and where feasible
+          within 72 hours of becoming aware) and will inform affected individuals when required by
+          law, in particular where the breach is likely to result in a high risk to rights and
+          freedoms.
         </Note>
       </Section>
 
       <Section title="9. Cookies">
-        <p>
-          For full details, see our{" "}
+        <p className="text-sm">
+          See our{" "}
           <Link href="/cookies" className="text-primary underline underline-offset-2">
             Cookie Policy
-          </Link>.
+          </Link>{" "}
+          for categories, purposes and your choices.
         </p>
-        <InfoTable rows={[
-          ["Essential cookies",  "Session management, security — always active"],
-          ["Preference cookies", "Language, theme, user preferences"],
-          ["Analytics cookies",  "Only if you give consent"],
-        ]} />
       </Section>
 
-      <Section title="10. Changes to This Policy">
-        <p>
-          We will update the &quot;Last Updated&quot; date on changes and notify registered
-          users by email for significant updates. Continued use of the platform constitutes
-          acceptance of the updated policy.
+      <Section title="10. Changes to this Policy">
+        <p className="text-sm leading-relaxed">
+          We may update this Policy from time to time. Material changes will be reflected in the
+          &quot;Last updated&quot; date and, where appropriate, notified by email or in-product
+          notice. Where the law requires fresh consent, we will obtain it separately.
         </p>
       </Section>
 
       <Section title="11. Contact">
-        <InfoTable rows={[
-          ["Email",         "info@herokidstory.com"],
-          ["Address",       SELLER.address],
-          ["Response time", "30 days"],
-        ]} />
+        <InfoTable
+          rows={[
+            ["Email", SELLER.email],
+            ["Postal address", SELLER.address],
+          ]}
+        />
       </Section>
-
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
-        ⚠️ This is <strong>v{POLICY_VERSION}</strong> draft. Not yet reviewed by legal counsel.
-      </div>
-
     </div>
   )
 }
 
-// ============================================================================
-// Yardımcı bileşenler
-// ============================================================================
-
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 border-b border-slate-200 pb-2 text-base font-bold text-slate-900 dark:border-slate-700 dark:text-slate-100">
+      <h2 className="mb-3 border-b border-slate-200 pb-2 text-base font-semibold tracking-tight text-slate-900 dark:border-slate-700 dark:text-slate-100">
         {title}
       </h2>
       <div className="space-y-3 text-sm leading-relaxed">{children}</div>
@@ -654,8 +739,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function SubSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="mt-3">
-      <h3 className="mb-1.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{title}</h3>
+    <div className="mt-4 first:mt-0">
+      <h3 className="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-200">{title}</h3>
       {children}
     </div>
   )
@@ -667,10 +752,10 @@ function InfoTable({ rows }: { rows: [string, string][] }) {
       <tbody>
         {rows.map(([label, value]) => (
           <tr key={label} className="border-b border-slate-100 dark:border-slate-800">
-            <td className="whitespace-nowrap py-1.5 pr-4 font-medium text-slate-700 dark:text-slate-300">
+            <td className="align-top py-2 pr-4 font-medium text-slate-800 dark:text-slate-200">
               {label}
             </td>
-            <td className="py-1.5 text-slate-600 dark:text-slate-400">{value}</td>
+            <td className="py-2 text-slate-600 dark:text-slate-400">{value}</td>
           </tr>
         ))}
       </tbody>
@@ -680,7 +765,7 @@ function InfoTable({ rows }: { rows: [string, string][] }) {
 
 function Note({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-2 rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+    <p className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-300">
       {children}
     </p>
   )
@@ -697,13 +782,13 @@ function Callout({
 }) {
   const colors =
     type === "info"
-      ? "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-300"
-      : "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300"
+      ? "border-slate-200 bg-slate-50 text-slate-800 dark:border-slate-600 dark:bg-slate-900/50 dark:text-slate-200"
+      : "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100"
 
   return (
-    <div className={`mt-2 rounded-lg border p-3 text-sm ${colors}`}>
+    <div className={`mt-3 rounded-lg border px-3 py-2.5 text-sm ${colors}`}>
       <p className="font-semibold">{title}</p>
-      <p className="mt-1">{children}</p>
+      <div className="mt-1.5 leading-relaxed">{children}</div>
     </div>
   )
 }

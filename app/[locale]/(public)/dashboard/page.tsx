@@ -32,6 +32,8 @@ export default async function LibraryPage({
       year: "numeric",
     }),
     illustrationStyle: book.illustration_style || undefined,
+    videoUrl: book.video_url || undefined,
+    audioStoryStatus: (book.audio_story_status as DashboardBook['audioStoryStatus']) ?? 'idle',
   }))
 
   return <DashboardClient initialBooks={initialBooks} />

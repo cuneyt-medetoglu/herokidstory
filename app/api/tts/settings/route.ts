@@ -1,6 +1,6 @@
 /**
- * GET  /api/tts/settings - Read global TTS defaults (anyone, for display in book viewer).
- * PATCH /api/tts/settings - Update global TTS defaults (admin only).
+ * GET  /api/tts/settings - Read global TTS defaults (public; used by TTS pipeline / reader).
+ * PATCH /api/tts/settings - Update global TTS defaults (admin only; UI at /admin/tts-settings).
  */
 
 import { NextRequest, NextResponse } from 'next/server'

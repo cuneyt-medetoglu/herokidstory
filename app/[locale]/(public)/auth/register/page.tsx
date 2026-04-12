@@ -72,6 +72,12 @@ export default function RegisterPage() {
       const result = await signIn("credentials", { email: data.email, password: data.password, redirect: false })
 
       if (result?.ok) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("tos_version_accepted", "1.1-draft")
+          localStorage.setItem("tos_accepted_at", new Date().toISOString())
+          localStorage.setItem("privacy_version_accepted", "1.4.0")
+          localStorage.setItem("privacy_accepted_at", new Date().toISOString())
+        }
         router.push("/dashboard")
         router.refresh()
         return

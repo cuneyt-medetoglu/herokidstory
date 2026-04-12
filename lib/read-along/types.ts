@@ -29,6 +29,7 @@ export interface TimelineGenerateOptions {
   pageNumber: number
   strategy?: TimelineStrategy
   chunkSize?: number
+  forceRefresh?: boolean
 }
 
 export interface TimelineResult {

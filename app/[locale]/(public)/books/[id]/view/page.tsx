@@ -8,6 +8,8 @@ export default function BookViewPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const isExample = searchParams.get("example") === "1"
+  const modeParam = searchParams.get("mode")
+  const initialMode = (modeParam === "audio-story" || modeParam === "watch") ? "watch" : undefined
 
   const handleClose = () => {
     if (isExample) {
@@ -22,6 +24,7 @@ export default function BookViewPage({ params }: { params: { id: string } }) {
       bookId={params.id}
       onClose={handleClose}
       useExampleApi={isExample}
+      initialMode={initialMode}
     />
   )
 }

@@ -7,12 +7,13 @@
  *  3. Her adımda progress_percent + progress_step güncellenir
  */
 import { Worker, Job } from 'bullmq'
-import { connection, BOOK_GENERATION_QUEUE_NAME, type BookGenerationJobData } from '../client'
+import { connection, BOOK_GENERATION_QUEUE_NAME, type BookGenerationJobData, type AudioStoryJobData } from '../client'
 import { runImagePipeline } from '@/lib/book-generation/image-pipeline'
-import { getBookById, updateBook } from '@/lib/db/books'
+import { getBookById, updateBook, markAudioStoryGenerating, markAudioStoryReady, markAudioStoryFailed } from '@/lib/db/books'
 import { getCharacterById } from '@/lib/db/characters'
 import { DEFAULT_STORY_MODEL } from '@/lib/ai/openai-models'
 import { PAGE_COUNT_DEBUG_FALLBACK } from '@/lib/constants/book-config'
+import { generateTts } from '@/lib/tts/generate'
 
 async function processBookGeneration(job: Job<BookGenerationJobData>): Promise<void> {
   const { bookId, userId, characterIds, illustrationStyle, themeKey, language, customRequests, isFromExampleMode, isCoverOnlyMode, fromExampleId, storyModel, pageCount } = job.data
@@ -72,10 +73,80 @@ async function processBookGeneration(job: Job<BookGenerationJobData>): Promise<v
   console.log(`[Worker] ✅ Job ${job.id} completed — bookId=${bookId}`)
 }
 
+async function processAudioStoryRegenerate(job: Job<AudioStoryJobData>): Promise<void> {
+  const { bookId, userId, language } = job.data
+  console.log(`[Worker] 🔊 Audio story job ${job.id} started — bookId=${bookId}`)
+
+  const { data: book, error } = await getBookById(bookId)
+  if (error || !book) throw new Error(`[Worker] Book not found: ${bookId}`)
+
+  const pages = (book.story_data?.pages ?? []) as Array<{ pageNumber?: number; text?: string; imageUrl?: string }>
+  const imagesData: Array<{ pageNumber?: number; audioUrl?: string; imageUrl?: string }> = Array.isArray(book.images_data) ? book.images_data : []
+
+  const ttsAudioMap = new Map<number, string>()
+  for (const img of imagesData) {
+    if (img.pageNumber && img.audioUrl) ttsAudioMap.set(img.pageNumber, img.audioUrl)
+  }
+
+  const imagesDataMap = new Map<number, string>()
+  for (const img of imagesData) {
+    if (img.pageNumber && img.imageUrl) imagesDataMap.set(img.pageNumber, img.imageUrl)
+  }
+
+  const candidatePages = pages
+    .filter((p) => p?.text?.trim())
+    .map((p, idx) => {
+      const pageNumber = p.pageNumber ?? idx + 1
+      const imageUrl = p.imageUrl || imagesDataMap.get(pageNumber) || ''
+      return { pageNumber, text: (p.text ?? '').trim(), imageUrl }
+    })
+    .filter((p) => p.imageUrl)
+
+  if (candidatePages.length === 0) throw new Error('No pages with images found')
+
+  const freshTtsMap = new Map(ttsAudioMap)
+  const missingPages = candidatePages.filter((p) => !freshTtsMap.has(p.pageNumber))
+  if (missingPages.length > 0) {
+    console.log(`[Worker] 🔊 TTS generating: ${missingPages.length} pages (no cache)...`)
+    await Promise.allSettled(
+      missingPages.map(async (p) => {
+        try {
+          const result = await generateTts(p.text, { language, userId, bookId })
+          freshTtsMap.set(p.pageNumber, result.audioUrl)
+        } catch (err) {
+          console.warn(`[Worker] TTS page ${p.pageNumber} failed:`, (err as Error)?.message)
+        }
+      }),
+    )
+    const updatedImagesData = imagesData.map((img: any) => {
+      if (!img.pageNumber) return img
+      const audioUrl = freshTtsMap.get(img.pageNumber)
+      return audioUrl ? { ...img, audioUrl } : img
+    })
+    await updateBook(bookId, { images_data: updatedImagesData })
+  }
+
+  const videoPages = candidatePages
+    .map((p) => ({ ...p, audioUrl: freshTtsMap.get(p.pageNumber) ?? '' }))
+    .filter((p) => p.audioUrl)
+
+  if (videoPages.length === 0) throw new Error('TTS generation failed — no video pages')
+
+  const { generateBookVideo } = await import('@/lib/video/generate-video')
+  const result = await generateBookVideo({ bookId, userId, pages: videoPages, language })
+  await markAudioStoryReady(bookId, result.publicUrl, result.s3Key)
+  console.log(`[Worker] ✅ Audio story completed: book=${bookId}`)
+}
+
 export function startBookGenerationWorker(): Worker {
-  const worker = new Worker<BookGenerationJobData>(
+  const worker = new Worker(
     BOOK_GENERATION_QUEUE_NAME,
-    processBookGeneration,
+    async (job: Job) => {
+      if (job.name === 'regenerate-audio-story') {
+        return processAudioStoryRegenerate(job as Job<AudioStoryJobData>)
+      }
+      return processBookGeneration(job as Job<BookGenerationJobData>)
+    },
     {
       connection,
       concurrency: 3,
@@ -94,6 +165,14 @@ export function startBookGenerationWorker(): Worker {
       console.error('[Worker] Stack:', err.stack)
     }
     if (!bookId) return
+
+    if (job?.name === 'regenerate-audio-story') {
+      await markAudioStoryFailed(bookId).catch((e) =>
+        console.error(`[Worker] markAudioStoryFailed DB error:`, e),
+      )
+      return
+    }
+
     try {
       const { data: book } = await getBookById(bookId)
       let prevMeta: Record<string, unknown> = {}
