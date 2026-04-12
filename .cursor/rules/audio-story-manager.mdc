@@ -1,6 +1,6 @@
 ---
-description: HeroKidStory sesli hikaye (audio story) özelliğinden sorumlu agent — TTS timeline, ASS altyazı, FFmpeg video üretimi, native video player
-globs: lib/read-along/**,lib/video/**,components/video/**,app/api/books/*/audio-story/**,docs/audio-story/**
+description: HeroKidStory sesli hikaye (audio story) — TTS timeline, FFmpeg MP4, S3, worker, native player, API’ler
+globs: lib/read-along/**,lib/video/**,components/video/**,app/api/books/*/audio-story/**,lib/book-generation/image-pipeline.ts,lib/queue/**,docs/audio-story/**
 alwaysApply: false
 ---
 
@@ -8,51 +8,60 @@ alwaysApply: false
 
 ## Sorumluluk
 
-Mevcut hikaye görselleri + TTS sesleri üzerinden otomatik MP4 video üretmek. Generative video (Veo vb.) KULLANMIYORUZ.
+Mevcut sayfa görselleri + TTS (MP3) ile sunucuda **tek MP4** üretmek; kitap oluşturma veya **regenerate** ile yeniden üretmek. Generative video (Veo vb.) yok.
 
-## Yol Haritası
+## Yol haritası
 
-`docs/audio-story/ROADMAP.md` ana referans. Faz 1–9 tamamlandı.
+`docs/audio-story/ROADMAP.md` — Faz 1–9 + Faz 6 (production) tamamlandı.
 
-## Mimari
+## Uçtan uca akış
 
-```
-Sayfa metni + TTS ses (MP3)
-       ↓
-lib/read-along/timeline.ts → WordTiming[] + TextChunk[] (S3 cache)
-       ↓
-lib/video/generate-ass.ts → ASS altyazı (fade-in/out)
-       ↓
-lib/video/generate-video.ts → FFmpeg: statik kare + vignette + ASS + sayfa arası sessiz geçiş → MP4
-       ↓
-S3 yükleme → signed URL → native <video controls> player
-```
+1. **Kitap oluşturma / regenerate** — BullMQ worker (`book-generation` + `regenerate-audio-story`).
+2. **image-pipeline** — TTS URL’leri `images_data`’ya yazılır; `SKIP_VIDEO_GENERATION` yoksa `generateBookVideo` çağrılır.
+3. **DB** — `markAudioStoryGenerating` → başarıda `markAudioStoryReady` + `video_url` / `video_path`; hatada `markAudioStoryFailed`.
+4. **generate-video.ts** — Sayfa başına: scale+pad+vignette+ASS (statik kare, **zoompan yok**). Sayfalar arası: kısa **sessiz + siyah klibi** ile `concat` (TTS üst üste binmez; `acrossfade` yok).
+5. **S3** — `videos/.../video_*.mp4` yüklenir.
+6. **Oynatma** — `VideoPlayer`: `bookId` ile `GET .../audio-story/url` → signed URL → `<video controls>`.
+7. **İndirme** — Tarayıcıdan S3’e doğrudan `fetch` CORS riski; dashboard **GET .../audio-story/download** (sunucu S3’ten buffer/stream).
 
-## Temel Tipler (`lib/read-along/types.ts`)
+## API uçları
 
-- `WordTiming { text, startMs, endMs }` — kelime bazlı zamanlama
-- `TextChunk { words[], displayText, startMs, endMs }` — altyazı grubu
-- `PageTimeline { pageNumber, totalDurationMs, words[], chunks[] }` — sayfa timeline
+| Method | Yol | Amaç |
+|--------|-----|------|
+| POST | `/api/books/[id]/audio-story/regenerate` | Kuyruğa iş atar (202) |
+| GET | `/api/books/[id]/audio-story/url` | Signed URL (sahip kontrolü) |
+| GET | `/api/books/[id]/audio-story/download` | MP4 indirme, aynı origin |
 
-## Kurallar
+## Ortam
 
-- Kelime zamanlaması: Whisper yoksa heuristik fallback her zaman çalışmalı
-- Video: zoompan KULLANMA (titriyor). Statik kare + vignette + crossfade.
-- Player: Native `<video controls>` kullan, custom player YAZMA.
-- ASS altyazı: `{\fad(300,300)}` fade ile. BorderStyle=4 (opaque box).
-- FFmpeg: `-tune stillimage -crf 24 -r 24`
-- Cache: timeline JSON `tts-cache/{hash}_timeline.json` formatında S3'te sakla
-- DB: `audio_story_status` (idle/generating/ready/failed), `audio_story_version`, `audio_story_generated_at`
-- Regenerate: Worker (BullMQ) üzerinden, API'de fire-and-forget YAPMA.
+- **FFmpeg / ffprobe:** Linux’ta PATH’teyse `FFMPEG_PATH` / `FFPROBE_PATH` **boş bırakılabilir** (`ffmpeg` / `ffprobe`). Windows’ta tam yol gerekebilir.
+- **Worker** — Next ile aynı `.env` ve Redis; video üretimi worker sürecinde çalışır.
 
-## Dosyalar
+## Kurallar (kod)
 
-| Konum | İçerik |
-|-------|--------|
-| `lib/read-along/` | Timeline üretim, heuristik, chunker, tipler |
-| `lib/video/` | FFmpeg video üretimi, ASS altyazı, tipler |
-| `components/video/VideoPlayer.tsx` | Native video player wrapper (Close + Download) |
-| `lib/book-generation/image-pipeline.ts` | Pipeline: TTS → video üretimi entegrasyonu |
-| `lib/queue/` | Worker: regenerate-audio-story job |
-| `app/api/books/[id]/audio-story/` | regenerate + url API endpoints |
-| `docs/audio-story/` | Yol haritası ve dokümanlar |
+- Timeline: Whisper yoksa heuristik fallback.
+- Video: **zoompan kullanma** (titreme).
+- ASS: `{\fad(300,300)}`, BorderStyle=4 kutusu.
+- Encode: `-tune stillimage -crf 24 -r 24`.
+- Regenerate: API içinde uzun `generateBookVideo` **yok** — sadece kuyruk.
+
+## Tipler
+
+`lib/read-along/types.ts` — `WordTiming`, `TextChunk`, `PageTimeline`.
+
+## Dosya haritası
+
+| Alan | Yol |
+|------|-----|
+| Timeline | `lib/read-along/timeline.ts` |
+| Video + ASS | `lib/video/generate-video.ts`, `generate-ass.ts` |
+| Player | `components/video/VideoPlayer.tsx` |
+| Pipeline | `lib/book-generation/image-pipeline.ts` |
+| Kuyruk + worker | `lib/queue/client.ts`, `lib/queue/workers/book-generation.worker.ts` |
+| DB yardımcıları | `lib/db/books.ts` (`markAudioStory*`) |
+| Doküman | `docs/audio-story/` |
+
+## İsteğe bağlı sonraki işler (ürün)
+
+- Ambiyans müzik / particle overlay (ayrı özellik).
+- `code-review-v1.md` tarihsel; mimari değişince tam denetim için yeni inceleme açılabilir.

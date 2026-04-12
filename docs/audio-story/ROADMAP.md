@@ -1,7 +1,7 @@
 # Audio Story (Sesli Hikaye) — Yol Haritası
 
 **Tarih:** 2026-04-12  
-**Durum:** Faz 9 tamamlandı  
+**Durum:** Faz 1–9 + Faz 6 (production) tamamlandı  
 **Agent:** `.cursor/rules/audio-story-manager.mdc`
 
 ---
@@ -20,10 +20,10 @@ Mevcut hikaye görselleri + TTS sesleri üzerinden otomatik **MP4 video** üreti
 | # | Faz | Durum | Doküman |
 |---|-----|-------|---------|
 | 1–5 | Araştırma, Senkronizasyon, Motion, Oynatıcı, Video Gen | ✅ Tamamlandı | [completed-phases.md](./completed-phases.md) |
-| 6 | Production Deploy | Beklemede | [faz-6-production-deploy.md](./faz-6-production-deploy.md) |
+| 6 | Production Deploy | ✅ Tamamlandı | [faz-6-production-deploy.md](./faz-6-production-deploy.md) |
 | 7 | Sesli Hikaye (isimlendirme, mimari, temizlik) | ✅ Tamamlandı | [faz-7-sesli-hikaye-fazlari.md](./faz-7-sesli-hikaye-fazlari.md) |
 | 8 | Stabilizasyon (ffprobe, CTA, worker, progress) | ✅ Tamamlandı | [faz-8-stabilizasyon.md](./faz-8-stabilizasyon.md) |
-| 9 | Native Player & Crossfade | ✅ Tamamlandı | [video-player-analiz.md](./video-player-analiz.md) |
+| 9 | Native player + sayfa arası sessizlik + encoding | ✅ Tamamlandı | [video-player-analiz.md](./video-player-analiz.md) |
 
 ---
 
@@ -39,6 +39,9 @@ Mevcut hikaye görselleri + TTS sesleri üzerinden otomatik **MP4 video** üreti
 | Pipeline entegrasyonu | `lib/book-generation/image-pipeline.ts` |
 | DB: audio_story_status | `migrations/036_books_audio_story.sql` |
 | Worker: regenerate job | `lib/queue/workers/book-generation.worker.ts` |
+| Signed URL (oynatma) | `GET /api/books/[id]/audio-story/url` |
+| MP4 indirme (CORS’suz) | `GET /api/books/[id]/audio-story/download` |
+| Dashboard indir menüsü | `app/[locale]/(public)/dashboard/DashboardClient.tsx` |
 
 ---
 

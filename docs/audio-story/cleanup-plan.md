@@ -29,7 +29,7 @@
 
 | # | Konu | Öncelik | Not |
 |---|------|---------|-----|
-| 1 | **Faz 6: Production Deploy** | Yüksek | Sunucuda FFmpeg kurulumu, DB migration, worker deploy. Beklemede — kullanıcı yapacak |
+| 1 | **Faz 6: Production Deploy** | — | ✅ Tamamlandı (senin tarafında) |
 | 2 | **Kitap silme: settings sayfasına taşıma** | Orta | Dashboard'dan kaldırıldı; settings sayfasında zaten mevcut olmalı — doğrulanacak |
 | 3 | **Ambient ses / müzik** | Düşük | Gemini önerisi: TTS arkasına hafif ambiyans. Ayrı özellik |
 | 4 | **Particle overlay / light leak** | Düşük | Gemini önerisi: stok video asset gerektirir. Ayrı özellik |

@@ -1,6 +1,6 @@
 # Faz 6 — Production Deploy & Doğrulama
 
-**Durum:** Beklemede (kullanıcı yapacak)  
+**Durum:** ✅ Tamamlandı (FFmpeg sunucuda, migration, worker)  
 **Bağımlılık:** Faz 5 (video üretim kodu hazır)  
 **Çıktı:** Sunucuda FFmpeg kurulu, migration uygulandı, yeni kitaplarda video otomatik üretiliyor
 

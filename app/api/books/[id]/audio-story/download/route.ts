@@ -50,11 +50,15 @@ export async function GET(
 
     const filename = safeDownloadFilename(book.title ?? undefined, bookId)
     const disposition = `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`
+    const mime = obj.contentType || "video/mp4"
 
-    return new NextResponse(obj.buffer, {
+    // Buffer → BlobPart: TS lib dom'da ArrayBufferLike uyumsuzluğu; çalışma zamanında Buffer Blob'a uyar
+    const blob = new Blob([obj.buffer as unknown as BlobPart], { type: mime })
+
+    return new NextResponse(blob, {
       status: 200,
       headers: {
-        "Content-Type": obj.contentType || "video/mp4",
+        "Content-Type": mime,
         "Content-Disposition": disposition,
         "Cache-Control": "private, no-store",
       },
